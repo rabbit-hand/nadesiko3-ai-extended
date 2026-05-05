@@ -1,0 +1,425 @@
+# Advanced Drone Autopilot Demo - English Version
+# Automatic flight, coordinate setting, and destination management
+
+DISPLAY "=== Advanced Drone Autopilot Demo ==="
+
+# --- Drone Autopilot System Discovery ---
+DISPLAY "1. Discovering drone autopilot systems..."
+all_autopilot = DISCOVER_DRONE_AUTOPILOT "all"
+PRINT "Autopilot systems found: {all_autopilotのキー数}"
+
+FOR EACH system IN all_autopilot
+  IF system.key !== "initialized" AND system.key !== "timestamp" THEN
+    system_name = system.value["name"] || system.key
+    PRINT "  {system_name}"
+  ENDIF
+NEXT
+
+DISPLAY ""
+
+# --- Coordinate Setting ---
+DISPLAY "2. Setting coordinates..."
+
+# Set home coordinate
+home_coord = SET_COORDINATE "Home" "35.681236,139.767124"
+PRINT "Home coordinate: {home_coord["message"]}"
+PRINT "Coordinates: {home_coord["coordinates"]["latitude"]}, {home_coord["coordinates"]["longitude"]}"
+
+# Set park coordinate
+park_coord = SET_COORDINATE "Park" "35.685236,139.770124"
+PRINT "Park coordinate: {park_coord["message"]}"
+
+# Set school coordinate
+school_coord = SET_COORDINATE "School" "35.675236,139.765124"
+PRINT "School coordinate: {school_coord["message"]}"
+
+# Set coordinate using object format
+station_coord = {
+  "latitude": 35.690236,
+  "longitude": 139.775124
+}
+station_coord_set = SET_COORDINATE "Station" station_coord
+PRINT "Station coordinate: {station_coord_set["message"]}"
+
+DISPLAY ""
+
+# --- Coordinate List ---
+DISPLAY "3. Displaying coordinate list..."
+coord_list = GET_COORDINATE_LIST
+PRINT "Total coordinates: {coord_list["total_coordinates"]}"
+
+PRINT "Saved coordinates:"
+FOR EACH coord IN coord_list["coordinates"]
+  coord_name = coord["name"]
+  lat = coord["coordinates"]["latitude"]
+  lng = coord["coordinates"]["longitude"]
+  created_at = coord["created_at"]
+  PRINT "  {coord_name}: ({lat}, {lng}) - {created_at}"
+NEXT
+
+DISPLAY ""
+
+# --- Destination Setting ---
+DISPLAY "4. Setting destinations..."
+
+# Set destination by coordinate name
+dest1 = SET_DESTINATION "Park"
+PRINT "Destination 1: {dest1["message"]}"
+
+# Set destination by coordinate string
+dest2 = SET_DESTINATION "35.680236,139.768124"
+PRINT "Destination 2: {dest2["message"]}"
+
+# Set destination using object format
+dest3 = {
+  "coordinates": "35.688236,139.772124",
+  "name": "Supermarket"
+}
+dest3_set = SET_DESTINATION dest3
+PRINT "Destination 3: {dest3_set["message"]}"
+
+DISPLAY ""
+
+# --- Current Position ---
+DISPLAY "5. Getting current position..."
+current_pos = GET_CURRENT_POSITION
+PRINT "Current position: {current_pos["position"]["latitude"]}, {current_pos["position"]["longitude"]}"
+PRINT "Altitude: {current_pos["position"]["altitude"]}m"
+PRINT "Accuracy: {current_pos["position"]["accuracy"]}"
+PRINT "GPS satellites: {current_pos["position"]["gps_satellites"]}"
+
+DISPLAY ""
+
+# --- Route Planning ---
+DISPLAY "6. Planning routes..."
+
+# Route from home to park
+route1 = PLAN_ROUTE "35.681236,139.767124" "35.685236,139.770124"
+PRINT "Route 1: {route1["message"]}"
+PRINT "Distance: {route1["route"]["distance"]}m"
+PRINT "Bearing: {route1["route"]["bearing"]}°"
+PRINT "Estimated time: {route1["route"]["estimated_time"]} minutes"
+PRINT "Waypoints: {route1["route"]["waypoints"]のキー数}"
+
+# Route from park to school
+route2 = PLAN_ROUTE "Park" "School"
+PRINT "Route 2: {route2["message"]}"
+
+DISPLAY ""
+
+# --- Auto Flight Start ---
+DISPLAY "7. Starting auto flight..."
+
+# Auto fly to destination
+auto_flight1 = START_AUTO_FLIGHT
+PRINT "Auto flight 1: {auto_flight1["message"]}"
+PRINT "Destination: {auto_flight1["destination"]["coordinates"]}"
+PRINT "Estimated duration: {auto_flight1["estimated_duration"]} minutes"
+
+DISPLAY ""
+
+# --- Flight Status Monitoring ---
+DISPLAY "8. Monitoring flight status..."
+
+REPEAT 5 times
+  flight_status = GET_FLIGHT_STATUS
+  current_status = flight_status["status"]["current_status"]
+  flight_mode = flight_status["status"]["flight_mode"]
+  altitude = flight_status["status"]["altitude"]
+  speed = flight_status["status"]["speed"]
+  battery = flight_status["status"]["battery_level"]
+  distance_to_dest = flight_status["status"]["distance_to_destination"]
+  
+  PRINT "Status: {current_status}"
+  PRINT "Flight mode: {flight_mode}"
+  PRINT "Altitude: {altitude}m"
+  PRINT "Speed: {speed}m/s"
+  PRINT "Battery: {battery}%"
+  PRINT "Distance to destination: {distance_to_dest.toFixed(2)}m"
+  PRINT "---"
+  
+  WAIT 2000
+NEXT
+
+DISPLAY ""
+
+# --- Auto Coordinate Flight ---
+DISPLAY "9. Testing auto coordinate flight..."
+
+# Auto fly to coordinate name
+auto_coord_flight1 = AUTO_FLY_TO_COORDINATE "School"
+PRINT "Auto coordinate flight 1: {auto_coord_flight1["message"]}"
+
+# Auto return home
+auto_coord_flight2 = AUTO_FLY_TO_COORDINATE "Home"
+PRINT "Auto coordinate flight 2: {auto_coord_flight2["message"]}"
+
+DISPLAY ""
+
+# --- Return to Home ---
+DISPLAY "10. Testing return to home..."
+home_return = RETURN_TO_HOME
+PRINT "Return to home: {home_return["message"]}"
+
+DISPLAY ""
+
+# --- Emergency Landing ---
+DISPLAY "11. Testing emergency landing..."
+emergency_land = EMERGENCY_LANDING
+PRINT "Emergency landing: {emergency_land["message"]}"
+PRINT "Landing time: {emergency_land["emergency_landing"]["landing_time"]}"
+
+DISPLAY ""
+
+# --- Integrated Autopilot ---
+DISPLAY "12. Checking integrated autopilot..."
+integrated_autopilot = INTEGRATED_AUTOPILOT
+PRINT "Integrated system status: {integrated_autopilot["overall_status"]}"
+PRINT "Available operations: {integrated_autopilot["available_operations"]のキー数}"
+
+DISPLAY ""
+
+# --- Practical Example: Delivery Drone System ---
+DISPLAY "13. Practical example: Delivery drone system..."
+
+# Set delivery destinations
+delivery_dest1 = SET_COORDINATE "Customer A" "35.695236,139.780124"
+delivery_dest2 = SET_COORDINATE "Customer B" "35.698236,139.785124"
+delivery_dest3 = SET_COORDINATE "Customer C" "35.692236,139.775124"
+
+PRINT "Delivery destinations set"
+
+# Execute delivery route
+delivery_route = ["Customer A", "Customer B", "Customer C"]
+delivery_log = []
+
+FOR EACH destination IN delivery_route
+  PRINT "Starting delivery to {destination}..."
+  
+  # Auto fly to destination
+  delivery_flight = AUTO_FLY_TO_COORDINATE destination
+  
+  IF delivery_flight["success"] THEN
+    # Monitor flight status
+    REPEAT 3 times
+      flight_status = GET_FLIGHT_STATUS
+      IF flight_status["status"]["current_status"] = "landed" THEN
+        PRINT "Arrived at {destination}"
+        delivery_logに{
+          "destination": destination,
+          "arrival_time": new Date().toISOString(),
+          "status": "delivered"
+        }を追加
+        BREAK
+      ENDIF
+      WAIT 1000
+    NEXT
+  ELSE
+    PRINT "Delivery to {destination} failed"
+    delivery_logに{
+      "destination": destination,
+      "error": delivery_flight["error"],
+      "status": "failed"
+    }を追加
+  ENDIF
+  
+  WAIT 2000
+NEXT
+
+PRINT "Delivery completed"
+PRINT "Delivery log:"
+FOR EACH log IN delivery_log
+  PRINT "  {log["destination"]}: {log["status"]} ({log["arrival_time"] || log["error"]})"
+NEXT
+
+DISPLAY ""
+
+# --- Kid-Friendly Mode Example ---
+DISPLAY "14. Kid-friendly mode example..."
+「かんたんモード」
+
+# Kid-friendly drone operations
+PRINT "🚁 Hello Drone-san!"
+DOG_BARK
+
+# Play with coordinate setting
+PRINT "📍 Let's remember places!"
+home_coord = SET_COORDINATE "My Home" "35.681236,139.767124"
+DECORATE "I remembered my home!"
+CAT_MEOW
+
+PRINT "🏰 Let's remember the park too!"
+park_coord = SET_COORDINATE "Park" "35.685236,139.770124"
+DECORATE "I remembered the park too!"
+
+# Play with auto flight
+PRINT "🚁 Let's fly to the park!"
+auto_flight = AUTO_FLY_TO_COORDINATE "Park"
+IF auto_flight["success"] THEN
+  DECORATE "I'm flying to the park! So exciting!"
+  CAT_MEOW
+ELSE
+  DECORATE "I couldn't fly to the park!"
+ENDIF
+
+# Play with current position
+PRINT "📍 Where am I now?"
+current_pos = GET_CURRENT_POSITION
+DECORATE "I'm at {current_pos["position"]["latitude"]}, {current_pos["position"]["longitude"]}!"
+
+# Play with return home
+PRINT "🏠 Let's go home!"
+home_return = RETURN_TO_HOME
+IF home_return["success"] THEN
+  DECORATE "I'm going home! See you later!"
+  CAT_MEOW
+ELSE
+  DECORATE "I couldn't go home!"
+ENDIF
+
+# Play with emergency landing
+PRINT "🚨 Let's do emergency landing!"
+emergency_land = EMERGENCY_LANDING
+IF emergency_land["success"] THEN
+  DECORATE "Emergency landing! That was a big sound!"
+  DOG_BARK
+ELSE
+  DECORATE "Emergency landing failed!"
+ENDIF
+
+DISPLAY ""
+
+# --- Advanced Features: Multi-Point Patrol ---
+DISPLAY "15. Advanced features: Multi-point patrol..."
+
+# Set patrol route
+patrol_route = ["Home", "Park", "School", "Station"]
+patrol_log = []
+
+PRINT "Starting patrol route..."
+
+FOR EACH point IN patrol_route
+  PRINT "Heading to {point}..."
+  
+  # Auto fly to patrol point
+  patrol_flight = AUTO_FLY_TO_COORDINATE point
+  
+  IF patrol_flight["success"] THEN
+    # Wait for landing
+    REPEAT 3 times
+      flight_status = GET_FLIGHT_STATUS
+      IF flight_status["status"]["current_status"] = "landed" THEN
+        PRINT "Patrol of {point} completed"
+        patrol_logに{
+          "location": point,
+          "completion_time": new Date().toISOString(),
+          "status": "completed"
+        }を追加
+        BREAK
+      ENDIF
+      WAIT 1000
+    NEXT
+  ENDIF
+  
+  WAIT 1000
+NEXT
+
+PRINT "Patrol route completed"
+PRINT "Patrol log:"
+FOR EACH log IN patrol_log
+  PRINT "  {log["location"]}: {log["status"]} ({log["completion_time"]})"
+NEXT
+
+DISPLAY ""
+
+# --- Advanced Features: Autonomous Mission Planning ---
+DISPLAY "16. Advanced features: Autonomous mission planning..."
+
+# Define mission waypoints
+mission_waypoints = [
+  {"name": "Waypoint A", "coordinates": "35.682236,139.768124"},
+  {"name": "Waypoint B", "coordinates": "35.684236,139.769124"},
+  {"name": "Waypoint C", "coordinates": "35.686236,139.771124"},
+  {"name": "Return Home", "coordinates": "35.681236,139.767124"}
+]
+
+PRINT "=== Autonomous Mission Planning ==="
+PRINT "Mission waypoints: {mission_waypoints.length}"
+
+mission_log = []
+current_position = "Home"
+
+FOR EACH waypoint IN mission_waypoints
+  PRINT "Flying from {current_position} to {waypoint["name"]}..."
+  
+  # Plan route to waypoint
+  route = PLAN_ROUTE current_position waypoint["coordinates"]
+  
+  IF route["success"] THEN
+    PRINT "Route planned: {route["message"]}"
+    
+    # Execute auto flight
+    flight = AUTO_FLY_TO_COORDINATE waypoint["name"]
+    
+    IF flight["success"] THEN
+      # Wait for arrival
+      REPEAT 5 times
+        flight_status = GET_FLIGHT_STATUS
+        IF flight_status["status"]["current_status"] = "landed" THEN
+          PRINT "Arrived at {waypoint["name"]}"
+          mission_logに{
+            "from": current_position,
+            "to": waypoint["name"],
+            "arrival_time": new Date().toISOString(),
+            "status": "completed"
+          }を追加
+          current_position = waypoint["name"]
+          BREAK
+        ENDIF
+        WAIT 1000
+      NEXT
+    ENDIF
+  ENDIF
+  
+  WAIT 1000
+NEXT
+
+PRINT "Mission completed"
+PRINT "Mission summary:"
+FOR EACH log IN mission_log
+  PRINT "  {log["from"]} → {log["to"]}: {log["status"]}"
+NEXT
+
+DISPLAY ""
+
+# --- Drone Autopilot Benefits Summary ---
+DISPLAY ""
+DISPLAY "=== Advanced Drone Autopilot Benefits ==="
+PRINT "✅ Complete coordinate setting system!"
+PRINT "✅ Automatic destination flight!"
+PRINT "✅ Advanced route planning!"
+PRINT "✅ Real-time position tracking!"
+PRINT "✅ Flight status monitoring!"
+PRINT "✅ Emergency landing capability!"
+PRINT "✅ Return to home function!"
+PRINT "✅ Auto coordinate flight!"
+PRINT "✅ Multi-point patrol capability!"
+PRINT "✅ Autonomous mission planning!"
+PRINT "✅ Kid-friendly drone features!"
+PRINT "✅ English and Japanese support!"
+
+DISPLAY ""
+DISPLAY "=== Demo Complete ==="
+PRINT "🚁 Now Nadesiko3 has advanced drone autopilot capabilities!"
+PRINT "📍 Coordinate setting for any location memory!"
+PRINT "🎯 Automatic flight to any destination!"
+PRINT "🛩️ Advanced route planning with waypoints!"
+PRINT "📍 Real-time position tracking!"
+PRINT "🚁 Automatic flight for unmanned operation!"
+PRINT "🏠 Return to home for automatic return!"
+PRINT "🚨 Emergency landing for safety!"
+PRINT "📊 Flight status monitoring for complete control!"
+PRINT "🎈 Kids can easily control drones!"
+PRINT "🌍 Perfect for international drone operations!"
+
+koko
