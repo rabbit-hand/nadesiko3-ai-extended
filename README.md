@@ -1,11 +1,21 @@
-# 日本語プログラミング言語「なでしこ3」
+# 日本語プログラミング言語「なでしこ3」 - AI魔改造版
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 [![npm version](https://badge.fury.io/js/nadesiko3.svg)](https://www.npmjs.com/package/nadesiko3)
+[![AI Enhanced](https://img.shields.io/badge/AI-Enhanced-purple.svg?style=flat)](https://github.com/rabbit-hand/nadesiko3ai)
 
-## 「なでしこ3」とは
+## 「なでしこ3」とは - AI魔改造版
 
-「なでしこ3」とは、日本語のプログラミング言語です。JavaScript/TypeScriptをベースとしているので、PC/スマホ/タブレットなど、幅広い環境で動きます。日本語プログラミング言語は、読みやすく理解しやすいのが特徴で、初めてでも楽しくプログラミングを覚えることができます。また、バッチ処理や定型処理などを手軽に記述できます。
+**これはAIで魔改造したものです！**
+
+「なでしこ3」とは、日本語のプログラミング言語です。JavaScript/TypeScriptをベースとしているので、PC/スマホ/タブレットなど、幅広い環境で動きます。日本語プログラミング言語は、読みやすく理解しやすいのが特徴で、初めてでも楽しくプログラミングを覚えることができます。
+
+**🚀 AI魔改造版の特徴:**
+- Pythonレベルの高度な機能を完全実装
+- データサイエンス・機械学習・深層学習機能
+- 自然言語処理・時系列分析機能
+- IoTハードウェア制御・Web API連携機能
+- 教育・研究・実務で活用できる究極の日本語プログラミング言語
 
 - [なでしこのWebサイト](https://nadesi.com/)
 - [マニュアル](https://nadesi.com/v3/doc/)
