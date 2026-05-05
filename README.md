@@ -21,6 +21,8 @@
 
 - [なでしこのWebサイト](https://nadesi.com/)
 - [マニュアル](https://nadesi.com/v3/doc/)
+- **🌍 English Documentation**: [README_EN.md](README_EN.md) - Complete English guide
+- **📚 Multilingual Guide**: [README_MULTILANG.md](README_MULTILANG.md) - English & kid-friendly features
 
 はじめて「なでしこ」に挑戦する方は、次のチュートリアルから始めることをオススメします。日本語プログラミング言語の雰囲気が容易に理解できます。
 

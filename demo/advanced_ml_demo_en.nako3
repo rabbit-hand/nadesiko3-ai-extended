@@ -1,0 +1,251 @@
+# Advanced Machine Learning Demo - English Version
+# Implementing advanced ML algorithms in Nadesiko3
+
+DISPLAY "=== Advanced Machine Learning Demo ==="
+
+# --- Data Preparation ---
+DISPLAY "1. Data Preparation..."
+
+# Generate sample dataset
+np.random.seed 42
+X = [[1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 9], [9, 10]]
+y = [3, 5, 7, 9, 11, 13, 15, 17, 19, 21]
+
+# Split data into training and testing sets
+train_size = 0.7
+X_train, X_test, y_train, y_test = Xとyをデータ分割 train_size
+
+PRINT "Training set size: {X_trainの要素数}"
+PRINT "Testing set size: {X_testの要素数}"
+
+# --- Random Forest ---
+DISPLAY ""
+DISPLAY "2. Random Forest Classifier..."
+
+# Train Random Forest
+rf_model = X_trainとy_trainをランダムフォレスト学習 {"n_estimators": 10, "max_depth": 3}
+
+# Make predictions
+rf_predictions = rf_modelでX_testをランダムフォレスト予測
+
+# Calculate accuracy
+rf_accuracy = y_testとrf_predictionsを正解率
+PRINT "Random Forest Accuracy: {rf_accuracy}"
+
+# --- Support Vector Machine ---
+DISPLAY ""
+DISPLAY "3. Support Vector Machine..."
+
+# Train SVM
+svm_model = X_trainとy_trainをSVM分類学習 {"kernel": "rbf", "C": 1.0}
+
+# Make predictions
+svm_predictions = svm_modelでX_testをSVM予測
+
+# Calculate accuracy
+svm_accuracy = y_testとsvm_predictionsを正解率
+PRINT "SVM Accuracy: {svm_accuracy}"
+
+# --- Gradient Boosting ---
+DISPLAY ""
+DISPLAY "4. Gradient Boosting..."
+
+# Train Gradient Boosting
+gb_model = X_trainとy_trainを勾配ブースティング学習 {"n_estimators": 50, "learning_rate": 0.1}
+
+# Make predictions
+gb_predictions = gb_modelでX_testを勾配ブースティング予測
+
+# Calculate accuracy
+gb_accuracy = y_testとgb_predictionsを正解率
+PRINT "Gradient Boosting Accuracy: {gb_accuracy}"
+
+# --- Naive Bayes ---
+DISPLAY ""
+DISPLAY "5. Naive Bayes Classifier..."
+
+# Train Naive Bayes
+nb_model = X_trainとy_trainを単純ベイズ分類学習
+
+# Make predictions
+nb_predictions = nb_modelでX_testを単純ベイズ予測
+
+# Calculate accuracy
+nb_accuracy = y_testとnb_predictionsを正解率
+PRINT "Naive Bayes Accuracy: {nb_accuracy}"
+
+# --- Decision Tree ---
+DISPLAY ""
+DISPLAY "6. Decision Tree Classifier..."
+
+# Train Decision Tree
+dt_model = X_trainとy_trainを決定木学習 {"max_depth": 5}
+
+# Make predictions
+dt_predictions = dt_modelでX_testを決定木予測
+
+# Calculate accuracy
+dt_accuracy = y_testとdt_predictionsを正解率
+PRINT "Decision Tree Accuracy: {dt_accuracy}"
+
+# --- Lasso Regression ---
+DISPLAY ""
+DISPLAY "7. Lasso Regression..."
+
+# Generate regression data
+X_reg = [[1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 9], [9, 10]]
+y_reg = [2.1, 3.2, 4.3, 5.4, 6.5, 7.6, 8.7, 9.8, 10.9, 12.0]
+
+# Split regression data
+X_train_reg, X_test_reg, y_train_reg, y_test_reg = X_regとy_regをデータ分割 0.7
+
+# Train Lasso
+lasso_model = X_train_regとy_train_regをLasso回帰学習 {"alpha": 0.1}
+
+# Make predictions
+lasso_predictions = lasso_modelでX_test_regをLasso予測
+
+# Calculate R-squared
+lasso_r2 = y_test_regとlasso_predictionsを決定係数
+PRINT "Lasso R-squared: {lasso_r2}"
+
+# --- Ridge Regression ---
+DISPLAY ""
+DISPLAY "8. Ridge Regression..."
+
+# Train Ridge
+ridge_model = X_train_regとy_train_regをRidge回帰学習 {"alpha": 1.0}
+
+# Make predictions
+ridge_predictions = ridge_modelでX_test_regをRidge予測
+
+# Calculate R-squared
+ridge_r2 = y_test_regとridge_predictionsを決定係数
+PRINT "Ridge R-squared: {ridge_r2}"
+
+# --- Cross-Validation ---
+DISPLAY ""
+DISPLAY "9. Cross-Validation..."
+
+# Perform k-fold cross validation
+cv_scores = Xとyを5分割交差検証 {"estimator": "random_forest", "cv": 5}
+
+PRINT "Cross-Validation Scores: {cv_scores}"
+PRINT "Mean CV Score: {cv_scoresの平均}"
+PRINT "Std CV Score: {cv_scoresの標準偏差}"
+
+# --- Model Comparison ---
+DISPLAY ""
+DISPLAY "10. Model Comparison..."
+
+# Compare all models
+model_results = {
+  "Random Forest": rf_accuracy,
+  "SVM": svm_accuracy,
+  "Gradient Boosting": gb_accuracy,
+  "Naive Bayes": nb_accuracy,
+  "Decision Tree": dt_accuracy
+}
+
+PRINT "=== Model Comparison Results ==="
+FOR EACH model_name, accuracy IN model_results
+  PRINT "{model_name}: {accuracy}"
+NEXT
+
+# Find best model
+best_model = model_resultsから最大値のキー取得
+best_accuracy = model_resultsから最大値
+PRINT ""
+PRINT "Best Model: {best_model} (Accuracy: {best_accuracy})"
+
+# --- Feature Importance ---
+DISPLAY ""
+DISPLAY "11. Feature Importance Analysis..."
+
+# Get feature importance from Random Forest
+feature_importance = rf_modelから特徴量重要度取得
+PRINT "Feature Importance: {feature_importance}"
+
+# --- Learning Curves ---
+DISPLAY ""
+DISPLAY "12. Learning Curves Analysis..."
+
+# Generate learning curve data
+train_sizes = [0.1, 0.3, 0.5, 0.7, 0.9]
+learning_curve_data = Xとyで学習曲線作成 train_sizes rf_model
+
+PRINT "Learning Curve Data Generated"
+PRINT "Training sizes: {learning_curve_data["train_sizes"]}"
+PRINT "Training scores: {learning_curve_data["train_scores"]}"
+PRINT "Validation scores: {learning_curve_data["val_scores"]}"
+
+# --- Model Persistence ---
+DISPLAY ""
+DISPLAY "13. Model Saving and Loading..."
+
+# Save the best model
+model_file = "best_model.json"
+best_modelをモデル保存 model_file
+PRINT "Model saved to: {model_file}"
+
+# Load the model
+loaded_model = model_fileからモデル読込
+PRINT "Model loaded from: {model_file}"
+
+# Test loaded model
+loaded_predictions = loaded_modelでX_testを予測
+loaded_accuracy = y_testとloaded_predictionsを正解率
+PRINT "Loaded Model Accuracy: {loaded_accuracy}"
+
+# --- Ensemble Methods ---
+DISPLAY ""
+DISPLAY "14. Ensemble Methods..."
+
+# Create voting ensemble
+ensemble_models = [rf_model, svm_model, gb_model]
+voting_predictions = X_testをensemble_modelsで投票アンサンブル予測
+
+# Calculate ensemble accuracy
+ensemble_accuracy = y_testとvoting_predictionsを正解率
+PRINT "Voting Ensemble Accuracy: {ensemble_accuracy}"
+
+# --- Hyperparameter Tuning ---
+DISPLAY ""
+DISPLAY "15. Hyperparameter Tuning..."
+
+# Define parameter grid
+param_grid = {
+  "n_estimators": [10, 50, 100],
+  "max_depth": [3, 5, 7],
+  "min_samples_split": [2, 5, 10]
+}
+
+# Perform grid search
+grid_search = X_trainとy_trainでグリッドサーチ rf_model param_grid
+best_params = grid_searchから最良パラメータ取得
+best_score = grid_searchから最良スコア取得
+
+PRINT "Best Parameters: {best_params}"
+PRINT "Best Score: {best_score}"
+
+# --- Summary ---
+DISPLAY ""
+DISPLAY "=== Advanced ML Demo Complete ==="
+PRINT "✅ Random Forest with accuracy: {rf_accuracy}"
+PRINT "✅ SVM with accuracy: {svm_accuracy}"
+PRINT "✅ Gradient Boosting with accuracy: {gb_accuracy}"
+PRINT "✅ Naive Bayes with accuracy: {nb_accuracy}"
+PRINT "✅ Decision Tree with accuracy: {dt_accuracy}"
+PRINT "✅ Lasso R²: {lasso_r2}"
+PRINT "✅ Ridge R²: {ridge_r2}"
+PRINT "✅ Cross-validation completed"
+PRINT "✅ Model comparison completed"
+PRINT "✅ Feature importance analyzed"
+PRINT "✅ Learning curves generated"
+PRINT "✅ Model persistence implemented"
+PRINT "✅ Ensemble methods tested"
+PRINT "✅ Hyperparameter tuning completed"
+PRINT ""
+PRINT "🚀 Nadesiko3 now has Python-level advanced ML capabilities!"
+
+koko

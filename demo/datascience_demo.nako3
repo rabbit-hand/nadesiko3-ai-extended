@@ -1,5 +1,7 @@
 # データサイエンス機能デモンストレーション
 # Pythonでできることをなでしこ3で実装
+# Data Science Features Demo
+# Implementing Python capabilities in Nadesiko3
 
 # --- データ処理（NumPy風） ---
 「=== データ処理デモ ===」と表示。
