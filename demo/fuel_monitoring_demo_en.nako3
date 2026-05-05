@@ -1,0 +1,625 @@
+# Advanced Fuel Monitoring Demo - English Version
+# Gasoline, Hydrogen, Diesel, Electric, and Hybrid Fuel Systems Monitoring
+
+DISPLAY "=== Advanced Fuel Monitoring Demo ==="
+
+# --- Fuel System Discovery ---
+DISPLAY "1. Discovering fuel systems..."
+all_fuel_systems = DISCOVER_FUEL_SYSTEMS "all"
+PRINT "Fuel systems found: {all_fuel_systemsのキー数}"
+
+FOR EACH system IN all_fuel_systems
+  IF system.key !== "initialized" AND system.key !== "timestamp" THEN
+    system_name = system.value["name"] || system.key
+    PRINT "  {system_name}"
+  ENDIF
+NEXT
+
+DISPLAY ""
+
+# --- Gasoline Level Measurement ---
+DISPLAY "2. Getting gasoline level..."
+gasoline_level = GET_GASOLINE_LEVEL
+PRINT "Gasoline level: {gasoline_level["message"]}"
+PRINT "Current gasoline level: {gasoline_level["level"]}L"
+PRINT "Tank capacity: {gasoline_level["measurement"]["capacity"]}L"
+PRINT "Percentage: {gasoline_level["measurement"]["percentage"]}%"
+PRINT "Temperature: {gasoline_level["measurement"]["temperature"]}°C"
+
+DISPLAY ""
+
+# --- Hydrogen Level Measurement ---
+DISPLAY "3. Getting hydrogen level..."
+hydrogen_level = GET_HYDROGEN_LEVEL
+PRINT "Hydrogen level: {hydrogen_level["message"]}"
+PRINT "Current hydrogen level: {hydrogen_level["level"]}kg"
+PRINT "Tank capacity: {hydrogen_level["measurement"]["capacity"]}kg"
+PRINT "Percentage: {hydrogen_level["measurement"]["percentage"]}%"
+PRINT "Pressure: {hydrogen_level["measurement"]["pressure"]}bar"
+PRINT "Temperature: {hydrogen_level["measurement"]["temperature"]}°C"
+
+DISPLAY ""
+
+# --- Diesel Level Measurement ---
+DISPLAY "4. Getting diesel level..."
+diesel_level = GET_DIESEL_LEVEL
+PRINT "Diesel level: {diesel_level["message"]}"
+PRINT "Current diesel level: {diesel_level["level"]}L"
+PRINT "Tank capacity: {diesel_level["measurement"]["capacity"]}L"
+PRINT "Percentage: {diesel_level["measurement"]["percentage"]}%"
+PRINT "Temperature: {diesel_level["measurement"]["temperature"]}°C"
+
+DISPLAY ""
+
+# --- Electric Level Measurement ---
+DISPLAY "5. Getting electric level..."
+electric_level = GET_ELECTRIC_LEVEL
+PRINT "Electric level: {electric_level["message"]}"
+PRINT "Current electric level: {electric_level["level"]}kWh"
+PRINT "Battery capacity: {electric_level["measurement"]["capacity"]}kWh"
+PRINT "Percentage: {electric_level["measurement"]["percentage"]}%"
+PRINT "Voltage: {electric_level["measurement"]["voltage"]}V"
+PRINT "Current: {electric_level["measurement"]["current"]}A"
+PRINT "Temperature: {electric_level["measurement"]["temperature"]}°C"
+
+DISPLAY ""
+
+# --- Hybrid Level Measurement ---
+DISPLAY "6. Getting hybrid level..."
+hybrid_level = GET_HYBRID_LEVEL
+PRINT "Hybrid level: {hybrid_level["message"]}"
+PRINT "Current gasoline level: {hybrid_level["gasoline_level"]}L"
+PRINT "Current electric level: {hybrid_level["electric_level"]}kWh"
+PRINT "Gasoline percentage: {hybrid_level["measurement"]["gasoline_percentage"]}%"
+PRINT "Electric percentage: {hybrid_level["measurement"]["electric_percentage"]}%"
+PRINT "Combined efficiency: {hybrid_level["measurement"]["combined_efficiency"]}km/L"
+
+DISPLAY ""
+
+# --- Start Fuel Monitoring ---
+DISPLAY "7. Starting fuel monitoring..."
+monitoring_start = START_FUEL_MONITORING
+PRINT "Monitoring start: {monitoring_start["message"]}"
+PRINT "Monitoring active: {monitoring_start["monitoring_active"]}"
+PRINT "Monitoring interval: {monitoring_start["interval"]}ms"
+
+DISPLAY ""
+
+# --- Calculate Fuel Consumption Rate ---
+DISPLAY "8. Calculating fuel consumption rate..."
+consumption_rate = CALCULATE_FUEL_CONSUMPTION_RATE
+PRINT "Consumption rate: {consumption_rate["message"]}"
+PRINT "Overall rate: {consumption_rate["overall_rate"]}L/min"
+PRINT "Time period: {consumption_rate["time_period"]} minutes"
+
+PRINT "Consumption rate by fuel type:"
+FOR EACH fuel_type IN consumption_rate["rates"]
+  rate = fuel_type.value
+  PRINT "  {fuel_type.key}: {rate.toFixed(4)}L/min"
+NEXT
+
+DISPLAY ""
+
+# --- Predict Driving Range ---
+DISPLAY "9. Predicting driving range..."
+driving_range = PREDICT_DRIVING_RANGE
+PRINT "Driving range: {driving_range["message"]}"
+PRINT "Total driving range: {driving_range["total_range"]}km"
+
+PRINT "Driving range by fuel type:"
+FOR EACH fuel_type IN driving_range["breakdown"]
+  range = fuel_type.value
+  PRINT "  {fuel_type.key}: {range}km"
+NEXT
+
+DISPLAY ""
+
+# --- Search Refueling Stations ---
+DISPLAY "10. Searching refueling stations..."
+stations = SEARCH_REFUELING_STATIONS "all"
+PRINT "Refueling stations: {stations["message"]}"
+PRINT "Total stations found: {stations["total_found"]}"
+
+PRINT "Station list:"
+FOR EACH station IN stations["stations"]
+  PRINT "  {station["id"]}: {station["name"]}"
+  PRINT "    Type: {station["type"]}"
+  PRINT "    Location: ({station["location"]["lat"]}, {station["location"]["lng"]})"
+  PRINT "    Distance: {station["distance"]}km"
+  PRINT "    Price: {station["price"]}"
+  PRINT "    Availability: {station["availability"]}"
+  PRINT "    Services: {station["services"]を「,」で区切って表示}"
+  PRINT "---"
+NEXT
+
+DISPLAY ""
+
+# --- Search Gasoline Stations ---
+DISPLAY "11. Searching gasoline stations..."
+gasoline_stations = SEARCH_REFUELING_STATIONS "gasoline"
+PRINT "Gasoline stations: {gasoline_stations["message"]}"
+PRINT "Gasoline stations found: {gasoline_stations["total_found"]}"
+
+DISPLAY ""
+
+# --- Search Hydrogen Stations ---
+DISPLAY "12. Searching hydrogen stations..."
+hydrogen_stations = SEARCH_REFUELING_STATIONS "hydrogen"
+PRINT "Hydrogen stations: {hydrogen_stations["message"]}"
+PRINT "Hydrogen stations found: {hydrogen_stations["total_found"]}"
+
+DISPLAY ""
+
+# --- Plan Optimal Refueling Route ---
+DISPLAY "13. Planning optimal refueling route..."
+optimal_route = PLAN_OPTIMAL_REFUELING_ROUTE "gasoline" "Osaka"
+PRINT "Optimal refueling route: {optimal_route["message"]}"
+PRINT "Destination: {optimal_route["route_plan"]["destination"]}"
+PRINT "Fuel type: {optimal_route["route_plan"]["fuel_type"]}"
+PRINT "Recommended station: {optimal_route["route_plan"]["recommended_station"]["name"]}"
+PRINT "Estimated cost: {optimal_route["route_plan"]["estimated_cost"]}"
+PRINT "Estimated time: {optimal_route["route_plan"]["estimated_time"]} minutes"
+PRINT "Route distance: {optimal_route["route_plan"]["route_distance"]}km"
+
+PRINT "Alternative stations:"
+FOR EACH station IN optimal_route["route_plan"]["alternative_stations"]
+  PRINT "  {station["name"]}: {station["distance"]}km"
+NEXT
+
+DISPLAY ""
+
+# --- Set Fuel Warnings ---
+DISPLAY "14. Setting fuel warnings..."
+warnings = {
+  "low_gasoline": 20,
+  "low_hydrogen": 15,
+  "low_diesel": 25,
+  "low_electric": 20,
+  "low_hybrid_gasoline": 15,
+  "low_hybrid_electric": 15,
+  "critical_gasoline": 10,
+  "critical_hydrogen": 5,
+  "critical_diesel": 15,
+  "critical_electric": 10,
+  "critical_hybrid_gasoline": 8,
+  "critical_hybrid_electric": 8
+}
+fuel_warnings = SET_FUEL_WARNINGS warnings
+PRINT "Fuel warnings: {fuel_warnings["message"]}"
+
+PRINT "Warning thresholds:"
+FOR EACH warning_type IN fuel_warnings["warnings"]
+  threshold = warning_type.value
+  PRINT "  {warning_type.key}: {threshold}%"
+NEXT
+
+DISPLAY ""
+
+# --- Get Fuel History ---
+DISPLAY "15. Getting fuel history..."
+fuel_history = GET_FUEL_HISTORY
+PRINT "Fuel history: {fuel_history["message"]}"
+PRINT "Total records: {fuel_history["total_records"]}"
+
+PRINT "Latest values by fuel type:"
+FOR EACH fuel_type IN fuel_history["latest_by_type"]
+  latest = fuel_type.value
+  PRINT "  {fuel_type.key}: {latest["level"]} ({latest["percentage"]}%)"
+NEXT
+
+DISPLAY ""
+
+# --- Evaluate Fuel Efficiency ---
+DISPLAY "16. Evaluating fuel efficiency..."
+efficiency = EVALUATE_FUEL_EFFICIENCY
+PRINT "Fuel efficiency: {efficiency["message"]}"
+PRINT "Overall assessment: {efficiency["overall_assessment"]}"
+
+PRINT "Efficiency evaluation by fuel type:"
+FOR EACH fuel_type IN efficiency["efficiency_scores"]
+  evaluation = fuel_type.value
+  PRINT "  {fuel_type.key}:"
+  PRINT "    Score: {evaluation["score"]}"
+  PRINT "    Average level: {evaluation["average_level"]}%"
+  PRINT "    Min level: {evaluation["min_level"]}%"
+  PRINT "    Max level: {evaluation["max_level"]}%"
+  PRINT "    Stability: {evaluation["stability"]}%"
+  PRINT "    Recommendations:"
+  FOR EACH recommendation IN evaluation["recommendations"]
+    PRINT "      {recommendation}"
+  NEXT
+  PRINT "---"
+NEXT
+
+DISPLAY ""
+
+# --- Integrated Fuel Management ---
+DISPLAY "17. Checking integrated fuel management..."
+integrated_management = INTEGRATED_FUEL_MANAGEMENT
+PRINT "Integrated system status: {integrated_management["overall_status"]}"
+PRINT "Available operations: {integrated_management["available_operations"]のキー数}"
+
+PRINT "System status details:"
+PRINT "  Gasoline system: {integrated_management["gasoline_system"]["active"]}"
+PRINT "  Hydrogen system: {integrated_management["hydrogen_system"]["active"]}"
+PRINT "  Diesel system: {integrated_management["diesel_system"]["active"]}"
+PRINT "  Electric system: {integrated_management["electric_system"]["active"]}"
+PRINT "  Hybrid system: {integrated_management["hybrid_system"]["active"]}"
+PRINT "  Monitoring system: {integrated_management["monitoring_system"]["active"]}"
+PRINT "  Refueling system: {integrated_management["refueling_system"]["active"]}"
+
+DISPLAY ""
+
+# --- Auto Fuel Monitoring ---
+DISPLAY "18. Running auto fuel monitoring..."
+auto_monitoring = AUTO_FUEL_MONITORING
+PRINT "Auto fuel monitoring: {auto_monitoring["message"]}"
+PRINT "Total measurements: {auto_monitoring["total_measurements"]}"
+PRINT "Average gasoline level: {auto_monitoring["average_gasoline_level"]}L"
+PRINT "Average hydrogen level: {auto_monitoring["average_hydrogen_level"]}kg"
+PRINT "Average diesel level: {auto_monitoring["average_diesel_level"]}L"
+PRINT "Average electric level: {auto_monitoring["average_electric_level"]}kWh"
+PRINT "Average hybrid level: {auto_monitoring["average_hybrid_level"]}L"
+PRINT "Overall consumption rate: {auto_monitoring["overall_consumption_rate"]}L/min"
+
+PRINT "Measurement results:"
+FOR EACH measurement IN auto_monitoring["measurements"]
+  PRINT "  {measurement["timestamp"]}:"
+  PRINT "    Gasoline: {measurement["gasoline_level"]}L"
+  PRINT "    Hydrogen: {measurement["hydrogen_level"]}kg"
+  PRINT "    Diesel: {measurement["diesel_level"]}L"
+  PRINT "    Electric: {measurement["electric_level"]}kWh"
+  PRINT "    Hybrid: {measurement["hybrid_level"]}L"
+  PRINT "    Consumption rate: {measurement["consumption_rate"]}L/min"
+  PRINT "    Predicted range: {measurement["predicted_range"]}km"
+  PRINT "    Warning triggered: {measurement["warning_triggered"]}"
+  PRINT "---"
+NEXT
+
+DISPLAY ""
+
+# --- Practical Example: Smart Vehicle Fuel Management ---
+DISPLAY "19. Practical example: Smart vehicle fuel management..."
+
+# Start continuous monitoring
+PRINT "Starting smart vehicle fuel management..."
+fuel_management_log = []
+
+REPEAT 15 times
+  # Execute all measurements
+  gasoline_level = GET_GASOLINE_LEVEL
+  hydrogen_level = GET_HYDROGEN_LEVEL
+  diesel_level = GET_DIESEL_LEVEL
+  electric_level = GET_ELECTRIC_LEVEL
+  hybrid_level = GET_HYBRID_LEVEL
+  
+  # Predict driving range
+  driving_range = PREDICT_DRIVING_RANGE
+  
+  # Safety assessment
+  gasoline_percentage = gasoline_level["measurement"]["percentage"]
+  hydrogen_percentage = hydrogen_level["measurement"]["percentage"]
+  diesel_percentage = diesel_level["measurement"]["percentage"]
+  electric_percentage = electric_level["measurement"]["percentage"]
+  hybrid_gasoline_percentage = hybrid_level["measurement"]["gasoline_percentage"]
+  total_range = driving_range["total_range"]
+  
+  # Fuel warning assessment
+  IF gasoline_percentage <= 15 THEN
+    PRINT "⚠️ Low gasoline level! Searching nearest station..."
+    gasoline_stations = SEARCH_REFUELING_STATIONS "gasoline"
+    IF gasoline_stations["total_found"] > 0 THEN
+      PRINT "Nearest gasoline station: {gasoline_stations["stations"][0]["name"]}"
+    ENDIF
+    fuel_management_logに{
+      "timestamp": new Date().toISOString(),
+      "event": "low_gasoline",
+      "fuel_type": "gasoline",
+      "level": gasoline_percentage,
+      "action": "search_station",
+      "severity": "warning"
+    }を追加
+  ENDIF
+  
+  IF hydrogen_percentage <= 10 THEN
+    PRINT "⚠️ Low hydrogen level! Searching nearest station..."
+    hydrogen_stations = SEARCH_REFUELING_STATIONS "hydrogen"
+    IF hydrogen_stations["total_found"] > 0 THEN
+      PRINT "Nearest hydrogen station: {hydrogen_stations["stations"][0]["name"]}"
+    ENDIF
+    fuel_management_logに{
+      "timestamp": new Date().toISOString(),
+      "event": "low_hydrogen",
+      "fuel_type": "hydrogen",
+      "level": hydrogen_percentage,
+      "action": "search_station",
+      "severity": "warning"
+    }を追加
+  ENDIF
+  
+  IF diesel_percentage <= 20 THEN
+    PRINT "⚠️ Low diesel level! Searching nearest station..."
+    diesel_stations = SEARCH_REFUELING_STATIONS "diesel"
+    IF diesel_stations["total_found"] > 0 THEN
+      PRINT "Nearest diesel station: {diesel_stations["stations"][0]["name"]}"
+    ENDIF
+    fuel_management_logに{
+      "timestamp": new Date().toISOString(),
+      "event": "low_diesel",
+      "fuel_type": "diesel",
+      "level": diesel_percentage,
+      "action": "search_station",
+      "severity": "warning"
+    }を追加
+  ENDIF
+  
+  IF electric_percentage <= 15 THEN
+    PRINT "⚠️ Low electric level! Searching nearest station..."
+    electric_stations = SEARCH_REFUELING_STATIONS "electric"
+    IF electric_stations["total_found"] > 0 THEN
+      PRINT "Nearest electric station: {electric_stations["stations"][0]["name"]}"
+    ENDIF
+    fuel_management_logに{
+      "timestamp": new Date().toISOString(),
+      "event": "low_electric",
+      "fuel_type": "electric",
+      "level": electric_percentage,
+      "action": "search_station",
+      "severity": "warning"
+    }を追加
+  ENDIF
+  
+  IF total_range <= 50 THEN
+    PRINT "⚠️ Short driving range! Recommend refueling..."
+    fuel_management_logに{
+      "timestamp": new Date().toISOString(),
+      "event": "short_range",
+      "total_range": total_range,
+      "action": "refuel_recommended",
+      "severity": "moderate"
+    }を追加
+  ENDIF
+  
+  WAIT 1000
+NEXT
+
+PRINT "Smart vehicle fuel management completed"
+PRINT "Fuel management log:"
+FOR EACH log IN fuel_management_log
+  PRINT "  {log["timestamp"]}: {log["event"]} - {log["action"]}"
+NEXT
+
+DISPLAY ""
+
+# --- Kid-Friendly Mode Example ---
+DISPLAY "20. Kid-friendly mode example..."
+「かんたんモード」
+
+# Kid-friendly fuel monitoring
+PRINT "⛽ Hello fuel monitor!"
+DOG_BARK
+
+# Play with gasoline
+PRINT "⛽ Let's check gasoline level!"
+gasoline_level = GET_GASOLINE_LEVEL
+DECORATE "Gasoline is {gasoline_level["measurement"]["percentage"]}% full!"
+CAT_MEOW
+
+# Play with hydrogen
+PRINT "💧 Let's check hydrogen level!"
+hydrogen_level = GET_HYDROGEN_LEVEL
+DECORATE "Hydrogen is {hydrogen_level["measurement"]["percentage"]}% full!"
+CAT_MEOW
+
+# Play with diesel
+PRINT "🚛 Let's check diesel level!"
+diesel_level = GET_DIESEL_LEVEL
+DECORATE "Diesel is {diesel_level["measurement"]["percentage"]}% full!"
+CAT_MEOW
+
+# Play with electric
+PRINT "🔋 Let's check electric level!"
+electric_level = GET_ELECTRIC_LEVEL
+DECORATE "Electric is {electric_level["measurement"]["percentage"]}% full!"
+CAT_MEOW
+
+# Play with hybrid
+PRINT "🚗 Let's check hybrid level!"
+hybrid_level = GET_HYBRID_LEVEL
+DECORATE "Hybrid has gasoline {hybrid_level["measurement"]["gasoline_percentage"]}% and electric {hybrid_level["measurement"]["electric_percentage"]}%!"
+CAT_MEOW
+
+# Play with driving range
+PRINT "🚗 Let's check how far we can go!"
+driving_range = PREDICT_DRIVING_RANGE
+total_range = driving_range["total_range"]
+
+IF total_range > 500 THEN
+  DECORATE "We can go very far! So exciting!"
+ELSE IF total_range > 200 THEN
+  DECORATE "We can go for a while!"
+ELSE IF total_range > 100 THEN
+  DECORATE "We should go to gas station soon!"
+ELSE
+  DECORATE "Let's go to gas station now!"
+ENDIF
+
+# Play with refueling stations
+PRINT "⛽ Let's search for refueling stations!"
+stations = SEARCH_REFUELING_STATIONS "all"
+IF stations["total_found"] > 0 THEN
+  DECORATE "Found {stations["total_found"]} refueling stations!"
+  CAT_MEOW
+ELSE
+  DECORATE "No refueling stations found!"
+ENDIF
+
+DISPLAY ""
+
+# --- Advanced Features: Fuel Optimization ---
+DISPLAY "21. Advanced features: Fuel optimization..."
+
+# Collect 30 minutes of data
+PRINT "Collecting 30 minutes of fuel data..."
+optimization_data = []
+
+REPEAT 30 times
+  # Execute all measurements
+  gasoline_level = GET_GASOLINE_LEVEL
+  hydrogen_level = GET_HYDROGEN_LEVEL
+  diesel_level = GET_DIESEL_LEVEL
+  electric_level = GET_ELECTRIC_LEVEL
+  hybrid_level = GET_HYBRID_LEVEL
+  driving_range = PREDICT_DRIVING_RANGE
+  
+  optimization_dataに{
+    "minute": optimization_dataのキー数 + 1,
+    "timestamp": new Date().toISOString(),
+    "gasoline_level": gasoline_level["measurement"]["percentage"],
+    "hydrogen_level": hydrogen_level["measurement"]["percentage"],
+    "diesel_level": diesel_level["measurement"]["percentage"],
+    "electric_level": electric_level["measurement"]["percentage"],
+    "hybrid_gasoline_level": hybrid_level["measurement"]["gasoline_percentage"],
+    "hybrid_electric_level": hybrid_level["measurement"]["electric_percentage"],
+    "total_range": driving_range["total_range"]
+  }を追加
+  
+  WAIT 1000
+NEXT
+
+# Data analysis
+PRINT "Fuel optimization analysis results:"
+
+# Calculate averages
+avg_gasoline = optimization_dataから "gasoline_level" を平均
+avg_hydrogen = optimization_dataから "hydrogen_level" を平均
+avg_diesel = optimization_dataから "diesel_level" を平均
+avg_electric = optimization_dataから "electric_level" を平均
+avg_hybrid_gasoline = optimization_dataから "hybrid_gasoline_level" を平均
+avg_hybrid_electric = optimization_dataから "hybrid_electric_level" を平均
+avg_total_range = optimization_dataから "total_range" を平均
+
+PRINT "  Average gasoline level: {avg_gasoline.toFixed(1)}%"
+PRINT "  Average hydrogen level: {avg_hydrogen.toFixed(1)}%"
+PRINT "  Average diesel level: {avg_diesel.toFixed(1)}%"
+PRINT "  Average electric level: {avg_electric.toFixed(1)}%"
+PRINT "  Average hybrid gasoline: {avg_hybrid_gasoline.toFixed(1)}%"
+PRINT "  Average hybrid electric: {avg_hybrid_electric.toFixed(1)}%"
+PRINT "  Average total range: {avg_total_range.toFixed(1)}km"
+
+# Min/max values
+min_gasoline = optimization_dataから "gasoline_level" を最小
+min_hydrogen = optimization_dataから "hydrogen_level" を最小
+min_diesel = optimization_dataから "diesel_level" を最小
+min_electric = optimization_dataから "electric_level" を最小
+max_range = optimization_dataから "total_range" を最大
+
+PRINT "  Minimum gasoline level: {min_gasoline.toFixed(1)}%"
+PRINT "  Minimum hydrogen level: {min_hydrogen.toFixed(1)}%"
+PRINT "  Minimum diesel level: {min_diesel.toFixed(1)}%"
+PRINT "  Minimum electric level: {min_electric.toFixed(1)}%"
+PRINT "  Maximum driving range: {max_range.toFixed(1)}km"
+
+# Fuel efficiency evaluation
+efficiency = EVALUATE_FUEL_EFFICIENCY
+PRINT "Overall efficiency assessment: {efficiency["overall_assessment"]}"
+
+# Optimization recommendations
+PRINT "Fuel optimization recommendations:"
+IF avg_gasoline < 30 THEN
+  PRINT "  ⚠️ Low gasoline level. Frequent refueling needed"
+ENDIF
+
+IF avg_hydrogen < 20 THEN
+  PRINT "  💧 Low hydrogen level. Search hydrogen stations"
+ENDIF
+
+IF avg_diesel < 25 THEN
+  PRINT "  🚛 Low diesel level. Search diesel stations"
+ENDIF
+
+IF avg_electric < 20 THEN
+  PRINT "  🔋 Low electric level. Search charging stations"
+ENDIF
+
+IF avg_total_range < 100 THEN
+  PRINT "  🚗 Short driving range. Consider refueling"
+ENDIF
+
+DISPLAY ""
+
+# --- Fuel Data Export ---
+DISPLAY "22. Exporting fuel data..."
+
+# Create comprehensive fuel report
+fuel_report = {
+  "report_date": new Date().toISOString(),
+  "analysis_period": "30 minutes",
+  "data_points": optimization_data.length,
+  "statistics": {
+    "average_gasoline_level": avg_gasoline,
+    "average_hydrogen_level": avg_hydrogen,
+    "average_diesel_level": avg_diesel,
+    "average_electric_level": avg_electric,
+    "average_hybrid_gasoline": avg_hybrid_gasoline,
+    "average_hybrid_electric": avg_hybrid_electric,
+    "average_total_range": avg_total_range,
+    "minimum_gasoline_level": min_gasoline,
+    "minimum_hydrogen_level": min_hydrogen,
+    "minimum_diesel_level": min_diesel,
+    "minimum_electric_level": min_electric,
+    "maximum_driving_range": max_range,
+    "overall_efficiency": efficiency["overall_assessment"]
+  },
+  "optimization_recommendations": this._generateFuelOptimizationRecommendations(avg_gasoline, avg_hydrogen, avg_diesel, avg_electric, avg_total_range)
+}
+
+PRINT "Fuel data exported successfully!"
+PRINT "Report includes:"
+PRINT "  Data points: {fuel_report["data_points"]}"
+PRINT "  Analysis period: {fuel_report["analysis_period"]}"
+PRINT "  Overall efficiency: {fuel_report["statistics"]["overall_efficiency"]}"
+PRINT "  Recommendations: {fuel_report["optimization_recommendations"].length} items"
+
+DISPLAY ""
+
+# --- Advanced Fuel Monitoring Benefits Summary ---
+DISPLAY ""
+DISPLAY "=== Advanced Fuel Monitoring Benefits ==="
+PRINT "✅ Complete multi-fuel monitoring system!"
+PRINT "✅ Real-time gasoline level tracking!"
+PRINT "✅ Real-time hydrogen level tracking!"
+PRINT "✅ Real-time diesel level tracking!"
+PRINT "✅ Real-time electric level tracking!"
+PRINT "✅ Real-time hybrid system tracking!"
+PRINT "✅ Fuel consumption rate analysis!"
+PRINT "✅ Driving range prediction!"
+PRINT "✅ Refueling station search!"
+PRINT "✅ Optimal route planning!"
+PRINT "✅ Fuel warning system!"
+PRINT "✅ Fuel history tracking!"
+PRINT "✅ Fuel efficiency evaluation!"
+PRINT "✅ Integrated fuel management!"
+PRINT "✅ Smart refueling management!"
+PRINT "✅ Fuel optimization features!"
+PRINT "✅ Kid-friendly fuel monitoring!"
+PRINT "✅ English and Japanese support!"
+
+DISPLAY ""
+DISPLAY "=== Demo Complete ==="
+PRINT "⛽ Now Nadesiko3 has advanced fuel monitoring!"
+PRINT "🚗 Multi-fuel monitoring for complete awareness!"
+PRINT "📊 Real-time fuel tracking for all fuel types!"
+PRINT "📈 Consumption rate analysis for efficient driving!"
+PRINT "🚗 Driving range prediction for planning!"
+PRINT "⛽ Refueling station search for convenience!"
+PRINT "🗺️ Optimal route planning for cost savings!"
+PRINT "⚠️ Fuel warnings for prevention!"
+PRINT "📊 History tracking for long-term analysis!"
+PRINT "🔧 Efficiency evaluation for optimization!"
+PRINT "🏠 Smart refueling for complete convenience!"
+PRINT "🤖 24/7 auto monitoring for continuous protection!"
+PRINT "🎈 Kids can easily monitor fuel levels!"
+PRINT "🌍 Perfect for international vehicle operations!"
+
+koko
