@@ -1,0 +1,384 @@
+# Advanced Drone Sensor System Demo - English Version
+# Complete drone sensor detection and control system
+
+DISPLAY "=== Advanced Drone Sensor System Demo ==="
+
+# --- Drone Sensor Discovery ---
+DISPLAY "1. Discovering drone sensors..."
+all_sensors = DISCOVER_DRONE_SENSORS
+PRINT "Sensors found: {all_sensorsのキー数}"
+
+DISPLAY ""
+
+# --- Gyroscope Data ---
+DISPLAY "2. Getting gyroscope data..."
+gyro_data = GET_GYRO_DATA
+PRINT "Gyroscope: {gyro_data["sensor"]}"
+PRINT "Roll: {gyro_data["roll"]}°"
+PRINT "Pitch: {gyro_data["pitch"]}°"
+PRINT "Yaw: {gyro_data["yaw"]}°"
+
+DISPLAY ""
+
+# --- GPS Data ---
+DISPLAY "3. Getting GPS data..."
+gps_data = GET_GPS_DATA
+PRINT "GPS: {gps_data["sensor"]}"
+PRINT "Latitude: {gps_data["latitude"]}"
+PRINT "Longitude: {gps_data["longitude"]}"
+PRINT "Altitude: {gps_data["altitude"]}m"
+PRINT "Speed: {gps_data["speed"]}m/s"
+PRINT "Satellites: {gps_data["satellites"]}"
+
+DISPLAY ""
+
+# --- Motor RPM Data ---
+DISPLAY "4. Getting motor RPM data..."
+motor_rpm = GET_MOTOR_RPM
+PRINT "Total motors: {motor_rpm["summary"]["total"]}"
+PRINT "Active motors: {motor_rpm["summary"]["active"]}"
+PRINT "Average RPM: {motor_rpm["summary"]["averageRPM"]}"
+
+FOR EACH motor IN motor_rpm["motors"]
+  motor_name = motor["motor"]
+  position = motor["position"]
+  rpm = motor["rpm"]
+  percentage = motor["percentage"]
+  PRINT "  {motor_name} ({position}): {rpm} RPM ({percentage}%)"
+NEXT
+
+DISPLAY ""
+
+# --- Altitude Data ---
+DISPLAY "5. Getting altitude data..."
+altitude_data = GET_ALTITUDE_DATA
+PRINT "Altimeter: {altitude_data["sensor"]}"
+PRINT "Altitude: {altitude_data["altitude"]}m"
+PRINT "Pressure: {altitude_data["pressure"]}hPa"
+PRINT "Temperature: {altitude_data["temperature"]}°C"
+
+DISPLAY ""
+
+# --- Accelerometer Data ---
+DISPLAY "6. Getting accelerometer data..."
+accel_data = GET_ACCELEROMETER_DATA
+PRINT "Accelerometer: {accel_data["sensor"]}"
+PRINT "X-axis: {accel_data["acceleration"]["x"]}g"
+PRINT "Y-axis: {accel_data["acceleration"]["y"]}g"
+PRINT "Z-axis: {accel_data["acceleration"]["z"]}g"
+
+DISPLAY ""
+
+# --- Magnetometer Data ---
+DISPLAY "7. Getting magnetometer data..."
+mag_data = GET_MAGNETOMETER_DATA
+PRINT "Magnetometer: {mag_data["sensor"]}"
+PRINT "X-axis: {mag_data["magnetic_field"]["x"]}gauss"
+PRINT "Y-axis: {mag_data["magnetic_field"]["y"]}gauss"
+PRINT "Z-axis: {mag_data["magnetic_field"]["z"]}gauss"
+
+DISPLAY ""
+
+# --- Barometer Data ---
+DISPLAY "8. Getting barometer data..."
+baro_data = GET_BAROMETER_DATA
+PRINT "Barometer: {baro_data["sensor"]}"
+PRINT "Pressure: {baro_data["pressure"]}hPa"
+PRINT "Altitude: {baro_data["altitude"]}m"
+PRINT "Temperature: {baro_data["temperature"]}°C"
+
+DISPLAY ""
+
+# --- Compass Data ---
+DISPLAY "9. Getting compass data..."
+compass_data = GET_COMPASS_DATA
+PRINT "Compass: {compass_data["sensor"]}"
+PRINT "Heading: {compass_data["heading"]}°"
+PRINT "Bearing: {compass_data["bearing"]}°"
+
+DISPLAY ""
+
+# --- Drone Status Monitoring ---
+DISPLAY "10. Monitoring drone status..."
+drone_status = MONITOR_DRONE
+PRINT "Monitor timestamp: {drone_status["timestamp"]}"
+PRINT "Flight status: {drone_status["status"]["flight"]}"
+PRINT "Battery: {drone_status["status"]["battery"]}%"
+PRINT "GPS lock: {drone_status["status"]["gps_lock"]}"
+PRINT "Sensors OK: {drone_status["status"]["sensors_ok"]}"
+PRINT "Motors OK: {drone_status["status"]["motors_ok"]}"
+
+DISPLAY ""
+
+# --- Flight Data Acquisition ---
+DISPLAY "11. Getting flight data..."
+flight_data = GET_FLIGHT_DATA
+PRINT "=== Flight Data Summary ==="
+PRINT "Position:"
+PRINT "  Latitude: {flight_data["position"]["latitude"]}"
+PRINT "  Longitude: {flight_data["position"]["longitude"]}"
+PRINT "  Altitude: {flight_data["position"]["altitude"]}m"
+
+PRINT "Orientation:"
+PRINT "  Roll: {flight_data["orientation"]["roll"]}°"
+PRINT "  Pitch: {flight_data["orientation"]["pitch"]}°"
+PRINT "  Yaw: {flight_data["orientation"]["yaw"]}°"
+PRINT "  Heading: {flight_data["orientation"]["heading"]}°"
+
+PRINT "Motion:"
+PRINT "  Acceleration: X={flight_data["motion"]["acceleration"]["x"]}g"
+PRINT "  Velocity: {flight_data["motion"]["velocity"]["total"]}m/s"
+
+PRINT "Environment:"
+PRINT "  Pressure: {flight_data["environment"]["pressure"]}hPa"
+PRINT "  Temperature: {flight_data["environment"]["temperature"]}°C"
+
+PRINT "Flight:"
+PRINT "  Status: {flight_data["flight"]["status"]}"
+PRINT "  Battery: {flight_data["flight"]["battery"]}%"
+PRINT "  Signal: {flight_data["flight"]["signal"]}%"
+
+DISPLAY ""
+
+# --- Drone Control Test ---
+DISPLAY "12. Drone control test..."
+
+# Takeoff
+takeoff_result = CONTROL_DRONE "takeoff"
+PRINT "Takeoff: {takeoff_result["message"]}"
+
+# Wait 3 seconds
+WAIT 3000
+
+# Hover
+hover_result = CONTROL_DRONE "hover"
+PRINT "Hover: {hover_result["message"]}"
+
+# Wait 3 seconds
+WAIT 3000
+
+# Move forward
+move_result = CONTROL_DRONE "move" {"direction": "forward", "distance": 5}
+PRINT "Move: {move_result["message"]}"
+
+# Wait 3 seconds
+WAIT 3000
+
+# Rotate
+rotate_result = CONTROL_DRONE "rotate" {"angle": 90}
+PRINT "Rotate: {rotate_result["message"]}"
+
+# Wait 3 seconds
+WAIT 3000
+
+# Change altitude
+altitude_result = CONTROL_DRONE "altitude" {"altitude": 20}
+PRINT "Altitude: {altitude_result["message"]}"
+
+# Wait 3 seconds
+WAIT 3000
+
+# Land
+land_result = CONTROL_DRONE "land"
+PRINT "Land: {land_result["message"]}"
+
+DISPLAY ""
+
+# --- Practical Example: Drone Flight Log ---
+DISPLAY "13. Practical example: Drone flight log..."
+
+flight_log = []
+REPEAT 5 times
+  # Get latest flight data
+  latest_flight_data = GET_FLIGHT_DATA
+  
+  # Create log entry
+  log_entry = {
+    "timestamp": latest_flight_data["timestamp"],
+    "altitude": latest_flight_data["position"]["altitude"],
+    "speed": latest_flight_data["motion"]["velocity"]["total"],
+    "battery": latest_flight_data["flight"]["battery"],
+    "heading": latest_flight_data["orientation"]["heading"]
+  }
+  
+  flight_logにlog_entryを追加
+  WAIT 1000
+NEXT
+
+PRINT "Flight log (5 entries):"
+FOR EACH entry IN flight_log
+  timestamp = entry["timestamp"]
+  altitude = entry["altitude"]
+  speed = entry["speed"]
+  battery = entry["battery"]
+  heading = entry["heading"]
+  PRINT "  {timestamp}: Alt{altitude}m, Speed{speed}m/s, Batt{battery}%, Heading{heading}°"
+NEXT
+
+DISPLAY ""
+
+# --- Advanced Features: Sensor Fusion ---
+DISPLAY "14. Advanced features: Sensor fusion..."
+
+# Get all sensor data for fusion
+gyro = GET_GYRO_DATA
+accel = GET_ACCELEROMETER_DATA
+mag = GET_MAGNETOMETER_DATA
+gps = GET_GPS_DATA
+altitude = GET_ALTITUDE_DATA
+
+# Create fused data
+fused_data = {
+  "timestamp": new Date().toISOString(),
+  "attitude": {
+    "roll": gyro["roll"],
+    "pitch": gyro["pitch"],
+    "yaw": gyro["yaw"]
+  },
+  "position": {
+    "latitude": gps["latitude"],
+    "longitude": gps["longitude"],
+    "altitude": altitude["altitude"]
+  },
+  "motion": {
+    "acceleration": accel["acceleration"],
+    "magnetic_field": mag["magnetic_field"]
+  },
+  "quality": {
+    "gps_accuracy": gps["accuracy"],
+    "sensor_count": 5,
+    "fusion_status": "active"
+  }
+}
+
+PRINT "=== Sensor Fusion Data ==="
+PRINT "Attitude: Roll={fused_data["attitude"]["roll"]}°, Pitch={fused_data["attitude"]["pitch"]}°, Yaw={fused_data["attitude"]["yaw"]}°"
+PRINT "Position: Lat={fused_data["position"]["latitude"]}, Lon={fused_data["position"]["longitude"]}, Alt={fused_data["position"]["altitude"]}m"
+PRINT "Motion: Accel={fused_data["motion"]["acceleration"]["x"]}g, Mag={fused_data["motion"]["magnetic_field"]["x"]}gauss"
+PRINT "Quality: GPS Acc={fused_data["quality"]["gps_accuracy"]}m, Sensors={fused_data["quality"]["sensor_count"]}"
+
+DISPLAY ""
+
+# --- Kid-Friendly Mode Example ---
+DISPLAY "15. Kid-friendly mode example..."
+「かんたんモード」
+
+# Kid-friendly drone operations
+PRINT "🚁 Hello Drone-san!"
+DOG_BARK
+
+# Play with drone sensors
+PRINT "🚁 Let's play with drone sensors!"
+gyro_data = GET_GYRO_DATA
+DECORATE "Drone is tilting {gyro_data["roll"]} degrees!"
+
+# Play with drone control
+PRINT "🚁 Let's fly the drone!"
+takeoff_result = CONTROL_DRONE "takeoff"
+CHIRP_CHIRP
+
+# Check altitude
+altitude_data = GET_ALTITUDE_DATA
+DECORATE "Drone is at {altitude_data["altitude"]} meters high!"
+
+DISPLAY ""
+
+# --- Drone Safety Features ---
+DISPLAY "16. Drone safety features..."
+
+# Safety check
+safety_check = {
+  "battery_level": 85,
+  "gps_lock": true,
+  "sensors_ok": true,
+  "motors_ok": true,
+  "weather_safe": true,
+  "no_obstacles": true
+}
+
+safety_status = "SAFE"
+IF safety_check["battery_level"] < 20 THEN
+  safety_status = "LOW BATTERY"
+ELSEIF NOT safety_check["gps_lock"] THEN
+  safety_status = "NO GPS"
+ELSEIF NOT safety_check["sensors_ok"] THEN
+  safety_status = "SENSOR ERROR"
+ELSEIF NOT safety_check["motors_ok"] THEN
+  safety_status = "MOTOR ERROR"
+ENDIF
+
+PRINT "=== Safety Check ==="
+PRINT "Battery: {safety_check["battery_level"]}%"
+PRINT "GPS Lock: {safety_check["gps_lock"]}"
+PRINT "Sensors: {safety_check["sensors_ok"]}"
+PRINT "Motors: {safety_check["motors_ok"]}"
+PRINT "Overall Status: {safety_status}"
+
+DISPLAY ""
+
+# --- Drone Performance Analysis ---
+DISPLAY "17. Drone performance analysis..."
+
+# Collect performance data
+performance_data = {
+  "max_altitude": 0,
+  "max_speed": 0,
+  "flight_time": 0,
+  "battery_consumption": 0,
+  "sensor_accuracy": 0
+}
+
+# Simulate performance metrics
+performance_data["max_altitude"] = 120 + Math.random() * 50
+performance_data["max_speed"] = 15 + Math.random() * 5
+performance_data["flight_time"] = 25 + Math.random() * 10
+performance_data["battery_consumption"] = 15 + Math.random() * 5
+performance_data["sensor_accuracy"] = 95 + Math.random() * 4
+
+PRINT "=== Performance Analysis ==="
+PRINT "Max Altitude: {performance_data["max_altitude"]}m"
+PRINT "Max Speed: {performance_data["max_speed"]}m/s"
+PRINT "Flight Time: {performance_data["flight_time"]}min"
+PRINT "Battery Consumption: {performance_data["battery_consumption"]}%"
+PRINT "Sensor Accuracy: {performance_data["sensor_accuracy"]}%"
+
+# Performance rating
+rating = "EXCELLENT"
+IF performance_data["sensor_accuracy"] < 90 THEN
+  rating = "GOOD"
+ELSEIF performance_data["sensor_accuracy"] < 80 THEN
+  rating = "FAIR"
+ELSEIF performance_data["sensor_accuracy"] < 70 THEN
+  rating = "POOR"
+ENDIF
+
+PRINT "Performance Rating: {rating}"
+
+DISPLAY ""
+
+# --- Advanced Drone Features Benefits ---
+DISPLAY ""
+DISPLAY "=== Advanced Drone Features Benefits ==="
+PRINT "✅ Complete sensor suite detection!"
+PRINT "✅ Real-time gyroscope and attitude control!"
+PRINT "✅ Precise GPS positioning!"
+PRINT "✅ Motor RPM monitoring!"
+PRINT "✅ Altitude and pressure sensing!"
+PRINT "✅ Accelerometer and motion detection!"
+PRINT "✅ Magnetometer and compass heading!"
+PRINT "✅ Barometer for weather monitoring!"
+PRINT "✅ Sensor fusion for enhanced accuracy!"
+PRINT "✅ Safety checks and monitoring!"
+PRINT "✅ Performance analysis capabilities!"
+PRINT "✅ Kid-friendly commands available!"
+PRINT "✅ English and Japanese support!"
+
+DISPLAY ""
+DISPLAY "=== Demo Complete ==="
+PRINT "🚁 Now Nadesiko3 has advanced drone sensor capabilities!"
+PRINT "📡 Complete sensor suite with automatic detection!"
+PRINT "🚁 Professional drone control and monitoring!"
+PRINT "🎈 Kids can easily control drones!"
+PRINT "🌍 Perfect for international drone developers!"
+
+koko
