@@ -1,0 +1,404 @@
+# Office連携・RFID・NFCタグ読み取り・生徒ID自動登録デモ
+# Advanced Office Integration with RFID/NFC and Student ID Auto-Registration Demo
+
+「=== Office連携・RFID・NFCタグ読み取り・生徒ID自動登録デモ ===」と表示。
+
+# --- Office連携システム検出 ---
+「1. Office連携システムを検出中...」と表示。
+全Office連携 = Office連携システム検出「全部」
+「検出されたシステム数: {全Office連携のキー数}」と表示。
+
+全Office連携を反復
+  IF 対象.key !== "initialized" AND 対象.key !== "timestamp" THEN
+    システム名 = 対象.value["name"] || 対象.key
+    「  {システム名}」と表示。
+  ENDIF
+ここまで。
+
+「」と表示。
+
+# --- Microsoft Office連携 ---
+「2. Microsoft Office連携を起動中...」と表示。
+MSOffice連携 = MicrosoftOffice連携
+「Officeタイプ: {MSOffice連携["office_type"]}」と表示。
+「バージョン: {MSOffice連携["version"]}」と表示。
+「接続状態: {MSOffice連携["connection_status"]}」と表示。
+
+「利用可能なアプリケーション:」と表示。
+MSOffice連携["applications"]を反復
+  アプリ名 = 対象.key
+  利用可能 = 対象.value
+  「  {アプリ名}: {利用可能}」と表示。
+ここまで。
+
+「」と表示。
+
+# --- LibreOffice連携 ---
+「3. LibreOffice連携を起動中...」と表示。
+LibreOffice連携 = LibreOffice連携
+「Officeタイプ: {LibreOffice連携["office_type"]}」と表示。
+「バージョン: {LibreOffice連携["version"]}」と表示。
+「接続状態: {LibreOffice連携["connection_status"]}」と表示。
+
+「利用可能なアプリケーション:」と表示。
+LibreOffice連携["applications"]を反復
+  アプリ名 = 対象.key
+  利用可能 = 対象.value
+  「  {アプリ名}: {利用可能}」と表示。
+ここまで。
+
+「」と表示。
+
+# --- Excel操作 ---
+「4. Excel操作をテスト中...」と表示。
+
+# 出席記録
+出席データ = {
+  "student_id": "S001",
+  "student_name": "田中太郎",
+  "timestamp": new Date().toISOString(),
+  "status": "出席"
+}
+Excel出席結果 = 「出席記録」を出席データでExcel操作
+「Excel出席記録: {Excel出席結果["message"]}」と表示。
+「処理された行数: {Excel出席結果["rows_affected"]}」と表示。
+
+# 成績登録
+成績データ = {
+  "student_id": "S001",
+  "score": 85,
+  "max_score": 100
+}
+Excel成績結果 = 「成績登録」を成績データで「数学」にExcel操作
+「Excel成績登録: {Excel成績結果["message"]}」と表示。
+
+「」と表示。
+
+# --- Word操作 ---
+「5. Word操作をテスト中...」と表示。
+
+# レポート作成
+レポートデータ = {
+  "title": "出席状況レポート",
+  "date": new Date().toISOString().split('T')[0],
+  "total_students": 25,
+  "present_students": 23
+}
+Wordレポート結果 = 「レポート作成」をレポートデータでWord操作
+「Wordレポート作成: {Wordレポート結果["message"]}」と表示。
+
+# 証明書作成
+証明書データ = {
+  "student_name": "田中太郎",
+  "class": "1年1組",
+  "issue_date": new Date().toISOString().split('T')[0],
+  "purpose": "出席証明"
+}
+Word証明書結果 = 「証明書作成」を証明書データでWord操作
+「Word証明書作成: {Word証明書結果["message"]}」と表示。
+
+「」と表示。
+
+# --- RFIDタグ読み取り ---
+「6. RFIDタグ読み取りをテスト中...」と表示。
+
+3回
+  RFID読み取り結果 = RFIDタグ読み取り
+  「読み取り時刻: {RFID読み取り結果["tag_data"]["read_time"]}」と表示。
+  「タグID: {RFID読み取り結果["tag_data"]["tag_id"]}」と表示。
+  「タグタイプ: {RFID読み取り結果["tag_data"]["tag_type"]}」と表示。
+  
+  IF RFID読み取り結果["tag_data"]["tag_type"] = "student_id" THEN
+    生徒ID = RFID読み取り結果["tag_data"]["student_id"]
+    生徒名 = RFID読み取り結果["tag_data"]["student_name"]
+    クラス = RFID読み取り結果["tag_data"]["class"]
+    「生徒ID: {生徒ID}」と表示。
+    「生徒名: {生徒名}」と表示。
+    「クラス: {クラス}」と表示。
+  ENDIF
+  
+  「---」と表示。
+  2000を待つ
+ここまで。
+
+「」と表示。
+
+# --- 生徒ID自動登録 ---
+「7. 生徒ID自動登録をテスト中...」と表示。
+
+# RFIDタグデータをシミュレート
+タグデータ = {
+  "tag_id": "STU_ABC123DEF",
+  "tag_type": "student_id",
+  "student_id": "S123",
+  "student_name": "佐藤花子",
+  "class": "2年3組"
+}
+
+登録結果 = タグデータを生徒ID自動登録
+「登録結果: {登録結果["message"]}」と表示。
+「生徒ID: {登録結果["student_id"]}」と表示。
+「生徒名: {登録結果["student_name"]}」と表示。
+「クラス: {登録結果["class"]}」と表示。
+
+「」と表示。
+
+# --- 生徒情報検索 ---
+「8. 生徒情報検索をテスト中...」と表示。
+
+検索結果1 = 「田中」を生徒情報検索
+「検索結果1: {検索結果1["message"]}」と表示。
+「見つかった生徒数: {検索結果1["total_found"]}」と表示。
+
+検索結果2 = 「S001」を生徒情報検索
+「検索結果2: {検索結果2["message"]}」と表示。
+「見つかった生徒数: {検索結果2["total_found"]}」と表示。
+
+「」と表示。
+
+# --- 出席記録 ---
+「9. 出席記録をテスト中...」と表示。
+
+出席記録結果 = 「S001」を「2024-01-15」に出席記録
+「出席記録結果: {出席記録結果["message"]}」と表示。
+「記録時刻: {出席記録結果["record_time"]}」と表示。
+
+「」と表示。
+
+# --- 成績登録 ---
+「10. 成績登録をテスト中...」と表示。
+
+成績登録データ = {
+  "student_id": "S001",
+  "score": 92,
+  "max_score": 100
+}
+
+成績登録結果 = 成績登録データを「国語」に成績登録
+「成績登録結果: {成績登録結果["message"]}」と表示。
+「登録日時: {成績登録結果["record_time"]}」と表示。
+
+「」と表示。
+
+# --- 統合Office連携 ---
+「11. 統合Office連携を確認中...」と表示。
+統合連携 = 統合Office連携
+「統合システム状態: {統合連携["overall_status"]}」と表示。
+「利用可能な操作数: {統合連携["available_operations"]のキー数}」と表示。
+
+「」と表示。
+
+# --- 自動タグ読み取り・登録 ---
+「12. 自動タグ読み取り・登録を実行中...」と表示。
+自動読み取り結果 = 自動タグ読み取り登録
+「総読み取り回数: {自動読み取り結果["total_reads"]}」と表示。
+「成功登録数: {自動読み取り結果["successful_registrations"]}」と表示。
+「システム状態: {自動読み取り結果["system_status"]}」と表示。
+
+「処理された操作:」と表示。
+自動読み取り結果["operations"]を反復
+  操作 = 対象
+  IF 操作["attendance_recorded"] AND 操作["excel_updated"] THEN
+    「✅ {操作["student_name"]} - 出席記録・Excel更新完了」と表示。
+  ELSE
+    「❌ {操作["student_name"]} - 処理失敗」と表示。
+  ENDIF
+ここまで。
+
+「」と表示。
+
+# --- 実用的な例：学校出席管理システム ---
+「13. 実用的な例：学校出席管理システム...」と表示。
+
+# 朝の出席チェック
+「朝の出席チェックを開始します...」と表示。
+朝の出席ログ = []
+
+5回
+  // RFIDタグ読み取り
+  タグ読み取り = RFIDタグ読み取り
+  
+  IF タグ読み取り["success"] AND タグ読み取り["tag_data"]["tag_type"] = "student_id" THEN
+    生徒情報 = タグ読み取り["tag_data"]
+    
+    // 生徒ID自動登録
+    登録 = 生徒情報を生徒ID自動登録
+    
+    IF 登録["success"] THEN
+      // 出席記録
+      出席 = 登録["student_id"]をnew Date().toISOString().split('T')[0]に出席記録
+      
+      IF 出席["success"] THEN
+        // Excelに記録
+        Excel記録 = 「出席記録」を{
+          "student_id": 登録["student_id"],
+          "student_name": 登録["student_name"],
+          "class": 登録["class"],
+          "timestamp": new Date().toISOString(),
+          "status": "出席"
+        }でExcel操作
+        
+        朝の出席ログに{
+          "student_id": 登録["student_id"],
+          "student_name": 登録["student_name"],
+          "class": 登録["class"],
+          "attendance_time": new Date().toISOString(),
+          "excel_updated": Excel記録["success"],
+          "status": "出席"
+        }を追加
+        
+        「✅ {登録["student_name"]} さんの出席を記録しました」と表示。
+      ELSE
+        「❌ {登録["student_name"]} さんの出席記録に失敗しました」と表示。
+      ENDIF
+    ENDIF
+  ELSE
+    「読み取り中...」と表示。
+  ENDIF
+  
+  1500を待つ
+ここまで。
+
+「朝の出席チェック完了」と表示。
+「処理した生徒数: {朝の出席ログのキー数}」と表示。
+
+「」と表示。
+
+# --- 英語モードでの使用例 ---
+「14. 英語モードでの使用例...」と表示。
+「言語モード設定」に「english」
+
+# 英語でOffice連携システム検出
+english_office = DISCOVER_OFFICE_INTEGRATION "all"
+PRINT "English Office systems found: {english_officeのキー数}"
+
+# 英語でMicrosoft Office連携
+ms_office = MICROSOFT_OFFICE_INTEGRATION
+PRINT "Microsoft Office: {ms_office["office_type"]}"
+
+# 英語でLibreOffice連携
+libre_office = LIBREOFFICE_INTEGRATION
+PRINT "LibreOffice: {libre_office["office_type"]}"
+
+# 英語でExcel操作
+excel_op = EXCEL_OPERATION "attendance_record" {
+  "student_id": "S001",
+  "student_name": "Taro Tanaka",
+  "timestamp": new Date().toISOString(),
+  "status": "present"
+}
+PRINT "Excel operation: {excel_op["message"]}"
+
+# 英語でWord操作
+word_op = WORD_OPERATION "create_report" {
+  "title": "Attendance Report",
+  "date": new Date().toISOString().split('T')[0],
+  "total_students": 25,
+  "present_students": 23
+}
+PRINT "Word operation: {word_op["message"]}"
+
+# 英語でRFID読み取り
+rfid_read = READ_RFID_TAG
+PRINT "RFID tag read: {rfid_read["success"]}"
+IF rfid_read["success"] THEN
+  PRINT "Tag ID: {rfid_read["tag_data"]["tag_id"]}"
+  PRINT "Tag type: {rfid_read["tag_data"]["tag_type"]}"
+ENDIF
+
+# 英語で生徒ID自動登録
+student_reg = AUTO_REGISTER_STUDENT rfid_read["tag_data"]
+PRINT "Student registration: {student_reg["message"]}"
+
+# 英語で生徒情報検索
+student_search = SEARCH_STUDENT "Taro"
+PRINT "Student search: {student_search["message"]}"
+
+# 英語で出席記録
+attendance = RECORD_ATTENDANCE "S001" new Date().toISOString().split('T')[0]
+PRINT "Attendance record: {attendance["message"]}"
+
+# 英語で成績登録
+grade_data = {
+  "student_id": "S001",
+  "score": 85,
+  "max_score": 100
+}
+grade_reg = REGISTER_GRADE grade_data "Mathematics"
+PRINT "Grade registration: {grade_reg["message"]}"
+
+# 英語で統合Office連携
+integrated = INTEGRATED_OFFICE_SYSTEM
+PRINT "Integrated system status: {integrated["overall_status"]}"
+
+# 英語で自動タグ読み取り・登録
+auto_read = AUTO_TAG_READ_REGISTER
+PRINT "Auto read operations: {auto_read["total_reads"]}"
+PRINT "Successful registrations: {auto_read["successful_registrations"]}"
+
+「」と表示。
+
+# --- 子供向けモードでの使用例 ---
+「15. 子供向けモードでの使用例...」と表示。
+「かんたんモード」
+
+# 子供向けOffice操作
+「📝 Officeさん、こんにちは！」と表示。
+わんわん
+
+# RFIDで遊ぶ
+「🏷️ カードをかざしてみよう！」と表示。
+RFID読み取り = RFIDタグ読み取り
+IF RFID読み取り["success"] THEN
+  IF RFID読み取り["tag_data"]["tag_type"] = "student_id" THEN
+    生徒名 = RFID読み取り["tag_data"]["student_name"]
+    ふくふくを「{生徒名}さんが来たよ！おはよう！」
+    ぴよぴよ
+  ELSE
+    ふくふくを「なんかのカードが読み取れたよ！」
+  ENDIF
+ELSE
+  ふくふくを「カードが見つからないよ！」
+ENDIF
+
+# Excelで遊ぶ
+「📊 Excelさんで出席をかこう！」と表示。
+出席データ = {
+  "student_name": "太郎くん",
+  "status": "出席",
+  "time": "おはよう！"
+}
+Excel操作結果 = 「出席記録」を出席データでExcel操作
+ふくふくを「Excelさんに出席を書いたよ！えらいね！」
+
+# Wordで遊ぶ
+「📄 Wordさんでしゅるいを作ろう！」と表示。
+レポートデータ = {
+  "title": "きょうのしゅるい",
+  "content": "みんなげんきでした！"
+}
+Word操作結果 = 「レポート作成」をレポートデータでWord操作
+ふくふくを「Wordさんでしゅるいを作ったよ！すごいね！」
+
+# 自動読み取りで遊ぶ
+「🤖 じどうでカードを読んでみよう！」と表示。
+自動読み取り = 自動タグ読み取り登録
+ふくふくを「じどうで{自動読み取り["total_reads"]}回カードを読んだよ！」
+IF 自動読み取り["successful_registrations"] > 0 THEN
+  ふくふくを「{自動読み取り["successful_registrations"]}人のおともだちを登録したよ！」
+  にゃんにゃん
+ENDIF
+
+「」と表示。
+
+「=== デモ完了 ===」と表示。
+「📝 これでなでしこ3で完全なOffice連携が使える！」と表示。
+「🏷️ RFID・NFCタグで自動生徒ID読み取り！」と表示。
+「📊 Microsoft Office・LibreOfficeに完全対応！」と表示。
+「📝 Excelで出席・成績を自動記録！」と表示。
+「📄 Wordでレポート・証明書を自動作成！」と表示。
+「👨‍🎓 生徒ID自動登録で出席管理を完全自動化！」と表示。
+「🤖 自動タグ読み取りで無人出席管理！」と表示。
+「🎈 子供でも簡単にOffice連携が使える！」と表示。
+「🌍 英語・日本語・子供向けモードで完全対応！」と表示。
+koko
