@@ -1,0 +1,66 @@
+#!/usr/bin/env cnako3
+# -----------------------------------------------------
+# なでしこのバージョン情報を自動生成する
+# -----------------------------------------------------
+# ●説明
+# package.json の内容を読んで ./src/nako_version.mts を生成
+# core/package.json の内容を元に、/core/src/nako_version.mts を生成
+# -----------------------------------------------------
+# 定数の宣言
+母艦パス取得してパス抽出して基本パスに代入。
+QS=『{』
+QE=『}』
+メインバージョン＝「」
+# --- メイン処理 ---
+メインバージョン更新。# 必ず先に読む
+コアバージョン更新
+
+●メインバージョン更新とは：
+　　「{基本パス}/package.json」を読んでJSONデコードして、Pに代入。
+　　VER=P@"version"
+　　メインバージョン＝VER
+　　定数[MAJOR,MINOR,PATCH]=(VERを「.」で区切る)
+　　VS=「/**
+ * なでしこのバージョン情報
+ * package.json から自動的に作成されます。このファイルを編集しないでください。
+ */
+// 型定義
+export interface NakoVersion {QS}
+    version: string;
+    major: number;
+    minor: number;
+    patch: number;
+{QE}
+// 実際のバージョン定義 (自動生成されるので以下を編集しない)
+const nakoVersion: NakoVersion = {QS}
+  version: '{VER}',
+  major: {MAJOR},
+  minor: {MINOR},
+  patch: {PATCH}
+{QE}
+export default nakoVersion
+」
+　　保存先=「{基本パス}/src/nako_version.mts」
+　　VSを保存先へ保存。
+　　「
+# ---------------------------------------------
+# ● なでしこのバージョン情報(src/nako_version.mts)を更新しました。
+# version {VER}
+# file: {保存先}
+# ---------------------------------------------
+」を表示。
+
+●コアバージョン更新とは：
+　　もし、メインバージョン＝空ならば：
+　　　　「!! [ERROR] メインバージョンが間違っています」と表示。終わる。
+　　CORE_PACKAGE=「{基本パス}/core/package.json」
+　　CORE_PACKAGEを読んでJSONデコードして、Pに代入。
+　　VER=P@"version"
+　　「★★コアバージョンを勝手に書き換えます！！」と表示。
+　　P@"version" = メインバージョン
+　　PをJSONエンコード整形してSに代入。
+　　CORE_PACKAGEにSを保存。
+　　RES=「node "{基本パス}/src/cnako3.mjs" "{基本パス}/core/batch/build_nako_version.nako3"」を起動待機。
+　　RESを表示。
+
+

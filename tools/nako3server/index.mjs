@@ -1,0 +1,137 @@
+#!/usr/bin/env node
+/** 超簡易サーバ(生のnodeだけで簡単HTTPサーバ) */
+import path from 'path'
+import fs from 'fs'
+import { execSync } from 'child_process'
+import opener from 'opener'
+import http from 'http'
+
+// __dirname のために
+import url from 'url'
+const __filename = url.fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+// CONST
+const SERVER_PORT = resolveServerPort(3000)
+const SERVER_HOST = process.env.NAKO3SERVER_HOST || 'localhost'
+const rootDir = path.resolve(__dirname, '../../')
+
+// ライブラリがあるかチェック
+const testFile = path.join(rootDir, 'demo/extlib/pure-min.css')
+if (!fs.existsSync(testFile)) {
+  console.log('try to downlod extlib')
+  try {
+    execSync('npm run extlib:install')
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+// root => redirect to demo/
+
+const server = http.createServer(function (req, res) {
+  console.log('[ようこそ]', JSON.stringify(req.url))
+
+  // root なら "demo/"へリダイレクト
+  if (req.url === '/') {
+    res.writeHead(302, { 'Location': '/demo/' })
+    res.end('<a href="/demo/">DEMO</a>')
+    return
+  }
+  // サニタイズ
+  let uri = '' + req.url
+  uri = uri.replace(/\.\./g, '') // 上のフォルダは許さない
+  if (uri.indexOf('?') >= 0) {
+    uri = (uri + '?').split('?')[0]
+  }
+
+  // ファイルパスを生成
+  let filePath = path.join(rootDir, uri)
+  // エイリアス
+  if (uri.startsWith('/extlib')) {
+    filePath = path.join(rootDir, 'demo', uri)
+  }
+  if (uri.startsWith('/css')) {
+    filePath = path.join(rootDir, 'demo', uri)
+  }
+  if (uri.startsWith('/image')) {
+    filePath = path.join(rootDir, 'demo', uri)
+  }
+
+  // フォルダか？
+  if (isDir(filePath)) {
+    // index.html を足す
+    filePath = path.join(filePath, 'index.html')
+  }
+
+  // ファイルの存在確認
+  if (!fs.existsSync(filePath)) {
+    console.log('[ERROR] 404 ', uri)
+    console.log('| file=', filePath)
+    res.statusCode = 404
+    res.end('<html><meta charset="utf-8"><body><h1>404 残念(ToT) ファイルがありません。</h1></body></html>')
+    return
+  }
+  // ファイルを読んで返す
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      res.statusCode = 500
+      res.end('Failed to read file.')
+      return
+    }
+    const mime = getMIMEType(filePath)
+    res.writeHead(200, { 'Content-Type': mime })
+    res.end(data)
+  })
+})
+// サーバを起動
+server.listen(SERVER_PORT, SERVER_HOST, function () {
+  const url = 'http://' + SERVER_HOST + ':' + SERVER_PORT
+  console.log('### 超簡易Webサーバが起動しました')
+  console.log('[URL]', url)
+  if (process.env.NAKO3SERVER_OPEN !== '0') {
+    opener(url)
+  }
+})
+
+// MIMEタイプ
+const MimeTypes = {
+  '.html': 'text/html; charset=utf-8',
+  '.css': 'text/css',
+  '.js': 'text/javascript',
+  '.png': 'image/png',
+  '.gif': 'image/gif',
+  '.svg': 'svg+xml'
+}
+function getMIMEType (url) {
+  let ext = '.txt'
+  const m = url.match(/(\.[a-z0-9_]+)$/)
+  if (m) { ext = m[1] }
+  if (MimeTypes[ext]) { return MimeTypes[ext] }
+  return 'text/plain; charset=utf-8'
+}
+
+// ディレクトリか判定
+function isDir (pathName) {
+  try {
+    const stats = fs.statSync(pathName, { throwIfNoEntry: false })
+    if (stats && stats.isDirectory()) {
+      return true
+    }
+  } catch (e) {
+    return false
+  }
+  return false
+}
+
+// ポート番号を検証して、安全な値のみを利用する
+function resolveServerPort (defaultPort) {
+  const rawPort = process.env.PORT || process.argv[2] || defaultPort
+  const port = Number.parseInt(rawPort, 10)
+  if (Number.isNaN(port) || port < 0 || port > 65535) {
+    console.error(`[ERROR] 無効なポート番号です: ${rawPort}`)
+    console.error('[ERROR] 環境変数 PORT またはコマンドライン引数には 0 から 65535 の整数を指定してください。')
+    process.exit(1)
+  }
+  return port
+}
