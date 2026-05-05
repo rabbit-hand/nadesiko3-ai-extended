@@ -1,0 +1,286 @@
+# ドローン用レーダー・人感センサー・家族安心機能デモ
+# Advanced Drone Safety System Demo
+
+「=== ドローン用レーダー・人感センサー・家族安心機能デモ ===」と表示。
+
+# --- セーフィティシステム検出 ---
+「1. セーフィティシステムを検出中...」と表示。
+全セーフィティ = セーフィティシステム検出「全部」
+「検出されたシステム数: {全セーフィティのキー数}」と表示。
+
+全セーフィティを反復
+  IF 対象.key !== "initialized" AND 対象.key !== "timestamp" THEN
+    システム名 = 対象.value["name"]
+    「  {システム名}」と表示。
+  ENDIF
+ここまで。
+
+「」と表示。
+
+# --- レーダーシステム ---
+「2. レーダーシステムを起動中...」と表示。
+レーダー結果 = レーダー検出
+「レーダー: {レーダー結果["sensor"]}」と表示。
+「検出物体数: {レーダー結果["total_objects"]}」と表示。
+「脅威物体数: {レーダー結果["threat_objects"]}」と表示。
+
+レーダー結果["objects"]を反復
+  物体ID = 対象["id"]
+  物体種類 = 対象["type"]
+  距離 = 対象["position"]["range"]
+  脅威レベル = 対象["threat_level"]
+  「  {物体ID} ({物体種類}) - 距離: {距離}m, 脅威: {脅威レベル}」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 人感センサー ---
+「3. 人感センサーを起動中...」と表示。
+人感結果 = 人感センサー検出
+「検出された人間数: {人感結果["total_detections"]}」と表示。
+
+人感結果["sensors"]を反復
+  センサー名 = 対象["sensor"]
+  検出状態 = 対象["detected"]
+  IF 検出状態 THEN
+    距離 = 対象["position"]["distance"]
+    信頼度 = 対象["confidence"]
+    「  {センサー名}: 人間を検出 - 距離: {距離}m, 信頼度: {信頼度}」と表示。
+  ELSE
+    「  {センサー名}: 人間未検出」と表示。
+  ENDIF
+ここまで。
+
+「」と表示。
+
+# --- 衝突防止システム ---
+「4. 衝突防止システムを起動中...」と表示。
+衝突防止結果 = 衝突防止システム
+「衝突リスクレベル: {衝突防止結果["collision_risk"]["level"]}」と表示。
+「リスクスコア: {衝突防止結果["collision_risk"]["score"]}」と表示。
+「推奨事項: {衝突防止結果["collision_risk"]["recommendation"]}」と表示。
+
+「実行される防止アクション:」と表示。
+衝突防止結果["prevention_actions"]を反復
+  アクション種類 = 対象["type"]
+  説明 = 対象["description"]
+  優先度 = 対象["priority"]
+  「  {アクション種類} ({優先度}): {説明}」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 家族安心システム ---
+「5. 家族安心システムを起動中...」と表示。
+家族安心結果 = 家族安心システム
+「登録家族数: {家族安心結果["registered_members"]}」と表示。
+「現在在宅人数: {家族安心結果["members_home"]}」と表示。
+「外出中人数: {家族安心結果["members_away"]}」と表示。
+「家族状況: {家族安心結果["family_status"]}」と表示。
+
+「」と表示。
+
+# --- 帰宅検出 ---
+「6. 帰宅検出を実行中...」と表示。
+帰宅結果 = 帰宅検出
+「検出された帰宅: {帰宅結果["total_home"]}」と表示。
+
+帰宅結果["homecomings"]を反復
+  メンバー名 = 対象["member_name"]
+  検出センサー = 対象["detected_by"]
+  検出時刻 = 対象["detection_time"]
+  「  {メンバー名}さんが{検出センサー}で検出 - {検出時刻}」と表示。
+ここまで。
+
+「」と表示。
+
+# --- スマホ自動送信 ---
+「7. スマホ自動送信を実行中...」と表示。
+
+# 帰宅通知を送信
+帰宅通知 = スマホ自動送信「homecoming」
+「帰宅通知送信数: {帰宅通知["total_sent"]}」と表示。
+
+帰宅通知["notifications"]を反復
+  宛先 = 対象["recipient"]
+  メッセージ = 対象["message"]
+  種類 = 対象["type"]
+  「  {宛先}へ: {メッセージ} ({種類})」と表示。
+ここまで。
+
+# ステータス通知を送信
+ステータス通知 = スマホ自動送信「status」
+「ステータス通知送信数: {ステータス通知["total_sent"]}」と表示。
+
+# 安全通知を送信
+安全通知 = スマホ自動送信「safety」
+「安全通知送信数: {安全通知["total_sent"]}」と表示。
+
+「」と表示。
+
+# --- 家族登録 ---
+「8. 家族登録を実行中...」と表示。
+
+# 新しい家族メンバーを登録
+新規登録 = 「山田次郎」を「+81-90-1234-5678」で「son」に家族登録
+「登録結果: {新規登録["message"]}」と表示。
+「総登録数: {新規登録["total_members"]}」と表示。
+
+「」と表示。
+
+# --- 安全モード設定 ---
+「9. 安全モードを設定中...」と表示。
+
+# 通常モード
+通常モード = 安全モード設定「normal」
+「{通常モード["message"]}」と表示。
+
+# 慎重モード
+慎重モード = 安全モード設定「cautious」
+「{慎重モード["message"]}」と表示。
+
+# 安全モード
+安全モード = 安全モード設定「safe」
+「{安全モード["message"]}」と表示。
+
+# 緊急モード
+緊急モード = 安全モード設定「emergency」
+「{緊急モード["message"]}」と表示。
+
+「」と表示。
+
+# --- 実用的な例：完全なセーフィティ監視 ---
+「10. 実用的な例：完全なセーフィティ監視...」と表示。
+
+セーフィティログ = []
+5回
+  # 全システムを監視
+  最新レーダー = レーダー検出
+  最新人感 = 人感センサー検出
+  最新衝突防止 = 衝突防止システム
+  最新家族安心 = 家族安心システム
+  
+  # 統合的な安全評価
+  安全評価 = {
+    "timestamp": new Date().toISOString(),
+    "radar_objects": 最新レーダー["total_objects"],
+    "human_detections": 最新人感["total_detections"],
+    "collision_risk": 最新衝突防止["collision_risk"]["level"],
+    "family_home": 最新家族安心["members_home"] > 0,
+    "overall_safety": "safe"
+  }
+  
+  # 全体安全性を評価
+  IF 最新衝突防止["collision_risk"]["level"] = "danger" THEN
+    安全評価["overall_safety"] = "danger"
+  ELSEIF 最新衝突防止["collision_risk"]["level"] = "high" THEN
+    安全評価["overall_safety"] = "warning"
+  ELSEIF 最新レーダー["threat_objects"] > 2 THEN
+    安全評価["overall_safety"] = "caution"
+  ENDIF
+  
+  セーフィティログに安全評価を追加
+  「ログ: {安全評価["timestamp"]} - 全体安全性: {安全評価["overall_safety"]}, レーダー物体: {安全評価["radar_objects"]}, 人感: {安全評価["human_detections"]}, 家族在宅: {安全評価["family_home"]}」と表示。
+  
+  1000を待つ
+ここまで。
+
+「」と表示。
+
+# --- 英語モードでの使用例 ---
+「11. 英語モードでの使用例...」と表示。
+「言語モード設定」に「english」
+
+# 英語でセーフィティシステム検出
+english_safety = DISCOVER_SAFETY_SYSTEM
+PRINT "English Safety Systems:"
+PRINT "Systems found: {english_safetyのキー数}"
+
+# 英語でレーダー検出
+radar_scan = RADAR_SCAN
+PRINT "Radar objects: {radar_scan["total_objects"]}"
+
+# 英語で人感センサー
+human_detection = HUMAN_DETECTION
+PRINT "Human detections: {human_detection["total_detections"]}"
+
+# 英語で衝突防止
+collision_prevention = COLLISION_PREVENTION
+PRINT "Collision risk: {collision_prevention["collision_risk"]["level"]}"
+
+# 英語で家族安心
+family_safety = FAMILY_SAFETY
+PRINT "Family members home: {family_safety["members_home"]}"
+
+# 英語で帰宅検出
+homecoming = DETECT_HOME_COMING
+PRINT "Homecomings detected: {homecoming["total_home"]}"
+
+# 英語で自動送信
+notifications = AUTO_SEND_NOTIFICATION "status"
+PRINT "Notifications sent: {notifications["total_sent"]}"
+
+# 英語で家族登録
+family_member = REGISTER_FAMILY_MEMBER "John Doe" "+1-555-0123" "father"
+PRINT "Family member registered: {family_member["message"]}"
+
+# 英語で安全モード設定
+safety_mode = SET_SAFETY_MODE "safe"
+PRINT "Safety mode: {safety_mode["message"]}"
+
+「」と表示。
+
+# --- 子供向けモードでの使用例 ---
+「12. 子供向けモードでの使用例...」と表示。
+「かんたんモード」
+
+# 子供向けセーフィティ操作
+「🛡️ ドローンの安全さん、こんにちは！」と表示。
+わんわん
+
+# レーダーで遊ぶ
+「📡 レーダーであそぼう！」と表示。
+レーダー結果 = レーダー検出
+IF レーダー結果["threat_objects"] > 0 THEN
+  ふくふくを「危ないものが{レーダー結果["threat_objects"]}個見つかったよ！気をつけてね！」
+ELSE
+  ふくふくを「大丈夫だよ！安全に飛べるよ！」
+ENDIF
+
+# 人感センサーで遊ぶ
+「👤 人感センサーであそぼう！」と表示。
+人感結果 = 人感センサー検出
+IF 人感結果["total_detections"] > 0 THEN
+  ふくふくを「人が{人感結果["total_detections"]}人見つかったよ！」
+  にゃんにゃん
+ELSE
+  ふくふくを「人は見つからなかったよ！」
+ENDIF
+
+# 家族安心で遊ぶ
+「👨‍👩‍👧‍👦 家族安心であそぼう！」と表示。
+家族安心結果 = 家族安心システム
+IF 家族安心結果["members_home"] > 0 THEN
+  ふくふくを「おうちに{家族安心結果["members_home"]}人いるよ！安心だね！」
+  ぴよぴよ
+ELSE
+  ふくふくを「みんなお出かけ中だよ！無事でね！」
+ENDIF
+
+# 自動送信で遊ぶ
+「📱 スマホに自動で送ってみよう！」と表示。
+通知結果 = スマホ自動送信「status」
+ふくふくを「家族みんなに通知したよ！みんな安心だね！」
+
+「」と表示。
+
+「=== デモ完了 ===」と表示。
+「🛡️ これでなでしこ3でドローンの完全なセーフィティが使える！」と表示。
+「📡 レーダーで周囲の物体を検出！」と表示。
+「👤 人感センサーで人間を感知！」と表示。
+「🚧 衝突防止で安全な飛行を実現！」と表示。
+「👨‍👩‍👧‍👦 家族安心機能で家族も安心！」と表示。
+「📱 スマホ自動送信で常に最新情報を共有！」と表示。
+「🎈 子供でも簡単にドローンの安全機能が使える！」と表示。
+「🌍 英語・日本語・子供向けモードで完全対応！」と表示。
+koko

@@ -1,0 +1,365 @@
+# Advanced Drone Safety System Demo - English Version
+# Radar, human detection, and family safety features
+
+DISPLAY "=== Advanced Drone Safety System Demo ==="
+
+# --- Safety System Discovery ---
+DISPLAY "1. Discovering safety systems..."
+all_safety = DISCOVER_SAFETY_SYSTEM
+PRINT "Safety systems found: {all_safetyのキー数}"
+
+FOR EACH system IN all_safety
+  IF system.key !== "initialized" AND system.key !== "timestamp" THEN
+    system_name = system.value["name"]
+    PRINT "  {system_name}"
+  ENDIF
+NEXT
+
+DISPLAY ""
+
+# --- Radar System ---
+DISPLAY "2. Activating radar system..."
+radar_scan = RADAR_SCAN
+PRINT "Radar: {radar_scan["sensor"]}"
+PRINT "Objects detected: {radar_scan["total_objects"]}"
+PRINT "Threat objects: {radar_scan["threat_objects"]}"
+
+FOR EACH object IN radar_scan["objects"]
+  object_id = object["id"]
+  object_type = object["type"]
+  distance = object["position"]["range"]
+  threat_level = object["threat_level"]
+  PRINT "  {object_id} ({object_type}) - Distance: {distance}m, Threat: {threat_level}"
+NEXT
+
+DISPLAY ""
+
+# --- Human Detection Sensors ---
+DISPLAY "3. Activating human detection sensors..."
+human_detection = HUMAN_DETECTION
+PRINT "Human detections: {human_detection["total_detections"]}"
+
+FOR EACH sensor IN human_detection["sensors"]
+  sensor_name = sensor["sensor"]
+  detected = sensor["detected"]
+  IF detected THEN
+    distance = sensor["position"]["distance"]
+    confidence = sensor["confidence"]
+    PRINT "  {sensor_name}: Human detected - Distance: {distance}m, Confidence: {confidence}"
+  ELSE
+    PRINT "  {sensor_name}: No human detected"
+  ENDIF
+NEXT
+
+DISPLAY ""
+
+# --- Collision Prevention System ---
+DISPLAY "4. Activating collision prevention system..."
+collision_prevention = COLLISION_PREVENTION
+PRINT "Collision risk level: {collision_prevention["collision_risk"]["level"]}"
+PRINT "Risk score: {collision_prevention["collision_risk"]["score"]}"
+PRINT "Recommendation: {collision_prevention["collision_risk"]["recommendation"]}"
+
+PRINT "Prevention actions:"
+FOR EACH action IN collision_prevention["prevention_actions"]
+  action_type = action["type"]
+  description = action["description"]
+  priority = action["priority"]
+  PRINT "  {action_type} ({priority}): {description}"
+NEXT
+
+DISPLAY ""
+
+# --- Family Safety System ---
+DISPLAY "5. Activating family safety system..."
+family_safety = FAMILY_SAFETY
+PRINT "Registered family members: {family_safety["registered_members"]}"
+PRINT "Members currently home: {family_safety["members_home"]}"
+PRINT "Members currently away: {family_safety["members_away"]}"
+PRINT "Family status: {family_safety["family_status"]}"
+
+DISPLAY ""
+
+# --- Homecoming Detection ---
+DISPLAY "6. Detecting homecomings..."
+homecoming = DETECT_HOME_COMING
+PRINT "Detected homecomings: {homecoming["total_home"]}"
+
+FOR EACH home IN homecoming["homecomings"]
+  member_name = home["member_name"]
+  detected_by = home["detected_by"]
+  detection_time = home["detection_time"]
+  PRINT "  {member_name} detected by {detected_by} at {detection_time}"
+NEXT
+
+DISPLAY ""
+
+# --- Automatic Smartphone Notifications ---
+DISPLAY "7. Sending automatic smartphone notifications..."
+
+# Send homecoming notifications
+homecoming_notifications = AUTO_SEND_NOTIFICATION "homecoming"
+PRINT "Homecoming notifications sent: {homecoming_notifications["total_sent"]}"
+
+FOR EACH notification IN homecoming_notifications["notifications"]
+  recipient = notification["recipient"]
+  message = notification["message"]
+  type = notification["type"]
+  PRINT "  Sent to {recipient}: {message} ({type})"
+NEXT
+
+# Send status updates
+status_notifications = AUTO_SEND_NOTIFICATION "status"
+PRINT "Status notifications sent: {status_notifications["total_sent"]}"
+
+# Send safety assurances
+safety_notifications = AUTO_SEND_NOTIFICATION "safety"
+PRINT "Safety notifications sent: {safety_notifications["total_sent"]}"
+
+DISPLAY ""
+
+# --- Family Member Registration ---
+DISPLAY "8. Registering new family member..."
+
+# Register new family member
+new_member = REGISTER_FAMILY_MEMBER "John Doe" "+1-555-0123" "father"
+PRINT "Registration: {new_member["message"]}"
+PRINT "Total members: {new_member["total_members"]}"
+
+# Register another family member
+mother_member = REGISTER_FAMILY_MEMBER "Jane Doe" "+1-555-0124" "mother"
+PRINT "Registration: {mother_member["message"]}"
+PRINT "Total members: {mother_member["total_members"]}"
+
+# Register child
+child_member = REGISTER_FAMILY_MEMBER "Jimmy Doe" "+1-555-0125" "son"
+PRINT "Registration: {child_member["message"]}"
+PRINT "Total members: {child_member["total_members"]}"
+
+DISPLAY ""
+
+# --- Safety Mode Configuration ---
+DISPLAY "9. Configuring safety modes..."
+
+# Normal mode
+normal_mode = SET_SAFETY_MODE "normal"
+PRINT "{normal_mode["message"]}"
+
+# Cautious mode
+cautious_mode = SET_SAFETY_MODE "cautious"
+PRINT "{cautious_mode["message"]}"
+
+# Safe mode
+safe_mode = SET_SAFETY_MODE "safe"
+PRINT "{safe_mode["message"]}"
+
+# Emergency mode
+emergency_mode = SET_SAFETY_MODE "emergency"
+PRINT "{emergency_mode["message"]}"
+
+DISPLAY ""
+
+# --- Practical Example: Complete Safety Monitoring ---
+DISPLAY "10. Practical example: Complete safety monitoring..."
+
+safety_log = []
+REPEAT 5 times
+  # Monitor all systems
+  latest_radar = RADAR_SCAN
+  latest_human = HUMAN_DETECTION
+  latest_collision = COLLISION_PREVENTION
+  latest_family = FAMILY_SAFETY
+  
+  # Comprehensive safety assessment
+  safety_assessment = {
+    "timestamp": new Date().toISOString(),
+    "radar_objects": latest_radar["total_objects"],
+    "human_detections": latest_human["total_detections"],
+    "collision_risk": latest_collision["collision_risk"]["level"],
+    "family_home": latest_family["members_home"] > 0,
+    "overall_safety": "safe"
+  }
+  
+  # Evaluate overall safety
+  IF latest_collision["collision_risk"]["level"] = "danger" THEN
+    safety_assessment["overall_safety"] = "danger"
+  ELSEIF latest_collision["collision_risk"]["level"] = "high" THEN
+    safety_assessment["overall_safety"] = "warning"
+  ELSEIF latest_radar["threat_objects"] > 2 THEN
+    safety_assessment["overall_safety"] = "caution"
+  ENDIF
+  
+  safety_logにsafety_assessmentを追加
+  PRINT "Log: {safety_assessment["timestamp"]} - Overall Safety: {safety_assessment["overall_safety"]}, Radar Objects: {safety_assessment["radar_objects"]}, Human Detections: {safety_assessment["human_detections"]}, Family Home: {safety_assessment["family_home"]}"
+  
+  WAIT 1000
+NEXT
+
+DISPLAY ""
+
+# --- Advanced Features: Multi-System Coordination ---
+DISPLAY "11. Advanced features: Multi-system coordination..."
+
+# Coordinated threat assessment
+radar_data = RADAR_SCAN
+human_data = HUMAN_DETECTION
+collision_data = COLLISION_PREVENTION
+
+coordinated_assessment = {
+  "timestamp": new Date().toISOString(),
+  "radar_threats": radar_data["threat_objects"],
+  "human_presence": human_data["total_detections"],
+  "collision_probability": collision_data["collision_risk"]["score"] / 100,
+  "recommended_action": "enhanced_monitoring",
+  "safety_protocols": {
+    "radar_monitoring": true,
+    "human_detection": true,
+    "collision_prevention": true,
+    "family_notifications": true
+  }
+}
+
+PRINT "=== Coordinated Safety Assessment ==="
+PRINT "Radar threats: {coordinated_assessment["radar_threats"]}"
+PRINT "Human presence: {coordinated_assessment["human_presence"]}"
+PRINT "Collision probability: {coordinated_assessment["collision_probability"]}"
+PRINT "Recommended action: {coordinated_assessment["recommended_action"]}"
+
+DISPLAY ""
+
+# --- Emergency Response Simulation ---
+DISPLAY "12. Emergency response simulation..."
+
+# Simulate emergency situation
+emergency_radar = {
+  "objects": [
+    {"id": "emergency_obj_1", "type": "aircraft", "threat_level": "high", "position": {"range": 5}},
+    {"id": "emergency_obj_2", "type": "obstacle", "threat_level": "high", "position": {"range": 3}}
+  ],
+  "total_objects": 2,
+  "threat_objects": 2
+}
+
+emergency_human = {
+  "total_detections": 1,
+  "sensors": {
+    "emergency_sensor": {
+      "sensor": "Emergency Human Sensor",
+      "detected": true,
+      "position": {"distance": 2, "angle": 0},
+      "confidence": 0.95
+    }
+  }
+}
+
+emergency_collision = {
+  "collision_risk": {
+    "level": "danger",
+    "score": 95,
+    "recommendation": "Immediate emergency landing required"
+  }
+}
+
+PRINT "=== Emergency Situation Detected ==="
+PRINT "Radar: {emergency_radar["threat_objects"]} threat objects"
+PRINT "Human: {emergency_human["total_detections"]} detections"
+PRINT "Collision Risk: {emergency_collision["collision_risk"]["level"]}"
+
+# Emergency response actions
+emergency_actions = [
+  {
+    "type": "emergency_stop",
+    "description": "Immediate drone shutdown",
+    "priority": "critical"
+  },
+  {
+    "type": "emergency_landing",
+    "description": "Auto-landing at nearest safe location",
+    "priority": "critical"
+  },
+  {
+    "type": "emergency_family_alert",
+    "description": "Send emergency alert to all family members",
+    "priority": "critical"
+  }
+]
+
+PRINT "Emergency Response Actions:"
+FOR EACH action IN emergency_actions
+  PRINT "  {action["type"]}: {action["description"]}"
+NEXT
+
+DISPLAY ""
+
+# --- Kid-Friendly Mode Example ---
+DISPLAY "13. Kid-friendly mode example..."
+「かんたんモード」
+
+# Kid-friendly safety operations
+PRINT "🛡️ Hello Drone Safety-san!"
+DOG_BARK
+
+# Play with radar
+PRINT "📡 Let's play with radar!"
+radar_scan = RADAR_SCAN
+IF radar_scan["threat_objects"] > 0 THEN
+  DECORATE "Found {radar_scan["threat_objects"]} scary things! Be careful!"
+ELSE
+  DECORATE "All clear! Safe to fly!"
+ENDIF
+
+# Play with human detection
+PRINT "👤 Let's look for people!"
+human_detection = HUMAN_DETECTION
+IF human_detection["total_detections"] > 0 THEN
+  DECORATE "Found {human_detection["total_detections"]} people! Hi there!"
+  CAT_MEOW
+ELSE
+  DECORATE "No people around!"
+ENDIF
+
+# Play with family safety
+PRINT "👨‍👩‍👧‍👦 Let's check on family!"
+family_safety = FAMILY_SAFETY
+IF family_safety["members_home"] > 0 THEN
+  DECORATE "{family_safety["members_home"]} family members are home! So happy!"
+  CHIRP_CHIRP
+ELSE
+  DECORATE "Everyone is out! Stay safe!"
+ENDIF
+
+# Play with notifications
+PRINT "📱 Let's send happy messages!"
+notifications = AUTO_SEND_NOTIFICATION "status"
+DECORATE "Sent happy messages to family! Everyone safe!"
+
+DISPLAY ""
+
+# --- Safety Benefits Summary ---
+DISPLAY ""
+DISPLAY "=== Advanced Safety Benefits ==="
+PRINT "✅ Complete radar system with object detection!"
+PRINT "✅ Multi-angle human detection sensors!"
+PRINT "✅ Intelligent collision prevention system!"
+PRINT "✅ Family safety monitoring and alerts!"
+PRINT "✅ Automatic homecoming detection!"
+PRINT "✅ Smartphone notification system!"
+PRINT "✅ Family member registration system!"
+PRINT "✅ Configurable safety modes!"
+PRINT "✅ Emergency response capabilities!"
+PRINT "✅ Multi-system coordination!"
+PRINT "✅ Kid-friendly safety features!"
+PRINT "✅ English and Japanese support!"
+
+DISPLAY ""
+DISPLAY "=== Demo Complete ==="
+PRINT "🛡️ Now Nadesiko3 has advanced drone safety capabilities!"
+PRINT "📡 Radar system detects surrounding objects!"
+PRINT "👤 Human sensors detect people nearby!"
+PRINT "🚧 Collision prevention keeps everyone safe!"
+PRINT "👨‍👩‍👧‍👦 Family safety system provides peace of mind!"
+PRINT "📱 Automatic notifications keep family informed!"
+PRINT "🎈 Kids can easily use safety features!"
+PRINT "🌍 Perfect for international drone safety!"
+
+koko
