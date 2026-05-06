@@ -62,6 +62,7 @@
 - 📊 **リアルタイム可視化**: Webベースデータ分析・パフォーマンス監視
 - 🐍 **Python完全互換**: NumPy・Pandas・Matplotlib・Scikit-learn・TensorFlow・PyTorch
 - 🤖 **AIライブラリ互換**: OpenCV・NLTK・spaCy・Flask・Django・Requests
+- 🚁 **GPSなしドローンナビゲーション**: SLAM・ビジュアルオドメトリ・IMU統合・障害物回避
 - 教育・研究・実務で活用できる究極の日本語プログラミング言語
 
 - [なでしこのWebサイト](https://nadesi.com/)
