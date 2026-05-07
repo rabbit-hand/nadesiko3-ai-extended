@@ -1,13 +1,14 @@
 {
-  "name": "nadesiko3",
-  "version": "3.7.19",
-  "description": "Japanese Programming Language",
+  "name": "nadesiko3-ai",
+  "version": "3.7.19-ai-enhanced",
+  "description": "AI-Enhanced Japanese Programming Language with Data Science Capabilities",
   "type": "module",
   "main": "src/index.mjs",
   "bin": {
     "cnako3": "src/cnako3.mjs",
     "nako3server": "tools/nako3server/index.mjs",
-    "nako3edit": "tools/nako3edit/index.mjs"
+    "nako3edit": "tools/nako3edit/index.mjs",
+    "nako3-ai": "src/cnako3.mjs"
   },
   "scripts": {
     "start": "node tools/nako3server/index.mjs",
@@ -72,14 +73,21 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kujirahand/nadesiko3.git"
+    "url": "git+https://github.com/rabbit-hand/nadesiko3ai.git"
   },
   "keywords": [
     "script",
-    "Japanse Programming Language",
+    "Japanese Programming Language",
     "Nadesiko",
     "日本語プログラミング言語",
-    "なでしこ"
+    "なでしこ",
+    "data-science",
+    "machine-learning",
+    "ai",
+    "numpy",
+    "pandas",
+    "statistics",
+    "artificial-intelligence"
   ],
   "files": [
     "bin",
@@ -92,10 +100,10 @@
     "batch",
     "release"
   ],
-  "author": "kujirahand",
+  "author": "rabbit-hand",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kujirahand/nadesiko3/issues"
+    "url": "https://github.com/rabbit-hand/nadesiko3ai/issues"
   },
   "browserslist": [
     "> 0.5%",
@@ -106,7 +114,7 @@
     "not dead",
     "not IE 11"
   ],
-  "homepage": "https://github.com/kujirahand/nadesiko3#readme",
+  "homepage": "https://github.com/rabbit-hand/nadesiko3ai#readme",
   "_moduleAliases": {
     "root": ".",
     "nako3": "/src",

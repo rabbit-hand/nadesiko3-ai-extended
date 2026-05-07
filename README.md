@@ -1,8 +1,9 @@
 # 日本語プログラミング言語「なでしこ3」 - AI魔改造版
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
-[![npm version](https://badge.fury.io/js/nadesiko3.svg)](https://www.npmjs.com/package/nadesiko3)
+[![npm version](https://badge.fury.io/js/nadesiko3-ai.svg)](https://www.npmjs.com/package/nadesiko3-ai)
 [![AI Enhanced](https://img.shields.io/badge/AI-Enhanced-purple.svg?style=flat)](https://github.com/rabbit-hand/nadesiko3ai)
+[![Install](https://img.shields.io/badge/Install-Now-brightgreen.svg?style=flat)](#インストール)
 
 ## 「なでしこ3」とは - AI魔改造版
 
@@ -97,33 +98,66 @@
 
 - [なでしこマニュアル > FAQ/なでしこ3をインストールして使うには？](https://nadesi.com/v3/doc/go.php?3907)
 
-## Node.jsでなでしこ3コマンドライン版をインストール
+## 🚀 インストール
 
-先にNode.js/npmをインストールします。
-次いで、コマンドラインから次のコマンドを実行します。
+### 方法1: ワンライナーインストール（推奨）
 
-```sh
-npm install -g nadesiko3
+**Linux/macOS:**
+```bash
+curl -fsSL https://raw.githubusercontent.com/rabbit-hand/nadesiko3ai/main/install.sh | bash
 ```
 
-すると、`cnako3`というコマンドで、なでしこを利用できます。
-
-```sh
-# コマンドラインからプログラムを実行
-cnako3 -e "「こんにちは」と表示。"
-# ソースコード hello.nako3 を実行
-cnako3 hello.nako3
+**Windows:**
+```cmd
+curl -fsSL https://raw.githubusercontent.com/rabbit-hand/nadesiko3ai/main/install.bat > install.bat && install.bat
 ```
 
-## GitHubからインストール
+### 方法2: npmでグローバルインストール
 
-Gitコマンドをインストールした上で、次のコマンドを実行すると、なでしこの開発環境をセットアップできます。
+```bash
+npm install -g nadesiko3-ai
+```
 
-```sh
-git clone https://github.com/kujirahand/nadesiko3.git
-cd nadesiko3
+### 方法3: GitHubからクローン
+
+```bash
+git clone https://github.com/rabbit-hand/nadesiko3ai.git
+cd nadesiko3ai
 npm install
 npm run build
+```
+
+### 方法4: 直接ダウンロード
+
+1. [GitHubリポジトリ](https://github.com/rabbit-hand/nadesiko3ai)にアクセス
+2. 「Code」→「Download ZIP」をクリック
+3. 解凍して、`npm install && npm run build` を実行
+
+## 📋 使い方
+
+インストール後、以下のコマンドが利用可能になります：
+
+```bash
+# 基本実行
+nako3-ai -e "「こんにちは、なでしこ3 AI Enhanced！😊」と表示。"
+
+# スクリプトファイル実行
+nako3-ai hello.nako3
+
+# Webサーバー起動（ポート3000）
+nako3server
+
+# エディター起動
+nako3edit
+
+# データサイエンスデモ
+nako3-ai demo/datascience_demo_manual.nako3
+```
+
+### Node.jsでなでしこ3コマンドライン版をインストール（従来版）
+
+```bash
+npm install -g nadesiko3
 ```
 
 ## Ubuntuへの開発環境のセットアップ
