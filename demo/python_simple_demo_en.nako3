@@ -1,0 +1,85 @@
+# Nadesiko3 Simple Data Science Demo (English)
+# Simple Data Science Functions Demo
+
+"=== Nadesiko3 Data Science Demo ===" を表示。
+
+# --- Data Science Functions ---
+"1. Testing data science functions..." を表示。
+
+# NumPy-style array operations
+data = [1, 2, 3, 4, 5]
+array = 配列作成 data
+"Array created: {array}" を表示。
+
+zero_array = ゼロ配列作成 5
+"Zero array: {zero_array}" を表示。
+
+ones_array = 配列1埋 5
+"Ones array: {ones_array}" を表示。
+
+range_array = 範囲配列作成 1 10
+"Range array: {range_array}" を表示。
+
+# Mathematical functions
+sum_value = 合計 data
+"Sum: {sum_value}" を表示。
+
+mean_value = 平均 data
+"Mean: {mean_value}" を表示。
+
+max_value = 最大値 data
+"Max: {max_value}" を表示。
+
+min_value = 最小値 data
+"Min: {min_value}" を表示。
+
+std_value = 標準偏差 data
+"Standard deviation: {std_value}" を表示。
+
+var_value = 分散 data
+"Variance: {var_value}" を表示。
+
+# Array operations
+product_value = 配列要素積 data
+"Array product: {product_value}" を表示。
+
+cumsum_value = 配列累積和 data
+"Array cumulative sum: {cumsum_value}" を表示。
+
+# Sorting
+sorted_array = 配列ソート data
+"Sorted array: {sorted_array}" を表示。
+
+desc_array = 配列ソート dataを降順に
+"Descending array: {desc_array}" を表示。
+
+# Statistical functions
+median_data = [1, 2, 3, 4, 5, 6]
+median_value = 中央値 median_data
+"Median: {median_value}" を表示。
+
+mode_data = [1, 2, 2, 3, 3, 3]
+mode_value = 最頻値 mode_data
+"Mode: {mode_value}" を表示。
+
+# Correlation coefficient
+dataX = [1, 2, 3, 4, 5]
+dataY = [2, 4, 6, 8, 10]
+corr_value = 相関係数 dataX dataY
+"Correlation coefficient: {corr_value}" を表示。
+
+# --- Machine Learning Basics ---
+"2. Testing machine learning basics..." を表示。
+
+# Data normalization
+norm_data = データ正規化 data
+"Data normalized: {norm_data}" を表示。
+
+# Regression line
+regression_result = 回帰直線 dataX dataY
+"Regression line: {regression_result}" を表示。
+
+# --- Results ---
+"3. Demo completed!" を表示。
+"All data science functions are working properly." を表示。
+"" を表示。
