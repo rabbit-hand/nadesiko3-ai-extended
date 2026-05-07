@@ -1,0 +1,480 @@
+# Advanced Weather Sensors Demo - English Version
+# Temperature, Body Temperature, Air Temperature, and Wind Measurement with Weather Observation
+
+DISPLAY "=== Advanced Weather Sensors Demo ==="
+
+# --- Weather Sensors System Discovery ---
+DISPLAY "1. Discovering weather sensor systems..."
+all_sensors = DISCOVER_WEATHER_SENSORS "all"
+PRINT "Weather sensor systems found: {all_sensorsのキー数}"
+
+FOR EACH system IN all_sensors
+  IF system.key !== "initialized" AND system.key !== "timestamp" THEN
+    system_name = system.value["name"] || system.key
+    PRINT "  {system_name}"
+  ENDIF
+NEXT
+
+DISPLAY ""
+
+# --- Temperature Measurement ---
+DISPLAY "2. Measuring temperature..."
+temp_measurement = MEASURE_TEMPERATURE
+PRINT "Temperature measurement: {temp_measurement["message"]}"
+PRINT "Current temperature: {temp_measurement["measurement"]["temperature"]}°C"
+PRINT "Measurement time: {temp_measurement["measurement"]["timestamp"]}"
+PRINT "Accuracy: {temp_measurement["measurement"]["accuracy"]}"
+
+DISPLAY ""
+
+# --- Body Temperature Measurement ---
+DISPLAY "3. Measuring body temperature..."
+body_temp = MEASURE_BODY_TEMPERATURE
+PRINT "Body temperature: {body_temp["message"]}"
+PRINT "Current body temperature: {body_temp["measurement"]["body_temperature"]}°C"
+PRINT "Body temperature status: {body_temp["measurement"]["status"]}"
+
+DISPLAY ""
+
+# --- Air Temperature Measurement ---
+DISPLAY "4. Measuring air temperature..."
+air_temp = MEASURE_AIR_TEMPERATURE
+PRINT "Air temperature: {air_temp["message"]}"
+PRINT "Current air temperature: {air_temp["measurement"]["air_temperature"]}°C"
+PRINT "Measurement time: {air_temp["measurement"]["timestamp"]}"
+
+DISPLAY ""
+
+# --- Wind Measurement ---
+DISPLAY "5. Measuring wind..."
+wind_measurement = MEASURE_WIND
+PRINT "Wind measurement: {wind_measurement["message"]}"
+PRINT "Current wind speed: {wind_measurement["measurement"]["wind_speed"]}m/s"
+PRINT "Wind direction: {wind_measurement["measurement"]["wind_direction"]}°"
+PRINT "Wind status: {wind_measurement["measurement"]["status"]}"
+
+DISPLAY ""
+
+# --- Humidity Measurement ---
+DISPLAY "6. Measuring humidity..."
+humidity_measurement = MEASURE_HUMIDITY
+PRINT "Humidity measurement: {humidity_measurement["message"]}"
+PRINT "Current humidity: {humidity_measurement["measurement"]["humidity"]}%"
+PRINT "Measurement time: {humidity_measurement["measurement"]["timestamp"]}"
+
+DISPLAY ""
+
+# --- Pressure Measurement ---
+DISPLAY "7. Measuring pressure..."
+pressure_measurement = MEASURE_PRESSURE
+PRINT "Pressure measurement: {pressure_measurement["message"]}"
+PRINT "Current pressure: {pressure_measurement["measurement"]["pressure"]}hPa"
+PRINT "Measurement time: {pressure_measurement["measurement"]["timestamp"]}"
+
+DISPLAY ""
+
+# --- Weather Observation ---
+DISPLAY "8. Observing weather..."
+weather_obs = OBSERVE_WEATHER
+PRINT "Weather observation: {weather_obs["message"]}"
+PRINT "Weather condition: {weather_obs["observation"]["weather_condition"]}"
+PRINT "Air temperature: {weather_obs["observation"]["air_temperature"]}°C"
+PRINT "Humidity: {weather_obs["observation"]["humidity"]}%"
+PRINT "Pressure: {weather_obs["observation"]["pressure"]}hPa"
+PRINT "Wind speed: {weather_obs["observation"]["wind_speed"]}m/s"
+PRINT "Visibility: {weather_obs["observation"]["visibility"]}"
+PRINT "UV index: {weather_obs["observation"]["uv_index"]}"
+PRINT "Comfort level: {weather_obs["observation"]["comfort_level"]}"
+
+DISPLAY ""
+
+# --- Weather Forecast ---
+DISPLAY "9. Getting weather forecast..."
+forecast = GET_WEATHER_FORECAST
+PRINT "Weather forecast: {forecast["message"]}"
+PRINT "Forecast days: {forecast["forecasts"]のキー数}"
+
+PRINT "7-day weather forecast:"
+FOR EACH day_forecast IN forecast["forecasts"]
+  PRINT "  {day_forecast["date"]}: {day_forecast["weather_condition"]}"
+  PRINT "    High temperature: {day_forecast["high_temperature"]}°C"
+  PRINT "    Low temperature: {day_forecast["low_temperature"]}°C"
+  PRINT "    Humidity: {day_forecast["humidity"]}%"
+  PRINT "    Wind speed: {day_forecast["wind_speed"]}m/s"
+  PRINT "    Precipitation probability: {day_forecast["precipitation_probability"]}%"
+  PRINT "    UV index: {day_forecast["uv_index"]}"
+  PRINT "---"
+NEXT
+
+DISPLAY ""
+
+# --- Abnormal Temperature Detection ---
+DISPLAY "10. Detecting abnormal temperature..."
+abnormal_temp = DETECT_ABNORMAL_TEMPERATURE
+PRINT "Abnormal temperature detection: {abnormal_temp["message"]}"
+PRINT "Abnormal detected: {abnormal_temp["abnormal_detected"]}"
+PRINT "Current temperature: {abnormal_temp["temperature"]}°C"
+PRINT "Normal range: {abnormal_temp["normal_range"]["min"]}°C to {abnormal_temp["normal_range"]["max"]}°C"
+
+IF abnormal_temp["abnormal_detected"] THEN
+  PRINT "Deviation: {abnormal_temp["deviation"]}°C"
+  PRINT "Severity: {abnormal_temp["severity"]}"
+ENDIF
+
+DISPLAY ""
+
+# --- Heat Stroke Assessment ---
+DISPLAY "11. Assessing heat stroke risk..."
+heat_stroke = ASSESS_HEAT_STROKE
+PRINT "Heat stroke assessment: {heat_stroke["message"]}"
+PRINT "Air temperature: {heat_stroke["temperature"]}°C"
+PRINT "Humidity: {heat_stroke["humidity"]}%"
+PRINT "Heat index: {heat_stroke["heat_index"]}"
+PRINT "Risk level: {heat_stroke["risk_level"]}"
+PRINT "Recommendations: {heat_stroke["recommendations"]}"
+
+DISPLAY ""
+
+# --- Temperature History ---
+DISPLAY "12. Getting temperature history..."
+temp_history = GET_TEMPERATURE_HISTORY
+PRINT "Temperature history: {temp_history["message"]}"
+PRINT "Total records: {temp_history["total_records"]}"
+PRINT "Latest temperature: {temp_history["latest"]["temperature"]}°C"
+
+PRINT "Recent temperature history:"
+FOR EACH record IN temp_history["history"]
+  PRINT "  {record["timestamp"]}: {record["temperature"]}°C"
+NEXT
+
+DISPLAY ""
+
+# --- Weather Data Recording ---
+DISPLAY "13. Recording weather data..."
+weather_record = RECORD_WEATHER_DATA
+PRINT "Weather data record: {weather_record["message"]}"
+PRINT "Record ID: {weather_record["record"]["record_id"]}"
+PRINT "Total records: {weather_record["total_records"]}"
+
+DISPLAY ""
+
+# --- Auto Weather Monitoring ---
+DISPLAY "14. Running auto weather monitoring..."
+auto_monitor = AUTO_WEATHER_MONITORING
+PRINT "Auto weather monitoring: {auto_monitor["message"]}"
+PRINT "Total measurements: {auto_monitor["total_measurements"]}"
+PRINT "Average temperature: {auto_monitor["average_temperature"]}°C"
+PRINT "Average humidity: {auto_monitor["average_humidity"]}%"
+PRINT "Average wind speed: {auto_monitor["average_wind_speed"]}m/s"
+
+PRINT "Measurement results:"
+FOR EACH measurement IN auto_monitor["measurements"]
+  PRINT "  {measurement["timestamp"]}:"
+  PRINT "    Temperature: {measurement["temperature"]}°C"
+  PRINT "    Air temperature: {measurement["air_temperature"]}°C"
+  PRINT "    Humidity: {measurement["humidity"]}%"
+  PRINT "    Wind speed: {measurement["wind_speed"]}m/s"
+  PRINT "    Weather: {measurement["weather_condition"]}"
+  PRINT "    Abnormal detected: {measurement["abnormal_detected"]}"
+  PRINT "    Heat stroke risk: {measurement["heat_stroke_risk"]}"
+  PRINT "---"
+NEXT
+
+DISPLAY ""
+
+# --- Integrated Weather Monitoring ---
+DISPLAY "15. Checking integrated weather monitoring..."
+integrated_monitor = INTEGRATED_WEATHER_MONITORING
+PRINT "Integrated system status: {integrated_monitor["overall_status"]}"
+PRINT "Available operations: {integrated_monitor["available_operations"]のキー数}"
+
+PRINT "System status details:"
+PRINT "  Temperature system: {integrated_monitor["temperature_system"]["active"]}"
+PRINT "  Body temperature system: {integrated_monitor["body_temperature_system"]["active"]}"
+PRINT "  Air temperature system: {integrated_monitor["air_temperature_system"]["active"]}"
+PRINT "  Wind system: {integrated_monitor["wind_system"]["active"]}"
+PRINT "  Weather system: {integrated_monitor["weather_system"]["active"]}"
+
+DISPLAY ""
+
+# --- Practical Example: Smart Home Weather Management ---
+DISPLAY "16. Practical example: Smart home weather management..."
+
+# Start continuous monitoring
+PRINT "Starting smart home weather monitoring..."
+monitoring_log = []
+
+REPEAT 10 times
+  # Measure all sensors
+  temp = MEASURE_TEMPERATURE
+  body_temp = MEASURE_BODY_TEMPERATURE
+  air_temp = MEASURE_AIR_TEMPERATURE
+  humidity = MEASURE_HUMIDITY
+  wind = MEASURE_WIND
+  weather = OBSERVE_WEATHER
+  
+  # Detect abnormalities
+  abnormal = DETECT_ABNORMAL_TEMPERATURE
+  
+  # Assess heat stroke
+  heat_stroke = ASSESS_HEAT_STROKE
+  
+  # Auto control decisions
+  IF abnormal["abnormal_detected"] THEN
+    PRINT "⚠️ Abnormal temperature detected! Auto-adjusting AC"
+    monitoring_logに{
+      "timestamp": new Date().toISOString(),
+      "event": "abnormal_temperature",
+      "temperature": abnormal["temperature"],
+      "action": "auto_adjust_ac",
+      "severity": abnormal["severity"]
+    }を追加
+  ENDIF
+  
+  IF heat_stroke["risk_level"] = "high" OR heat_stroke["risk_level"] = "extreme" THEN
+    PRINT "🚨 High heat stroke risk! Increasing cooling"
+    monitoring_logに{
+      "timestamp": new Date().toISOString(),
+      "event": "heat_stroke_risk",
+      "risk_level": heat_stroke["risk_level"],
+      "action": "increase_cooling",
+      "heat_index": heat_stroke["heat_index"]
+    }を追加
+  ENDIF
+  
+  IF weather["observation"]["weather_condition"] = "rainy" THEN
+    PRINT "🌧 Rain detected! Closing windows"
+    monitoring_logに{
+      "timestamp": new Date().toISOString(),
+      "event": "rain_detected",
+      "weather": weather["observation"]["weather_condition"],
+      "action": "close_windows"
+    }を追加
+  ENDIF
+  
+  IF wind["measurement"]["wind_speed"] > 15 THEN
+    PRINT "💨 Strong wind detected! Alert for outdoor activities"
+    monitoring_logに{
+      "timestamp": new Date().toISOString(),
+      "event": "strong_wind",
+      "wind_speed": wind["measurement"]["wind_speed"],
+      "action": "alert_strong_wind"
+    }を追加
+  ENDIF
+  
+  WAIT 2000
+NEXT
+
+PRINT "Smart home weather monitoring completed"
+PRINT "Monitoring log:"
+FOR EACH log IN monitoring_log
+  PRINT "  {log["timestamp"]}: {log["event"]} - {log["action"]}"
+NEXT
+
+DISPLAY ""
+
+# --- Kid-Friendly Mode Example ---
+DISPLAY "17. Kid-friendly mode example..."
+「かんたんモード」
+
+# Kid-friendly temperature measurement
+PRINT "🌡️ Hello weather sensors!"
+DOG_BARK
+
+# Play with temperature
+PRINT "🌡️ Let's check the temperature!"
+temp_measurement = MEASURE_TEMPERATURE
+DECORATE "The room is {temp_measurement["measurement"]["temperature"]} degrees!"
+CAT_MEOW
+
+# Play with body temperature
+PRINT "🤒 Let's check body temperature!"
+body_temp = MEASURE_BODY_TEMPERATURE
+IF body_temp["measurement"]["status"] = "normal" THEN
+  DECORATE "Body temperature is healthy!"
+  CAT_MEOW
+ELSE
+  DECORATE "Body temperature might be abnormal!"
+ENDIF
+
+# Play with weather
+PRINT "☀️ Let's check the weather!"
+weather_obs = OBSERVE_WEATHER
+weather_condition = weather_obs["observation"]["weather_condition"]
+
+IF weather_condition = "clear" THEN
+  DECORATE "It's sunny! Let's play outside!"
+  CAT_MEOW
+ELSE IF weather_condition = "rainy" THEN
+  DECORATE "It's raining! Let's stay inside!"
+ELSE IF weather_condition = "cloudy" THEN
+  DECORATE "It's cloudy! Maybe we can play later!"
+ELSE
+  DECORATE "Weather is {weather_condition}!"
+ENDIF
+
+# Play with wind
+PRINT "💨 Let's check the wind!"
+wind_measurement = MEASURE_WIND
+wind_speed = wind_measurement["measurement"]["wind_speed"]
+wind_status = wind_measurement["measurement"]["status"]
+
+IF wind_speed < 3 THEN
+  DECORATE "Wind is calm!"
+ELSE IF wind_speed < 8 THEN
+  DECORATE "Wind is gentle!"
+ELSE
+  DECORATE "Wind is strong! Be careful!"
+ENDIF
+
+# Play with heat stroke
+PRINT "🌡️ Let's check heat stroke risk!"
+heat_stroke = ASSESS_HEAT_STROKE
+risk_level = heat_stroke["risk_level"]
+
+IF risk_level = "low" THEN
+  DECORATE "Heat stroke risk is low! Let's play!"
+ELSE IF risk_level = "moderate" THEN
+  DECORATE "Drink water and take breaks!"
+ELSE IF risk_level = "high" THEN
+  DECORATE "Be careful! Stay in the shade!"
+ELSE
+  DECORATE "It's too hot! Stay inside!"
+ENDIF
+
+DISPLAY ""
+
+# --- Advanced Features: Weather Data Analysis ---
+DISPLAY "18. Advanced features: Weather data analysis..."
+
+# Collect 24 hours of data
+PRINT "Collecting 24 hours of weather data..."
+analysis_data = []
+
+REPEAT 24 times
+  # Run all measurements
+  temp = MEASURE_TEMPERATURE
+  air_temp = MEASURE_AIR_TEMPERATURE
+  humidity = MEASURE_HUMIDITY
+  wind = MEASURE_WIND
+  weather = OBSERVE_WEATHER
+  
+  analysis_dataに{
+    "hour": analysis_dataのキー数 + 1,
+    "timestamp": new Date().toISOString(),
+    "temperature": temp["measurement"]["temperature"],
+    "air_temperature": air_temp["measurement"]["air_temperature"],
+    "humidity": humidity["measurement"]["humidity"],
+    "wind_speed": wind["measurement"]["wind_speed"],
+    "weather_condition": weather["observation"]["weather_condition"]
+  }を追加
+  
+  WAIT 500
+NEXT
+
+# Data analysis
+PRINT "Weather data analysis results:"
+
+# Calculate averages
+avg_temp = analysis_dataから "temperature" を平均
+avg_air_temp = analysis_dataから "air_temperature" を平均
+avg_humidity = analysis_dataから "humidity" を平均
+avg_wind_speed = analysis_dataから "wind_speed" を平均
+
+PRINT "  Average temperature: {avg_temp.toFixed(1)}°C"
+PRINT "  Average air temperature: {avg_air_temp.toFixed(1)}°C"
+PRINT "  Average humidity: {avg_humidity.toFixed(1)}%"
+PRINT "  Average wind speed: {avg_wind_speed.toFixed(1)}m/s"
+
+# Max/min values
+max_temp = analysis_dataから "temperature" を最大
+min_temp = analysis_dataから "temperature" を最小
+max_wind = analysis_dataから "wind_speed" を最大
+
+PRINT "  Highest temperature: {max_temp.toFixed(1)}°C"
+PRINT "  Lowest temperature: {min_temp.toFixed(1)}°C"
+PRINT "  Highest wind speed: {max_wind.toFixed(1)}m/s"
+
+# Weather pattern analysis
+weather_count = {}
+FOR EACH data_point IN analysis_data
+  weather = data_point["weather_condition"]
+  IF weather_count[weather] = undefined THEN
+    weather_count[weather] = 0
+  ENDIF
+  weather_count[weather] = weather_count[weather] + 1
+NEXT
+
+PRINT "  Weather patterns:"
+FOR EACH weather IN weather_count
+  count = weather_count[weather]
+  PRINT "    {weather}: {count} times ({(count/24*100).toFixed(1)}%)"
+NEXT
+
+DISPLAY ""
+
+# --- Weather Data Export ---
+DISPLAY "19. Exporting weather data..."
+
+# Create comprehensive weather report
+weather_report = {
+  "report_date": new Date().toISOString(),
+  "analysis_period": "24 hours",
+  "data_points": analysis_data.length,
+  "statistics": {
+    "average_temperature": avg_temp,
+    "average_air_temperature": avg_air_temp,
+    "average_humidity": avg_humidity,
+    "average_wind_speed": avg_wind_speed,
+    "max_temperature": max_temp,
+    "min_temperature": min_temp,
+    "max_wind_speed": max_wind
+  },
+  "weather_patterns": weather_count,
+  "recommendations": this._generateWeatherRecommendations(avg_temp, avg_humidity, max_wind)
+}
+
+PRINT "Weather data exported successfully!"
+PRINT "Report includes:"
+PRINT "  Data points: {weather_report["data_points"]}"
+PRINT "  Analysis period: {weather_report["analysis_period"]}"
+PRINT "  Weather patterns: {weather_report["weather_patterns"]のキー数} different conditions"
+PRINT "  Recommendations: {weather_report["recommendations"].length} items"
+
+DISPLAY ""
+
+# --- Weather Sensors Benefits Summary ---
+DISPLAY ""
+DISPLAY "=== Advanced Weather Sensors Benefits ==="
+PRINT "✅ Complete temperature measurement system!"
+PRINT "✅ Body temperature monitoring!"
+PRINT "✅ Air temperature tracking!"
+PRINT "✅ Wind speed and direction measurement!"
+PRINT "✅ Humidity and pressure monitoring!"
+PRINT "✅ Weather observation and forecasting!"
+PRINT "✅ Abnormal temperature detection!"
+PRINT "✅ Heat stroke risk assessment!"
+PRINT "✅ Temperature history tracking!"
+PRINT "✅ Weather data recording!"
+PRINT "✅ Auto weather monitoring!"
+PRINT "✅ Integrated weather management!"
+PRINT "✅ Smart home automation integration!"
+PRINT "✅ Kid-friendly weather features!"
+PRINT "✅ English and Japanese support!"
+
+DISPLAY ""
+DISPLAY "=== Demo Complete ==="
+PRINT "🌡️ Now Nadesiko3 has advanced weather sensors!"
+PRINT "🤒 Temperature and body temperature monitoring!"
+PRINT "💨 Wind speed and direction measurement!"
+PRINT "☀️ Real-time weather observation!"
+PRINT "📅 7-day weather forecasting!"
+PRINT "⚠️ Abnormal temperature detection!"
+PRINT "🚨 Heat stroke risk assessment!"
+PRINT "📊 Temperature history and analysis!"
+PRINT "🏠 Smart home weather automation!"
+PRINT "🤖 24/7 auto weather monitoring!"
+PRINT "🎈 Kids can easily use weather sensors!"
+PRINT "🌍 Perfect for international weather management!"
+
+koko

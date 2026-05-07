@@ -1,0 +1,436 @@
+/* eslint-disable no-undef */
+import os from 'os'
+import fs from 'node:fs'
+import assert from 'assert'
+import path from 'path'
+
+import { NakoCompiler } from '../../core/src/nako3.mjs'
+import PluginNode from '../../src/plugin_node.mjs'
+import PluginCSV from '../../core/src/plugin_csv.mjs'
+
+// __dirname のために
+import url from 'url'
+// @ts-ignore
+const __filename = url.fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const testFileMe = path.join(__dirname, 'plugin_node_test.mjs')
+
+async function cmp(/** @type {string} */code, /** @type {string} */res, /** @type {number} */ms=10) {
+  // (原則) EvalやFunctionの中で行う非同期処理は、その中で行うこと！
+  // @see https://qiita.com/kujirahand/items/880917172bb0de8d30b9
+  const nako = new NakoCompiler()
+  nako.addPluginFile('PluginNode', 'plugin_node.js', PluginNode)
+  nako.addPluginFile('PluginCSV', 'plugin_csv.js', PluginCSV)
+  const g = await nako.runAsync(code, 'main')
+  await forceWait(ms)
+  assert.strictEqual(g.log, res) // 強制的に指定ミリ秒待つ
+  return g
+}
+// 強制的にミリ秒待機
+function forceWait(/** @type {number} */ms) {
+  return /** @type {Promise<void>} */(new Promise((resolve, reject) => {
+    setTimeout(() => { resolve() }, ms);
+  }));
+}
+
+const cmd = async (/** @type {string} */ code) => {
+  const nako = new NakoCompiler()
+  nako.addPluginFile('PluginNode', 'plugin_node.js', PluginNode)
+  nako.addPluginFile('PluginCSV', 'plugin_csv.js', PluginCSV)
+  await nako.runAsync(code, 'main')
+}
+function get7zPath() {
+  if (process.platform === 'linux') { // Linuxならパスを調べる
+    if (fs.existsSync('/usr/bin/7z')) { return '/usr/bin/7z' }
+  }
+  if (process.platform === 'darwin') { // macOSでもパスを調べる
+    const appleSilicon = '/opt/homebrew/bin/7z'
+    if (fs.existsSync(appleSilicon)) { return appleSilicon }
+    const intelMac = '/usr/local/bin/7z'
+    if (fs.existsSync(intelMac)) { return intelMac }
+  }
+  if (process.platform === 'win32') {
+    const path7z = path.join(__dirname, '../../bin/7z.exe')
+    if (!fs.existsSync(path7z)) { return path7z }
+  }
+  return '' // なし
+}
+
+function makeTmpDir(/** @type {string} */prefix) {
+  return fs.mkdtempSync(path.join(os.tmpdir(), prefix))
+}
+
+describe('plugin_node_test', () => {
+  // --- test ---
+  it('表示', async () => {
+    await cmp('3を表示', '3')
+    await cmp('1+2*3を表示', '7')
+    await cmp('A=30;「--{A}--」を表示', '--30--')
+  })
+  it('存在1', async () => {
+    await cmp('「/xxx/xxx/xxx/xxx」が存在;もしそうならば;「NG」と表示。違えば「OK」と表示。', 'OK')
+  })
+  it('存在2', async () => {
+    await cmp('「' + testFileMe + '」が存在;もしそうならば;「OK」と表示。違えば「NG」と表示。', 'OK')
+  })
+  it('フォルダ存在', async () => {
+    const dir = __dirname
+    await cmp('「' + dir + '」が存在;もしそうならば;「OK」と表示。違えば「NG」と表示。', 'OK')
+    await cmp('「' + dir + '/xxx」が存在;もしそうならば;「OK」と表示。違えば「NG」と表示。', 'NG')
+  })
+  it('ASSERT', async () => {
+    cmd('3と3がASSERT等')
+  })
+  it('環境変数取得', async () => {
+    const path = process.env.PATH
+    await cmp('「PATH」の環境変数取得して表示。', path || '')
+  })
+  it('ファイルサイズ取得', async () => {
+    await cmp('「' + testFileMe + '」のファイルサイズ取得;もし、それが2000以上ならば;「OK」と表示。違えば「NG」と表示。', 'OK')
+  })
+  it('ファイル情報取得', async () => {
+    await cmp('「' + testFileMe + '」のファイル情報取得;もし、それ["size"]が2000以上ならば;「OK」と表示。違えば「NG」と表示。', 'OK')
+  })
+  it('クリップボード', async () => {
+    try {
+      const rnd = 'a' + Math.random()
+      await cmp('クリップボード="' + rnd + '";クリップボードを表示。', rnd)
+    } catch (err) {
+      // テストは必須ではない(Linuxコンソール環境に配慮)
+    }
+  })
+  it('文字エンコーディング', async () => {
+    const sjisfile = path.join(__dirname, 'sjis.txt')
+    await cmp(`「${sjisfile}」をバイナリ読む。` +
+      'SJIS取得。CSV取得してCに代入。C[2][1]を表示',
+    'ホームセンター')
+    await cmp(`「${sjisfile}」をバイナリ読む。` +
+      '「Shift_JIS」からエンコーディング取得。' +
+      'CSV取得してCに代入。C[2][1]を表示',
+    'ホームセンター')
+  })
+  it('ハッシュ値計算', async () => {
+    await cmp('「hello world」を「sha256」の「base64」でハッシュ値計算して表示。', 'uU0nuZNNPgilLlLX2n2r+sSE7+N6U4DukIj3rOLvzek=')
+    await cmp('「hello world」を「sha256」の「hex」でハッシュ値計算して表示。', 'b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9')
+    await cmp('「some data to hash」を「sha256」の「hex」でハッシュ値計算して表示。', '6a2da20943931e9834fc12cfe5bb47bbd9ae43489a30726962b576f4e3993e50')
+  })
+  it('テンポラリフォルダ', async () => {
+    await cmp('F=「{テンポラリフォルダ}/test.txt」;「abc」をFに保存。S=Fを読む。Sを表示。', 'abc', 100)
+    // await cmp('F=「{テンポラリフォルダ}/test.txt」;「abc」をFに保存。Fを読んでトリムして表示。', 'abc')
+  })
+  it('圧縮解凍', async function () {
+    let path7z = get7zPath()
+    if (path7z === '') { return this.skip() }
+    let tmp = '/tmp'
+    if (process.platform === 'linux') {
+      tmp = path.join(os.tmpdir(), 'nadesiko3test')
+    } else {
+      tmp = makeTmpDir('nadesiko3test-')
+    }
+    const code = 'FIN=「' + testFileMe + '」;' +
+      `TMP=「${tmp}」へ一時フォルダ作成。` +
+      '『' + path7z + '』に圧縮解凍ツールパス変更;' +
+      'もし、TMPが存在しないならば、TMPのフォルダ作成。' +
+      'FZIP=「{TMP}/test.zip」;\n' +
+      'FINをFZIPへ圧縮。FZIPを「{TMP}/」に解凍。\n' +
+      'S1=「{TMP}/plugin_node_test.mjs」を読む。\n' +
+      'S2=FINを読む。\n' +
+      'もし(S1＝S2)ならば、"OK"と表示。\n'
+    await cmp(code, 'OK', 300)
+  })
+  it('圧縮/解凍', async function () {
+    // 7zip がない環境ではテストを飛ばす
+    let path7z = get7zPath()
+    if (path7z === '') { return this.skip() }
+    // なぜかGitHubでエラーになるので飛ばす
+    if (process.platform !== 'darwin') { return this.skip() }
+    // テスト
+    let tmp = '/tmp'
+    if (process.platform === 'linux') {
+      tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'nadesiko3zip-test'))
+    } else {
+      tmp = makeTmpDir('nadesiko3zip-test-')
+    }
+    const pathSrc = `TMP="${tmp}";FILE=「{TMP}/test.txt」;ZIP=「{TMP}/test.zip」;`
+    await cmp(`${pathSrc}FILEへ「abc」を保存。FILEをZIPに圧縮。ZIPが存在。もし,そうならば「ok」と表示。`, 'ok')
+    await cmp(`${pathSrc}FILEをファイル削除。ZIPをTMPに解凍。FILEを読む。トリム。それを表示。`, 'abc')
+  })
+  it('圧縮/解凍 - OSコマンドインジェクション対策がなされているか #1325', async function () {
+    // 7z がない環境ではテストを飛ばす
+    let path7z = get7zPath()
+    if (path7z === '') { return this.skip() }
+    // なぜかGitHubでエラーになるので飛ばす
+    if (process.platform !== 'darwin') { return this.skip() }
+    // 一時フォルダを作成
+    let tmp = '/tmp'
+    if (process.platform === 'linux') {
+      tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'test_nako3zip'))
+    } else {
+      tmp = makeTmpDir('test_nako3zip-')
+    }
+    // (1) 元ファイルへのインジェクション
+    const pathSrc = '' +
+      `TMP="${tmp}"\n` +
+      'FILE=「{TMP}/`touch hoge`.txt」;ZIP=「{TMP}/test.zip」\n'
+    await cmp(pathSrc +
+        'F=「{TMP}/hoge」;Fが存在;もしそうならば、Fをファイル削除;' +
+        'FILEへ「abc」を保存。FILEをZIPに圧縮。ZIPが存在。もし,そうならば「ok」と表示。', 'ok', 200)
+    await cmp(`${pathSrc}「{TMP}/hoge」が存在。もし,そうならば「OS_INJECTION」と表示。`, '', 50)
+    await cmp(`${pathSrc}FILEをファイル削除。ZIPをTMPに解凍。FILEを読む。トリム。それを表示。`, 'abc', 50)
+    // (2) ZIPファイルへのインジェクション
+    const pathSrc2 = '' +
+      `TMP="${tmp}"\n` +
+      'FILE=「{TMP}/test2.txt」;ZIP=「{TMP}/`touch bbb`.zip」;'
+    await cmp(pathSrc2 +
+        'F=「{TMP}/bbb」;Fが存在;もしそうならば、Fをファイル削除;' +
+        'FILEへ「abc」を保存。FILEをZIPに圧縮。ZIPが存在。もし,そうならば「ok」と表示。', 'ok', 200)
+    await cmp(`${pathSrc2};「{TMP}/bbb」が存在。もし,そうならば「OS_INJECTION」と表示。`, '')
+    await cmp(`${pathSrc2};FILEをファイル削除。ZIPをTMPに解凍。FILEを読む。トリムして表示。`, 'abc')
+  })
+  it('圧縮/解凍 - OSコマンドインジェクション対策(修正が不完全だった件の修正) #1325', async function () {
+    // 7z がない環境ではテストを飛ばす
+    let path7z = get7zPath()
+    if (path7z === '') { return this.skip() }
+    // なぜかGitHubでエラーになるので飛ばす
+    if (process.platform !== 'darwin') { return this.skip() }
+    //
+    let tmp = '/tmp'
+    if (process.platform === 'linux') {
+      tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'test_nako3zip'))
+    } else {
+      tmp = makeTmpDir('test_nako3zip-')
+    }
+    // (1) 元ファイルへのインジェクション
+    const pathSrc = '' +
+      `TMP="${tmp}"\n` +
+      'FILE=「{TMP}/\'a\'`touch xxx`\'c」;ZIP=「{TMP}/test.zip」\n'
+    const code1 = pathSrc +
+      'F=「{TMP}/xxx」;Fが存在;もしそうならば、Fをファイル削除;' +
+      'FILEへ「abc」を保存。FILEをZIPに圧縮。ZIPが存在。もし,そうならば「ok」と表示。'
+    await cmp(code1, 'ok', 200)
+    await cmp(`${pathSrc}「{TMP}/xxx」が存在。もし,そうならば「OS_INJECTION」と表示。`, '')
+    await cmp(`${pathSrc}FILEをファイル削除。ZIPをTMPに解凍。FILEを読む。トリム。それを表示。`, 'abc')
+  })
+  it('ファイル関連の命令を追加 #2181', async () => {
+    await cmp('「a」に終端パス追加して表示。', `a${path.sep}`)
+    await cmp(`「a${path.sep}」から終端パス除去して表示。`, `a`)
+  })
+  it('コマンド実行/待機 #2181', async () => {
+    const tmpFile = path.join(os.tmpdir(), 'nako3_command_test.txt')
+    const prevEnv = process.env.NAKO3_DISABLE_NEW_CONSOLE
+    process.env.NAKO3_DISABLE_NEW_CONSOLE = '1'
+    // 非同期の「コマンド実行」は固定待機だと環境差でフレークし得るため、
+    // ファイル出現と内容反映を一定時間ポーリングして待つ。
+    const waitForFileContent = async (filePath, expected, timeoutMs = 5000, intervalMs = 50) => {
+      const start = Date.now()
+      while (Date.now() - start < timeoutMs) {
+        if (fs.existsSync(filePath)) {
+          const content = fs.readFileSync(filePath, 'utf-8').trim()
+          if (content === expected) {
+            return
+          }
+        }
+        await new Promise(resolve => setTimeout(resolve, intervalMs))
+      }
+      assert.fail(`タイムアウト: ${timeoutMs}ms 以内に ${filePath} の内容が "${expected}" になりませんでした`)
+    }
+    try {
+      await cmp(
+        `FILE="${tmpFile}";もし、「{FILE}」が存在ならば、FILEをファイル削除。「echo async-ok > "{FILE}"」をコマンド実行。0を表示。`,
+        '0',
+        300
+      )
+      await waitForFileContent(tmpFile, 'async-ok')
+      const content = fs.readFileSync(tmpFile, 'utf-8').trim()
+      assert.strictEqual(content, 'async-ok')
+      await cmp(
+        `FILE="${tmpFile}";「echo wait-ok > "{FILE}"」をコマンド実行待機。FILEを読む。トリムして表示。`,
+        'wait-ok'
+      )
+    } finally {
+      if (prevEnv === undefined) {
+        delete process.env.NAKO3_DISABLE_NEW_CONSOLE
+      } else {
+        process.env.NAKO3_DISABLE_NEW_CONSOLE = prevEnv
+      }
+      if (fs.existsSync(tmpFile)) { fs.unlinkSync(tmpFile) }
+    }
+  })
+  it('コンソールクリア #2181', async () => {
+    await cmp('コンソールクリア。123を表示。', '123')
+  })
+  it('ファイルコピー - コピー先が存在しない場合は成功', async () => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'nako3-cp-test-'))
+    try {
+      const src = path.join(tmp, 'src.txt')
+      const dest = path.join(tmp, 'dest.txt')
+      fs.writeFileSync(src, 'hello')
+      await cmp(`「${src}」を「${dest}」へファイルコピー。「${dest}」を読む。トリムして表示。`, 'hello', 200)
+    } finally {
+      fs.rmSync(tmp, { recursive: true })
+    }
+  })
+  it('ファイルコピー - コピー先が存在する場合はエラー', async () => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'nako3-cp-err-'))
+    try {
+      const src = path.join(tmp, 'src.txt')
+      const dest = path.join(tmp, 'dest.txt')
+      fs.writeFileSync(src, 'hello')
+      fs.writeFileSync(dest, 'existing')
+      const nako2 = new NakoCompiler()
+      nako2.addPluginFile('PluginNode', 'plugin_node.js', PluginNode)
+      const g = await nako2.runAsync(`「${src}」を「${dest}」へファイルコピー。`, 'main')
+      await new Promise(resolve => setTimeout(resolve, 200))
+      assert.strictEqual(g.numFailures > 0, true, 'コピー先が存在する場合はエラーになるべき')
+    } finally {
+      fs.rmSync(tmp, { recursive: true })
+    }
+  })
+  it('ファイルコピー - デフォルト動作をoverwriteにすると上書き成功', async () => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'nako3-cp-overwrite-'))
+    try {
+      const src = path.join(tmp, 'src.txt')
+      const dest = path.join(tmp, 'dest.txt')
+      fs.writeFileSync(src, 'new-data')
+      fs.writeFileSync(dest, 'old-data')
+      await cmp(`ファイルコピーデフォルト動作="overwrite"。「${src}」を「${dest}」へファイルコピー。「${dest}」を読む。トリムして表示。`, 'new-data', 200)
+    } finally {
+      fs.rmSync(tmp, { recursive: true })
+    }
+  })
+  it('ファイル上書コピー - ディレクトリのマージコピー', async () => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'nako3-merge-cp-'))
+    try {
+      const srcDir = path.join(tmp, 'src')
+      const destDir = path.join(tmp, 'dest')
+      fs.mkdirSync(srcDir)
+      fs.mkdirSync(destDir)
+      fs.writeFileSync(path.join(srcDir, 'a.txt'), 'aaa')
+      fs.writeFileSync(path.join(srcDir, 'b.txt'), 'bbb')
+      fs.writeFileSync(path.join(destDir, 'c.txt'), 'ccc')
+      await cmp(`「${srcDir}」を「${destDir}」へファイル上書コピー。「${path.join(destDir, 'c.txt')}」を読む。トリムして表示。`, 'ccc', 200)
+      // srcのファイルがdestにマージされている
+      assert.strictEqual(fs.existsSync(path.join(destDir, 'a.txt')), true, 'a.txtがマージされるべき')
+      assert.strictEqual(fs.existsSync(path.join(destDir, 'b.txt')), true, 'b.txtがマージされるべき')
+      assert.strictEqual(fs.existsSync(path.join(destDir, 'c.txt')), true, 'c.txtは残るべき')
+    } finally {
+      fs.rmSync(tmp, { recursive: true })
+    }
+  })
+  it('ファイル移動 - 移動先が存在しない場合は成功', async () => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'nako3-mv-test-'))
+    try {
+      const src = path.join(tmp, 'src.txt')
+      const dest = path.join(tmp, 'dest.txt')
+      fs.writeFileSync(src, 'move-test')
+      await cmp(`「${src}」を「${dest}」へファイル移動。「${dest}」を読む。トリムして表示。`, 'move-test', 200)
+      assert.strictEqual(fs.existsSync(src), false, '移動後はソースファイルが消えるべき')
+    } finally {
+      fs.rmSync(tmp, { recursive: true })
+    }
+  })
+  it('ファイル移動 - 移動先が存在する場合はエラー', async () => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'nako3-mv-err-'))
+    try {
+      const src = path.join(tmp, 'src.txt')
+      const dest = path.join(tmp, 'dest.txt')
+      fs.writeFileSync(src, 'hello')
+      fs.writeFileSync(dest, 'existing')
+      const nako2 = new NakoCompiler()
+      nako2.addPluginFile('PluginNode', 'plugin_node.js', PluginNode)
+      const g = await nako2.runAsync(`「${src}」を「${dest}」へファイル移動。`, 'main')
+      await new Promise(resolve => setTimeout(resolve, 200))
+      assert.strictEqual(g.numFailures > 0, true, '移動先が存在する場合はエラーになるべき')
+    } finally {
+      fs.rmSync(tmp, { recursive: true })
+    }
+  })
+  it('ファイル移動 - デフォルト動作を上書きにすると上書き成功', async () => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'nako3-mv-overwrite-'))
+    try {
+      const src = path.join(tmp, 'src.txt')
+      const dest = path.join(tmp, 'dest.txt')
+      fs.writeFileSync(src, 'moved-data')
+      fs.writeFileSync(dest, 'old-data')
+      await cmp(`ファイルコピーデフォルト動作="上書き"。「${src}」を「${dest}」へファイル移動。「${dest}」を読む。トリムして表示。`, 'moved-data', 200)
+      assert.strictEqual(fs.existsSync(src), false, '上書き移動後はソースファイルが消えるべき')
+    } finally {
+      fs.rmSync(tmp, { recursive: true, force: true })
+    }
+  })
+  it('ファイル上書移動 - ディレクトリのマージ移動', async () => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'nako3-merge-mv-'))
+    try {
+      const srcDir = path.join(tmp, 'src')
+      const destDir = path.join(tmp, 'dest')
+      fs.mkdirSync(srcDir)
+      fs.mkdirSync(destDir)
+      fs.writeFileSync(path.join(srcDir, 'a.txt'), 'aaa')
+      fs.writeFileSync(path.join(srcDir, 'b.txt'), 'bbb')
+      fs.writeFileSync(path.join(destDir, 'c.txt'), 'ccc')
+      await cmp(`「${srcDir}」を「${destDir}」へファイル上書移動。「${path.join(destDir, 'a.txt')}」を読む。トリムして表示。`, 'aaa', 300)
+      // srcのファイルがdestにマージされ、srcディレクトリは削除される
+      assert.strictEqual(fs.existsSync(srcDir), false, '移動後はソースディレクトリが消えるべき')
+      assert.strictEqual(fs.existsSync(path.join(destDir, 'a.txt')), true, 'a.txtがマージされるべき')
+      assert.strictEqual(fs.existsSync(path.join(destDir, 'b.txt')), true, 'b.txtがマージされるべき')
+      assert.strictEqual(fs.existsSync(path.join(destDir, 'c.txt')), true, 'c.txtは残るべき')
+    } finally {
+      fs.rmSync(tmp, { recursive: true, force: true })
+    }
+  })
+  it('ファイル処理時 - 進捗コールバックが呼ばれる', async () => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'nako3-progress-'))
+    try {
+      const srcDir = path.join(tmp, 'src')
+      const destDir = path.join(tmp, 'dest')
+      fs.mkdirSync(srcDir)
+      fs.writeFileSync(path.join(srcDir, 'a.txt'), 'aaa')
+      fs.writeFileSync(path.join(srcDir, 'b.txt'), 'bbb')
+      fs.writeFileSync(path.join(srcDir, 'c.txt'), 'ccc')
+      // なでしこ関数でコールバックを定義してカウントし最終的にログに出力
+      const nako2 = new NakoCompiler()
+      nako2.addPluginFile('PluginNode', 'plugin_node.js', PluginNode)
+      const g = await nako2.runAsync(`
+CNT = 0
+●進捗CB
+  CNT = CNT + 1
+ここまで
+「進捗CB」をファイル処理時
+「${srcDir}」を「${destDir}」へファイル上書コピー
+CNTを表示
+`, 'main')
+      await new Promise(resolve => setTimeout(resolve, 500))
+      assert.strictEqual(g.log, '3', `コールバックが3回呼ばれるべき(実際:${g.log})`)
+    } finally {
+      fs.rmSync(tmp, { recursive: true })
+    }
+  })
+  it('ファイル処理強制停止 - 途中で停止できる', async () => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'nako3-stop-test-'))
+    try {
+      const srcDir = path.join(tmp, 'src')
+      const destDir = path.join(tmp, 'dest')
+      fs.mkdirSync(srcDir)
+      // 5つのファイルを作成
+      for (let i = 0; i < 5; i++) {
+        fs.writeFileSync(path.join(srcDir, `file${i}.txt`), `content${i}`)
+      }
+      // コールバック内でファイル処理強制停止を呼び出して途中停止するテスト
+      const nako2 = new NakoCompiler()
+      nako2.addPluginFile('PluginNode', 'plugin_node.js', PluginNode)
+      const g = await nako2.runAsync(`
+●停止CB
+  ファイル処理強制停止
+ここまで
+「停止CB」をファイル処理時
+「${srcDir}」を「${destDir}」へファイル上書コピー
+`, 'main')
+      await new Promise(resolve => setTimeout(resolve, 500))
+      // 1ファイルだけコピーされて停止していること（強制停止のため残りはスキップ）
+      const copiedFiles = fs.existsSync(destDir) ? fs.readdirSync(destDir).length : 0
+      assert.strictEqual(copiedFiles, 1, `強制停止後のファイル数は1のはず(実際:${copiedFiles})`)
+    } finally {
+      fs.rmSync(tmp, { recursive: true })
+    }
+  })
+})

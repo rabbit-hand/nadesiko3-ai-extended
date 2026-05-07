@@ -1,0 +1,276 @@
+# Hardware Auto Discovery and Investigation Demo - English Version
+# Automatic hardware discovery and investigation system
+
+DISPLAY "=== Hardware Auto Discovery Demo ==="
+
+# --- Full Hardware Discovery ---
+DISPLAY "1. Discovering all hardware..."
+all_hardware = DISCOVER_HARDWARE
+PRINT "All hardware info:"
+PRINT all_hardwareをJSON整形
+
+DISPLAY ""
+
+# --- Get Sensor Information ---
+DISPLAY "2. Getting sensor information..."
+sensors = GET_SENSORS
+PRINT "Sensors found: {sensorsの要素数}"
+
+FOR EACH sensor IN sensors
+  sensor_name = sensor["name"]
+  sensor_type = sensor["type"]
+  sensor_port = sensor["port"]
+  PRINT "  - {sensor_name} ({sensor_type}) - Port: {sensor_port}"
+NEXT
+
+DISPLAY ""
+
+# --- Get Motor Information ---
+DISPLAY "3. Getting motor information..."
+motors = GET_MOTORS
+PRINT "Motors found: {motorsの要素数}"
+
+FOR EACH motor IN motors
+  motor_name = motor["name"]
+  motor_type = motor["type"]
+  motor_port = motor["port"]
+  PRINT "  - {motor_name} ({motor_type}) - Port: {motor_port}"
+NEXT
+
+DISPLAY ""
+
+# --- Get Wheel/Tire Information ---
+DISPLAY "4. Getting wheel/tire information..."
+wheel_count = GET_WHEEL_COUNT
+tire_count = GET_TIRE_COUNT
+PRINT "Wheel count: {wheel_count}"
+PRINT "Tire count: {tire_count}"
+
+DISPLAY ""
+
+# --- Get GPIO Port Information ---
+DISPLAY "5. Getting GPIO port information..."
+gpio_ports = GET_GPIO_PORTS
+PRINT "Available GPIO ports: {gpio_portsの要素数}"
+
+FOR EACH port IN gpio_ports
+  gpio_name = port["name"]
+  gpio_number = port["number"]
+  gpio_status = port["status"]
+  PRINT "  - {gpio_name} (Number: {gpio_number}) - Status: {gpio_status}"
+NEXT
+
+DISPLAY ""
+
+# --- Get I2C Device Information ---
+DISPLAY "6. Getting I2C device information..."
+i2c_devices = GET_I2C_DEVICES
+PRINT "I2C devices found: {i2c_devicesの要素数}"
+
+FOR EACH device IN i2c_devices
+  device_name = device["name"]
+  device_address = device["address"]
+  device_type = device["type"]
+  PRINT "  - {device_name} ({device_type}) - Address: {device_address}"
+NEXT
+
+DISPLAY ""
+
+# --- Get SPI Device Information ---
+DISPLAY "7. Getting SPI device information..."
+spi_devices = GET_SPI_DEVICES
+PRINT "SPI devices found: {spi_devicesの要素数}"
+
+FOR EACH device IN spi_devices
+  device_name = device["name"]
+  device_type = device["type"]
+  PRINT "  - {device_name} ({device_type})"
+NEXT
+
+DISPLAY ""
+
+# --- Get Sensor Data ---
+DISPLAY "8. Getting sensor data..."
+
+# Get data from temperature sensor
+temp_data = GET_SENSOR_DATA "sensor_001"
+PRINT "Temperature sensor data: {temp_data["data"]["value"]}{temp_data["data"]["unit"]}"
+
+# Get data from humidity sensor
+humidity_data = GET_SENSOR_DATA "sensor_002"
+PRINT "Humidity sensor data: {humidity_data["data"]["value"]}{humidity_data["data"]["unit"]}"
+
+# Get data from distance sensor
+distance_data = GET_SENSOR_DATA "sensor_003"
+PRINT "Distance sensor data: {distance_data["data"]["value"]}{distance_data["data"]["unit"]}"
+
+DISPLAY ""
+
+# --- Motor Control ---
+DISPLAY "9. Motor control test..."
+
+# Control left motor forward
+left_motor = CONTROL_MOTOR "motor_001" "forward"
+PRINT "Left motor control result: {left_motor["result"]["message"]}"
+
+# Control right motor forward
+right_motor = CONTROL_MOTOR "motor_002" "forward"
+PRINT "Right motor control result: {right_motor["result"]["message"]}"
+
+# Control arm motor
+arm_control = CONTROL_MOTOR "motor_003" "speed 90"
+PRINT "Arm motor control result: {arm_control["result"]["message"]}"
+
+DISPLAY ""
+
+# --- Hardware Status Monitoring ---
+DISPLAY "10. Monitoring hardware status..."
+hardware_status = MONITOR_HARDWARE
+
+PRINT "Hardware status summary:"
+PRINT "Timestamp: {hardware_status["timestamp"]}"
+PRINT "Active sensors: {hardware_status["sensors"]の要素数}"
+PRINT "Ready motors: {hardware_status["motors"]の要素数}"
+PRINT "Available GPIO ports: {hardware_status["gpio"]の要素数}"
+
+DISPLAY ""
+
+# --- Formatted Hardware Information ---
+DISPLAY "11. Displaying formatted hardware information..."
+formatted_info = FORMAT_HARDWARE_INFO hardware_status
+PRINT formatted_info
+
+DISPLAY ""
+
+# --- Practical Example: Robot Control ---
+DISPLAY "12. Practical example: Robot control..."
+
+# Get basic robot information
+robot_info = DISCOVER_HARDWARE
+PRINT "Robot configuration:"
+PRINT "  Sensors: {robot_info["sensors"]の要素数}"
+PRINT "  Motors: {robot_info["motors"]の要素数}"
+PRINT "  Wheels: {robot_info["wheels"]["count"]}"
+
+# Move robot forward
+PRINT "Moving robot forward..."
+CONTROL_MOTOR "motor_001" "forward"
+CONTROL_MOTOR "motor_002" "forward"
+
+# Wait 3 seconds
+WAIT 3000
+
+# Stop robot
+PRINT "Stopping robot..."
+CONTROL_MOTOR "motor_001" "stop"
+CONTROL_MOTOR "motor_002" "stop"
+
+DISPLAY ""
+
+# --- Data Collection and Analysis ---
+DISPLAY "13. Data collection and analysis..."
+
+# Collect sensor data 5 times
+collected_data = []
+REPEAT 5 times
+  # Get latest sensor data
+  latest_status = MONITOR_HARDWARE
+  sensor_data = latest_status["sensors"]
+  
+  # Collect data
+  FOR EACH sensor IN sensor_data
+    data_point = {
+      "timestamp": sensor["lastData"]["timestamp"],
+      "sensor": sensor["name"],
+      "value": sensor["lastData"]["value"],
+      "unit": sensor["lastData"]["unit"]
+    }
+    collected_dataにdata_pointを追加
+  NEXT
+  
+  WAIT 1000
+NEXT
+
+PRINT "Collected data points: {collected_dataの要素数}"
+
+# Calculate average temperature
+temp_data_list = collected_dataをフィルタリング "sensor" "温度センサー"
+temp_values = temp_data_listをマッピング "value"
+temp_average = temp_valuesを平均
+PRINT "Average temperature: {temp_average}°C"
+
+DISPLAY ""
+
+# --- Kid-Friendly Mode Example ---
+DISPLAY "14. Kid-friendly mode example..."
+「かんたんモード」
+
+# Kid-friendly hardware operations
+PRINT "🤖 Hello Robot-san!"
+DOG_BARK
+
+# Play with sensors
+PRINT "📡 Let's play with sensors!"
+sensor_data = GET_SENSOR_DATA "sensor_001"
+DECORATE "Temperature is {sensor_data["data"]["value"]} degrees!"
+
+# Play with motors
+PRINT "🚗 Let's play with motors!"
+motor_result = CONTROL_MOTOR "motor_001" "forward"
+CHIRP_CHIRP
+
+DISPLAY ""
+
+# --- Advanced Hardware Features ---
+DISPLAY "15. Advanced hardware features..."
+
+# Hardware capability analysis
+hardware_capabilities = {
+  "sensors": {
+    "temperature": true,
+    "humidity": true,
+    "distance": true,
+    "light": true,
+    "accelerometer": true
+  },
+  "actuators": {
+    "dc_motors": 2,
+    "servo_motors": 1,
+    "wheels": 4
+  },
+  "interfaces": {
+    "gpio": 28,
+    "i2c": 2,
+    "spi": 1
+  }
+}
+
+PRINT "Hardware capabilities:"
+PRINT "  Sensor types: {hardware_capabilities["sensors"]のキー数}"
+PRINT "  DC motors: {hardware_capabilities["actuators"]["dc_motors"]}"
+PRINT "  Servo motors: {hardware_capabilities["actuators"]["servo_motors"]}"
+PRINT "  Wheels: {hardware_capabilities["actuators"]["wheels"]}"
+PRINT "  GPIO ports: {hardware_capabilities["interfaces"]["gpio"]}"
+PRINT "  I2C devices: {hardware_capabilities["interfaces"]["i2c"]}"
+PRINT "  SPI devices: {hardware_capabilities["interfaces"]["spi"]}"
+
+# --- Auto-detection Benefits ---
+DISPLAY ""
+DISPLAY "=== Auto-detection Benefits ==="
+PRINT "✅ No need to know sensor numbers!"
+PRINT "✅ Automatic motor and wheel detection!"
+PRINT "✅ Easy GPIO port identification!"
+PRINT "✅ I2C/SPI device auto-discovery!"
+PRINT "✅ Real-time hardware monitoring!"
+PRINT "✅ Kid-friendly commands available!"
+PRINT "✅ English and Japanese support!"
+
+DISPLAY ""
+DISPLAY "=== Demo Complete ==="
+PRINT "🔧 Now Nadesiko3 can automatically discover and investigate hardware!"
+PRINT "🤖 No more worrying about sensor numbers or motor IDs!"
+PRINT "🚗 Automatic wheel and tire counting!"
+PRINT "🎈 Kids can easily control robots!"
+PRINT "🌍 Perfect for international users!"
+
+koko

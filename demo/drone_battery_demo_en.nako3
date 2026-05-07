@@ -1,0 +1,486 @@
+# Advanced Drone Battery Monitoring Demo - English Version
+# Battery monitoring with automatic return-to-home system
+
+DISPLAY "=== Advanced Drone Battery Monitoring Demo ==="
+
+# --- Battery System Discovery ---
+DISPLAY "1. Discovering battery systems..."
+all_battery_systems = DISCOVER_DRONE_BATTERY "all"
+PRINT "Battery systems found: {all_battery_systemsのキー数}"
+
+FOR EACH system IN all_battery_systems
+  IF system.key !== "initialized" AND system.key !== "timestamp" THEN
+    system_name = system.value["name"] || system.key
+    PRINT "  {system_name}"
+  ENDIF
+NEXT
+
+DISPLAY ""
+
+# --- Battery Level Measurement ---
+DISPLAY "2. Getting battery level..."
+battery_level = GET_BATTERY_LEVEL
+PRINT "Battery level: {battery_level["message"]}"
+PRINT "Current battery level: {battery_level["measurement"]["level"]}%"
+PRINT "Voltage: {battery_level["measurement"]["voltage"]}V"
+PRINT "Temperature: {battery_level["measurement"]["temperature"]}°C"
+PRINT "Measurement time: {battery_level["measurement"]["timestamp"]}"
+
+DISPLAY ""
+
+# --- Battery Status Check ---
+DISPLAY "3. Getting battery status..."
+battery_status = GET_BATTERY_STATUS
+PRINT "Battery status: {battery_status["message"]}"
+PRINT "Status: {battery_status["status"]["status"]}"
+PRINT "Health: {battery_status["status"]["health"]}"
+PRINT "Estimated flight time: {battery_status["status"]["estimated_flight_time"]} minutes"
+PRINT "Charging status: {battery_status["status"]["charging_status"]}"
+PRINT "Cycle count: {battery_status["status"]["cycle_count"]}"
+
+DISPLAY ""
+
+# --- Start Battery Monitoring ---
+DISPLAY "4. Starting battery monitoring..."
+monitoring_start = START_BATTERY_MONITORING
+PRINT "Monitoring start: {monitoring_start["message"]}"
+PRINT "Monitoring active: {monitoring_start["monitoring_active"]}"
+PRINT "Monitoring interval: {monitoring_start["interval"]}ms"
+
+DISPLAY ""
+
+# --- Calculate Return Distance ---
+DISPLAY "5. Calculating return distance..."
+return_distance = CALCULATE_RETURN_DISTANCE
+PRINT "Return distance: {return_distance["message"]}"
+PRINT "Current distance: {return_distance["current_distance"]}m"
+PRINT "Available return distance: {return_distance["available_return_distance"]}m"
+PRINT "Max return distance: {return_distance["max_return_distance"]}m"
+PRINT "Can return: {return_distance["can_return"]}"
+PRINT "Safety margin: {return_distance["safety_margin"]}m"
+PRINT "Estimated return time: {return_distance["estimated_return_time"]} minutes"
+
+DISPLAY ""
+
+# --- Set Auto Return Threshold ---
+DISPLAY "6. Setting auto return threshold..."
+auto_return = SET_AUTO_RETURN_THRESHOLD 25
+PRINT "Auto return threshold: {auto_return["message"]}"
+PRINT "Threshold: {auto_return["threshold"]}%"
+
+DISPLAY ""
+
+# --- Calculate Battery Consumption Rate ---
+DISPLAY "7. Calculating battery consumption rate..."
+consumption_rate = CALCULATE_BATTERY_CONSUMPTION_RATE
+PRINT "Consumption rate: {consumption_rate["message"]}"
+PRINT "Rate: {consumption_rate["rate"]}%/min"
+PRINT "Time period: {consumption_rate["time_period"]} minutes"
+PRINT "Level change: {consumption_rate["level_change"]}%"
+
+DISPLAY ""
+
+# --- Predict Flight Time ---
+DISPLAY "8. Predicting flight time..."
+flight_time = PREDICT_FLIGHT_TIME
+PRINT "Flight time prediction: {flight_time["message"]}"
+PRINT "Remaining minutes: {flight_time["remaining_minutes"]}"
+PRINT "Current level: {flight_time["current_level"]}%"
+PRINT "Max flight time: {flight_time["max_flight_time"]} minutes"
+
+DISPLAY ""
+
+# --- Set Battery Warnings ---
+DISPLAY "9. Setting battery warnings..."
+warnings = {
+  "low_battery": 30,
+  "critical_battery": 20,
+  "emergency_battery": 10
+}
+battery_warnings = SET_BATTERY_WARNINGS warnings
+PRINT "Battery warnings: {battery_warnings["message"]}"
+PRINT "Low battery warning: {battery_warnings["warnings"]["low_battery"]}%"
+PRINT "Critical battery warning: {battery_warnings["warnings"]["critical_battery"]}%"
+PRINT "Emergency battery warning: {battery_warnings["warnings"]["emergency_battery"]}%"
+
+DISPLAY ""
+
+# --- Evaluate Battery Performance ---
+DISPLAY "10. Evaluating battery performance..."
+performance = EVALUATE_BATTERY_PERFORMANCE
+PRINT "Battery performance: {performance["message"]}"
+PRINT "Performance score: {performance["evaluation"]["performance_score"]}"
+PRINT "Average level: {performance["evaluation"]["average_level"]}%"
+PRINT "Min level: {performance["evaluation"]["min_level"]}%"
+PRINT "Max level: {performance["evaluation"]["max_level"]}%"
+PRINT "Stability: {performance["evaluation"]["stability"]}%"
+PRINT "Health status: {performance["evaluation"]["health_status"]}"
+
+PRINT "Recommendations:"
+FOR EACH recommendation IN performance["evaluation"]["recommendations"]
+  PRINT "  {recommendation}"
+NEXT
+
+DISPLAY ""
+
+# --- Execute Emergency Return ---
+DISPLAY "11. Executing emergency return..."
+emergency_return = EXECUTE_EMERGENCY_RETURN
+PRINT "Emergency return: {emergency_return["message"]}"
+PRINT "Return type: {emergency_return["return_operation"]["return_type"]}"
+PRINT "Destination: {emergency_return["return_operation"]["destination"]["latitude"]}, {emergency_return["return_operation"]["destination"]["longitude"]}"
+PRINT "Estimated time: {emergency_return["return_operation"]["estimated_time"]} minutes"
+PRINT "Battery level at initiation: {emergency_return["return_operation"]["battery_level_at_initiation"]}%"
+PRINT "Status: {emergency_return["return_operation"]["status"]}"
+
+DISPLAY ""
+
+# --- Get Battery History ---
+DISPLAY "12. Getting battery history..."
+battery_history = GET_BATTERY_HISTORY
+PRINT "Battery history: {battery_history["message"]}"
+PRINT "Total records: {battery_history["total_records"]}"
+PRINT "Latest level: {battery_history["latest"]["level"]}%"
+
+PRINT "Recent battery history:"
+FOR EACH record IN battery_history["history"]
+  PRINT "  {record["timestamp"]}: {record["level"]}% (Voltage: {record["voltage"]}V)"
+NEXT
+
+DISPLAY ""
+
+# --- Auto Battery Monitoring ---
+DISPLAY "13. Running auto battery monitoring..."
+auto_monitoring = AUTO_BATTERY_MONITORING
+PRINT "Auto battery monitoring: {auto_monitoring["message"]}"
+PRINT "Total measurements: {auto_monitoring["total_measurements"]}"
+PRINT "Average battery level: {auto_monitoring["average_battery_level"]}%"
+PRINT "Average consumption rate: {auto_monitoring["average_consumption_rate"]}%/min"
+PRINT "Auto return triggered: {auto_monitoring["auto_return_triggered"]}"
+
+PRINT "Measurement results:"
+FOR EACH measurement IN auto_monitoring["measurements"]
+  PRINT "  {measurement["timestamp"]}:"
+  PRINT "    Battery level: {measurement["battery_level"]}%"
+  PRINT "    Battery status: {measurement["battery_status"]}"
+  PRINT "    Return distance: {measurement["return_distance"]}m"
+  PRINT "    Consumption rate: {measurement["consumption_rate"]}%/min"
+  PRINT "    Remaining flight time: {measurement["remaining_flight_time"]} minutes"
+  PRINT "    Auto return triggered: {measurement["auto_return_triggered"]}"
+  PRINT "    Warning level: {measurement["warning_level"]}"
+  PRINT "---"
+NEXT
+
+DISPLAY ""
+
+# --- Integrated Battery Management ---
+DISPLAY "14. Checking integrated battery management..."
+integrated_management = INTEGRATED_BATTERY_MANAGEMENT
+PRINT "Integrated system status: {integrated_management["overall_status"]}"
+PRINT "Available operations: {integrated_management["available_operations"]のキー数}"
+
+PRINT "System status details:"
+PRINT "  Battery system: {integrated_management["battery_system"]["active"]}"
+PRINT "  Monitoring system: {integrated_management["monitoring_system"]["active"]}"
+PRINT "  Return system: {integrated_management["return_system"]["active"]}"
+PRINT "  Safety system: {integrated_management["safety_system"]["active"]}"
+
+DISPLAY ""
+
+# --- Practical Example: Safe Flight Management ---
+DISPLAY "15. Practical example: Safe flight management..."
+
+# Start continuous monitoring
+PRINT "Starting safe flight management..."
+safe_flight_log = []
+
+REPEAT 15 times
+  # Execute all measurements
+  battery_level = GET_BATTERY_LEVEL
+  battery_status = GET_BATTERY_STATUS
+  return_distance = CALCULATE_RETURN_DISTANCE
+  consumption_rate = CALCULATE_BATTERY_CONSUMPTION_RATE
+  flight_time = PREDICT_FLIGHT_TIME
+  
+  # Safety assessment
+  battery_level_value = battery_level["measurement"]["level"]
+  can_return = return_distance["can_return"]
+  remaining_time = flight_time["remaining_minutes"]
+  
+  # Auto return assessment
+  IF battery_level_value <= 10 THEN
+    PRINT "🚨 Emergency battery! Executing immediate return!"
+    emergency_return = EXECUTE_EMERGENCY_RETURN
+    IF emergency_return["success"] THEN
+      PRINT "🏠 Emergency return executed!"
+    ENDIF
+    safe_flight_logに{
+      "timestamp": new Date().toISOString(),
+      "event": "emergency_return",
+      "battery_level": battery_level_value,
+      "action": "emergency_return_executed",
+      "severity": "critical"
+    }を追加
+    BREAK
+  ENDIF
+  
+  IF battery_level_value <= 20 THEN
+    PRINT "⚠️ Critical battery level! Preparing return!"
+    safe_flight_logに{
+      "timestamp": new Date().toISOString(),
+      "event": "critical_battery_warning",
+      "battery_level": battery_level_value,
+      "action": "prepare_return",
+      "severity": "warning"
+    }を追加
+  ENDIF
+  
+  IF can_return = false THEN
+    PRINT "🚫 Insufficient return distance! Landing safely!"
+    safe_flight_logに{
+      "timestamp": new Date().toISOString(),
+      "event": "insufficient_return_distance",
+      "battery_level": battery_level_value,
+      "action": "safe_landing",
+      "severity": "high"
+    }を追加
+  ENDIF
+  
+  IF remaining_time <= 5 THEN
+    PRINT "⏰ Less than 5 minutes remaining! Return recommended!"
+    safe_flight_logに{
+      "timestamp": new Date().toISOString(),
+      "event": "low_flight_time",
+      "remaining_time": remaining_time,
+      "action": "return_recommended",
+      "severity": "moderate"
+    }を追加
+  ENDIF
+  
+  IF consumption_rate["rate"] > 2 THEN
+    PRINT "📈 High consumption rate! Adjust flight mode!"
+    safe_flight_logに{
+      "timestamp": new Date().toISOString(),
+      "event": "high_consumption_rate",
+      "consumption_rate": consumption_rate["rate"],
+      "action": "adjust_flight_mode",
+      "severity": "moderate"
+    }を追加
+  ENDIF
+  
+  WAIT 1000
+NEXT
+
+PRINT "Safe flight management completed"
+PRINT "Safe flight log:"
+FOR EACH log IN safe_flight_log
+  PRINT "  {log["timestamp"]}: {log["event"]} - {log["action"]}"
+NEXT
+
+DISPLAY ""
+
+# --- Kid-Friendly Mode Example ---
+DISPLAY "16. Kid-friendly mode example..."
+「かんたんモード」
+
+# Kid-friendly battery monitoring
+PRINT "🔋 Hello drone battery monitor!"
+DOG_BARK
+
+# Play with battery level
+PRINT "🔋 Let's check battery level!"
+battery_level = GET_BATTERY_LEVEL
+DECORATE "Battery is {battery_level["measurement"]["level"]}% full!"
+CAT_MEOW
+
+# Play with battery status
+PRINT "🔋 Let's check battery health!"
+battery_status = GET_BATTERY_STATUS
+IF battery_status["status"]["health"] = "good" THEN
+  DECORATE "Battery is healthy!"
+  CAT_MEOW
+ELSE IF battery_status["status"]["health"] = "fair" THEN
+  DECORATE "Battery is a bit tired!"
+ELSE
+  DECORATE "Battery needs rest!"
+ENDIF
+
+# Play with return distance
+PRINT "🏠 Let's check if we can go home!"
+return_distance = CALCULATE_RETURN_DISTANCE
+IF return_distance["can_return"] THEN
+  DECORATE "We can go home! Yay!"
+  CAT_MEOW
+ELSE
+  DECORATE "We can't go home! Let's land safely!"
+ENDIF
+
+# Play with flight time
+PRINT "⏰ Let's check how long we can fly!"
+flight_time = PREDICT_FLIGHT_TIME
+remaining_time = flight_time["remaining_minutes"]
+
+IF remaining_time > 20 THEN
+  DECORATE "We can fly for a long time! So exciting!"
+ELSE IF remaining_time > 10 THEN
+  DECORATE "We can fly for a little while!"
+ELSE IF remaining_time > 5 THEN
+  DECORATE "It's almost time to go home!"
+ELSE
+  DECORATE "Let's go home now!"
+ENDIF
+
+# Play with emergency return
+PRINT "🚨 Let's try emergency return!"
+emergency_return = EXECUTE_EMERGENCY_RETURN
+IF emergency_return["success"] THEN
+  DECORATE "Flying back home! So fast!"
+  CAT_MEOW
+ELSE
+  DECORATE "Couldn't return home!"
+ENDIF
+
+DISPLAY ""
+
+# --- Advanced Features: Battery Optimization ---
+DISPLAY "17. Advanced features: Battery optimization..."
+
+# Collect 30 minutes of data
+PRINT "Collecting 30 minutes of battery data..."
+optimization_data = []
+
+REPEAT 30 times
+  # Execute all measurements
+  battery_level = GET_BATTERY_LEVEL
+  consumption_rate = CALCULATE_BATTERY_CONSUMPTION_RATE
+  return_distance = CALCULATE_RETURN_DISTANCE
+  flight_time = PREDICT_FLIGHT_TIME
+  
+  optimization_dataに{
+    "minute": optimization_dataのキー数 + 1,
+    "timestamp": new Date().toISOString(),
+    "battery_level": battery_level["measurement"]["level"],
+    "consumption_rate": consumption_rate["rate"],
+    "return_distance": return_distance["available_return_distance"],
+    "remaining_flight_time": flight_time["remaining_minutes"],
+    "can_return": return_distance["can_return"]
+  }を追加
+  
+  WAIT 1000
+NEXT
+
+# Data analysis
+PRINT "Battery optimization analysis results:"
+
+# Calculate averages
+avg_battery = optimization_dataから "battery_level" を平均
+avg_consumption = optimization_dataから "consumption_rate" を平均
+avg_return_distance = optimization_dataから "return_distance" を平均
+avg_flight_time = optimization_dataから "remaining_flight_time" を平均
+
+PRINT "  Average battery level: {avg_battery.toFixed(1)}%"
+PRINT "  Average consumption rate: {avg_consumption.toFixed(3)}%/min"
+PRINT "  Average return distance: {avg_return_distance.toFixed(1)}m"
+PRINT "  Average remaining flight time: {avg_flight_time.toFixed(1)} minutes"
+
+# Max/min values
+max_consumption = optimization_dataから "consumption_rate" を最大
+min_battery = optimization_dataから "battery_level" を最小
+max_flight_time = optimization_dataから "remaining_flight_time" を最大
+
+PRINT "  Highest consumption rate: {max_consumption.toFixed(3)}%/min"
+PRINT "  Lowest battery: {min_battery.toFixed(1)}%"
+PRINT "  Longest flight time: {max_flight_time.toFixed(1)} minutes"
+
+# Safety assessment
+safe_flights = optimization_data.filter(d => d.can_return = true).length
+total_flights = optimization_data.length
+safety_rate = (safe_flights / total_flights * 100)
+
+PRINT "  Safe return rate: {safety_rate.toFixed(1)}%"
+
+# Optimization recommendations
+PRINT "Battery optimization recommendations:"
+IF avg_consumption > 1.5 THEN
+  PRINT "  ⚠️ High consumption rate. Adjust flight mode"
+ENDIF
+
+IF safety_rate < 80 THEN
+  PRINT "  🚫 Low safe return rate. Review return planning"
+ENDIF
+
+IF avg_battery < 30 THEN
+  PRINT "  🔋 Low battery level. Frequent charging needed"
+ENDIF
+
+IF avg_flight_time < 10 THEN
+  PRINT "  ⏰ Short flight time. Consider battery replacement"
+ENDIF
+
+DISPLAY ""
+
+# --- Battery Data Export ---
+DISPLAY "18. Exporting battery data..."
+
+# Create comprehensive battery report
+battery_report = {
+  "report_date": new Date().toISOString(),
+  "analysis_period": "30 minutes",
+  "data_points": optimization_data.length,
+  "statistics": {
+    "average_battery_level": avg_battery,
+    "average_consumption_rate": avg_consumption,
+    "average_return_distance": avg_return_distance,
+    "average_remaining_flight_time": avg_flight_time,
+    "max_consumption_rate": max_consumption,
+    "min_battery_level": min_battery,
+    "max_flight_time": max_flight_time,
+    "safety_rate": safety_rate
+  },
+  "optimization_recommendations": this._generateBatteryOptimizationRecommendations(avg_battery, avg_consumption, safety_rate)
+}
+
+PRINT "Battery data exported successfully!"
+PRINT "Report includes:"
+PRINT "  Data points: {battery_report["data_points"]}"
+PRINT "  Analysis period: {battery_report["analysis_period"]}"
+PRINT "  Safety rate: {battery_report["statistics"]["safety_rate"].toFixed(1)}%"
+PRINT "  Recommendations: {battery_report["optimization_recommendations"].length} items"
+
+DISPLAY ""
+
+# --- Drone Battery Benefits Summary ---
+DISPLAY ""
+DISPLAY "=== Advanced Drone Battery Benefits ==="
+PRINT "✅ Complete battery monitoring system!"
+PRINT "✅ Real-time battery level tracking!"
+PRINT "✅ Automatic return-to-home functionality!"
+PRINT "✅ Emergency return for battery safety!"
+PRINT "✅ Battery consumption rate analysis!"
+PRINT "✅ Flight time prediction!"
+PRINT "✅ Battery performance evaluation!"
+PRINT "✅ Battery history tracking!"
+PRINT "✅ Safety warning system!"
+PRINT "✅ Integrated battery management!"
+PRINT "✅ Safe flight management!"
+PRINT "✅ Battery optimization features!"
+PRINT "✅ Kid-friendly battery monitoring!"
+PRINT "✅ English and Japanese support!"
+
+DISPLAY ""
+DISPLAY "=== Demo Complete ==="
+PRINT "🔋 Now Nadesiko3 has advanced drone battery management!"
+PRINT "📊 Real-time battery monitoring for complete awareness!"
+PRINT "🏠 Automatic return-to-home for guaranteed safety!"
+PRINT "🚨 Emergency return to prevent battery depletion!"
+PRINT "📈 Consumption rate analysis for efficient flying!"
+PRINT "⏰ Flight time prediction for planning!"
+PRINT "🔧 Performance evaluation for battery health!"
+PRINT "📊 History tracking for long-term analysis!"
+PRINT "⚠️ Safety warnings for risk prevention!"
+PRINT "🏠 Smart return system for complete safety!"
+PRINT "🤖 24/7 auto monitoring for continuous protection!"
+PRINT "🎈 Kids can easily monitor battery levels!"
+PRINT "🌍 Perfect for international drone operations!"
+
+koko

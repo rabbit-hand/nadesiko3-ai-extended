@@ -1,0 +1,719 @@
+# ブラウザ機能拡張・Webインターフェース強化デモ
+# Advanced Browser Enhancement and Web Interface Demo
+
+「=== ブラウザ機能拡張・Webインターフェース強化デモ ===」と表示。
+
+# --- Web機能検出 ---
+「1. Web機能を検出中...」と表示。
+全Web機能 = Web機能検出「全部」
+「検出された機能数: {全Web機能のキー数}」と表示。
+
+全Web機能を反復
+  IF 対象.key !== "initialized" AND 対象.key !== "timestamp" THEN
+    機能名 = 対象.value["name"] || 対象.key
+    「  {機能名}」と表示。
+  ENDIF
+ここまで。
+
+「」と表示。
+
+# --- UIコンポーネント作成 ---
+「2. UIコンポーネントを作成中...」と表示。
+ボタン作成 = UIコンポーネント作成「button」「main_container」
+「ボタンコンポーネント: {ボタン作成["message"]}」と表示。
+「コンポーネントID: {ボタン作成["component"]["id"]}」と表示。
+「コンポーネントタイプ: {ボタン作成["component"]["type"]}」と表示。
+「コンテナ: {ボタン作成["component"]["container"]}」と表示。
+
+# ボタンのプロパティを表示
+ボタンプロパティ = ボタン作成["component"]["properties"]
+「ボタンテキスト: {ボタンプロパティ["text"]}」と表示。
+「ボタンタイプ: {ボタンプロパティ["type"]}」と表示。
+「ボタンサイズ: {ボタンプロパティ["size"]}」と表示。
+
+# ボタンのイベントを表示
+ボタンイベント = ボタン作成["component"]["events"]
+「サポートイベント: {ボタンイベントを「,」で区切って表示}」と表示。
+
+# ボタンのスタイルを表示
+ボタンスタイル = ボタン作成["component"]["styles"]
+「スタイル: {ボタンスタイル}」と表示。
+
+「」と表示。
+
+# --- 入力フィールド作成 ---
+「3. 入力フィールドを作成中...」と表示。
+入力作成 = UIコンポーネント作成「input」「form_container」
+「入力フィールド: {入力作成["message"]}」と表示。
+「プレースホルダー: {入力作成["component"]["properties"]["placeholder"]}」と表示。
+「入力タイプ: {入力作成["component"]["properties"]["type"]}」と表示。
+「必須項目: {入力作成["component"]["properties"]["required"]}」と表示。
+
+「」と表示。
+
+# --- セレクトボックス作成 ---
+「4. セレクトボックスを作成中...」と表示。
+セレクト作成 = UIコンポーネント作成「select」「filter_container」
+「セレクトボックス: {セレクト作成["message"]}」と表示。
+「オプション: {セレクト作成["component"]["properties"]["options"]を「,」で区切って表示}」と表示。
+「複数選択: {セレクト作成["component"]["properties"]["multiple"]}」と表示。
+
+「」と表示。
+
+# --- Canvas描画 ---
+「5. Canvas描画を実行中...」と表示。
+線描画コマンド = {
+  "type": "draw_line",
+  "parameters": {
+    "start_x": 10,
+    "start_y": 10,
+    "end_x": 100,
+    "end_y": 100,
+    "color": "#ff0000",
+    "width": 2
+  }
+}
+線描画 = Canvas描画 線描画コマンド「main_canvas」
+「線描画: {線描画["message"]}」と表示。
+「描画ID: {線描画["draw_result"]["id"]}」と表示。
+「操作タイプ: {線描画["draw_result"]["operation"]}」と表示。
+「実行時間: {線描画["draw_result"]["execution_time"]}ms」と表示。
+「描画品質: {線描画["draw_result"]["rendering_quality"]}%」と表示。
+
+# 円描画
+円描画コマンド = {
+  "type": "draw_circle",
+  "parameters": {
+    "center_x": 150,
+    "center_y": 50,
+    "radius": 30,
+    "color": "#00ff00",
+    "fill": true
+  }
+}
+円描画 = Canvas描画 円描画コマンド「main_canvas」
+「円描画: {円描画["message"]}」と表示。
+「中心座標: ({円描画["draw_result"]["parameters"]["center_x"]}, {円描画["draw_result"]["parameters"]["center_y"]})」と表示。
+「半径: {円描画["draw_result"]["parameters"]["radius"]}」と表示。
+
+# テキスト描画
+テキスト描画コマンド = {
+  "type": "draw_text",
+  "parameters": {
+    "text": "なでしこ3 Web拡張",
+    "x": 50,
+    "y": 150,
+    "font": "Arial",
+    "size": 20,
+    "color": "#0000ff"
+  }
+}
+テキスト描画 = Canvas描画 テキスト描画コマンド「main_canvas」
+「テキスト描画: {テキスト描画["message"]}」と表示。
+「テキスト: {テキスト描画["draw_result"]["parameters"]["text"]}」と表示。
+
+「」と表示。
+
+# --- アニメーション実行 ---
+「6. アニメーションを実行中...」と表示。
+フェードイン = アニメーション実行「fade_in」「main_element」
+「フェードイン: {フェードイン["message"]}」と表示。
+「アニメーションID: {フェードイン["animation"]["id"]}」と表示。
+「アニメーションタイプ: {フェードイン["animation"]["type"]}」と表示。
+「持続時間: {フェードイン["animation"]["duration"]}秒」と表示。
+「FPS: {フェードイン["animation"]["fps"]}」と表示。
+「パフォーマンススコア: {フェードイン["animation"]["performance_score"]}%」と表示。
+
+# スライドインアニメーション
+スライドイン = アニメーション実行「slide_in」「sidebar_element」
+「スライドイン: {スライドイン["message"]}」と表示。
+「持続時間: {スライドイン["animation"]["duration"]}秒」と表示。
+
+# バウンスアニメーション
+バウンス = アニメーション実行「bounce」「button_element」
+「バウンス: {バウンス["message"]}」と表示。
+「持続時間: {バウンス["animation"]["duration"]}秒」と表示。
+
+「」と表示。
+
+# --- Webストレージ操作 ---
+「7. Webストレージ操作を実行中...」と表示。
+
+# データ保存
+保存データ = {
+  "storage_type": "localStorage",
+  "key": "user_preferences",
+  "value": {
+    "theme": "dark",
+    "language": "ja",
+    "notifications": true
+  }
+}
+データ保存 = Webストレージ操作「save」保存データ
+「データ保存: {データ保存["message"]}」と表示。
+「ストレージID: {データ保存["storage"]["id"]}」と表示。
+「ストレージタイプ: {データ保存["storage"]["storage_type"]}」と表示。
+「データサイズ: {データ保存["storage"]["data_size"]}KB」と表示。
+「暗号化: {データ保存["storage"]["encrypted"]}」と表示。
+「圧縮: {データ保存["storage"]["compressed"]}」と表示。
+
+# データ読み込み
+読み込みデータ = {
+  "storage_type": "localStorage",
+  "key": "user_preferences"
+}
+データ読み込み = Webストレージ操作「load」読み込みデータ
+「データ読み込み: {データ読み込み["message"]}」と表示。
+
+# ストレージ状態確認
+ストレージ状態 = Webストレージ操作「status」{}
+「ストレージ状態: {ストレージ状態["message"]}」と表示。
+「使用量: {ストレージ状態["storage"]["storage_used"]}MB」と表示。
+「利用可能: {ストレージ状態["storage"]["storage_available"]}MB」と表示。
+
+「」と表示。
+
+# --- メディア操作 ---
+「8. メディア操作を実行中...」と表示。
+
+# 画像処理
+画像処理 = メディア操作「image」「process」
+「画像処理: {画像処理["message"]}」と表示。
+「メディアID: {画像処理["media"]["id"]}」と表示。
+「メディアタイプ: {画像処理["media"]["type"]}」と表示。
+「フォーマット: {画像処理["media"]["format"]}」と表示。
+「ファイルサイズ: {画像処理["media"]["file_size"]}MB」と表示。
+「品質: {画像処理["media"]["quality"]}%」と表示。
+「処理時間: {画像処理["media"]["processing_time"]}ms」と表示。
+
+# 音声処理
+音声処理 = メディア操作「audio」「record」
+「音声処理: {音声処理["message"]}」と表示。
+「フォーマット: {音声処理["media"]["format"]}」と表示。
+「再生時間: {音声処理["media"]["duration"]}秒」と表示。
+
+# 動画処理
+動画処理 = メディア操作「video」「stream」
+「動画処理: {動画処理["message"]}」と表示。
+「フォーマット: {動画処理["media"]["format"]}」と表示。
+「再生時間: {動画処理["media"]["duration"]}秒」と表示。
+
+「」と表示。
+
+# --- ネットワーク状態確認 ---
+「9. ネットワーク状態を確認中...」と表示。
+ネットワーク状態 = ネットワーク状態確認
+「ネットワーク状態: {ネットワーク状態["message"]}」と表示。
+「接続タイプ: {ネットワーク状態["network"]["connection_type"]}」と表示。
+「ダウンロード速度: {ネットワーク状態["network"]["download_speed"]}Mbps」と表示。
+「アップロード速度: {ネットワーク状態["network"]["upload_speed"]}Mbps」と表示。
+「レイテンシ: {ネットワーク状態["network"]["latency"]}ms」と表示。
+「パケットロス: {ネットワーク状態["network"]["packet_loss"]}%」と表示。
+「信号強度: {ネットワーク状態["network"]["signal_strength"]}%」と表示。
+「オンライン: {ネットワーク状態["network"]["online"]}」と表示。
+
+「」と表示。
+
+# --- セキュリティチェック ---
+「10. セキュリティチェックを実行中...」と表示。
+セキュリティチェック = セキュリティチェック「comprehensive」
+「セキュリティチェック: {セキュリティチェック["message"]}」と表示。
+「セキュリティスコア: {セキュリティチェック["security"]["security_score"]}%」と表示。
+「全体ステータス: {セキュリティチェック["security"]["overall_status"]}」と表示。
+
+「セキュリティチェック詳細:」と表示。
+セキュリティチェック["security"]["checks_performed"]を反復
+  チェック = 対象
+  「  {チェック["check"]}: {チェック["score"]}% ({チェック["status"]})」と表示。
+  「    詳細: {チェック["details"]}」と表示。
+ここまで。
+
+「推奨事項:」と表示。
+セキュリティチェック["security"]["recommendations"]を反復
+  推奨 = 対象
+  「  {推奨}」と表示。
+ここまで。
+
+「」と表示。
+
+# --- パフォーマンス監視 ---
+「11. パフォーマンスを監視中...」と表示。
+パフォーマンス監視 = パフォーマンス監視
+「パフォーマンス監視: {パフォーマンス監視["message"]}」と表示。
+「全体スコア: {パフォーマンス監視["performance"]["overall_score"]}%」と表示。
+「パフォーマンスグレード: {パフォーマンス監視["performance"]["performance_grade"]}」と表示。
+
+「パフォーマンスメトリクス:」と表示。
+パフォーマンス監視["performance"]["metrics"]を反復
+  メトリック = 対象.key
+  値 = 対象.value
+  「  {メトリック}: {値}」と表示。
+ここまで。
+
+「最適化提案:」と表示。
+パフォーマンス監視["performance"]["optimization_suggestions"]を反復
+  提案 = 対象
+  「  {提案}」と表示。
+ここまで。
+
+「」と表示。
+
+# --- アクセシビリティ設定 ---
+「12. アクセシビリティを設定中...」と表示。
+
+# スクリーンリーダー有効化
+スクリーンリーダー = アクセシビリティ設定「screen_reader」true
+「スクリーンリーダー: {スクリーンリーダー["message"]}」と表示。
+「機能: {スクリーンリーダー["accessibility"]["feature"]}」と表示。
+「設定: {スクリーンリーダー["accessibility"]["setting"]}」と表示。
+「影響: {スクリーンリーダー["accessibility"]["impact"]}」と表示。
+
+# 高コントラスト設定
+高コントラスト = アクセシビリティ設定「high_contrast」true
+「高コントラスト: {高コントラスト["message"]}」と表示。
+「影響: {高コントラスト["accessibility"]["impact"]}」と表示。
+
+# 大きいテキスト設定
+大きいテキスト = アクセシビリティ設定「large_text」true
+「大きいテキスト: {大きいテキスト["message"]}」と表示。
+「影響: {大きいテキスト["accessibility"]["impact"]}」と表示。
+
+「」と表示。
+
+# --- レスポンシブデザイン適用 ---
+「13. レスポンシブデザインを適用中...」と表示。
+レスポンシブデザイン = レスポンシブデザイン適用「mobile_first」「main_container」
+「レスポンシブデザイン: {レスポンシブデザイン["message"]}」と表示。
+「デザインパターン: {レスポンシブデザイン["responsive"]["pattern"]}」と表示。
+「ターゲット: {レスポンシブデザイン["responsive"]["target"]}」と表示。
+「レイアウトエンジン: {レスポンシブデザイン["responsive"]["layout_engine"]}」と表示。
+
+「ブレークポイント:」と表示。
+レスポンシブデザイン["responsive"]["breakpoints"]を反復
+  ブレークポイント = 対象
+  「  {ブレークポイント["name"]}: {ブレークポイント["width"]}px」と表示。
+ここまで。
+
+「」と表示。
+
+# --- Webページ作成 ---
+「14. Webページを作成中...」と表示。
+Webページ作成 = Webページ作成
+「Webページ作成: {Webページ作成["overall_status"]}」と表示。
+「利用可能な操作数: {Webページ作成["available_operations"]のキー数}」と表示。
+
+「システム状態詳細:」と表示。
+「  UIコンポーネント: {Webページ作成["ui_components"]["active"]}」と表示。
+「  Canvasシステム: {Webページ作成["canvas_system"]["active"]}」と表示。
+「  アニメーションシステム: {Webページ作成["animation_system"]["active"]}」と表示。
+「  ストレージシステム: {Webページ作成["storage_system"]["active"]}」と表示。
+「  メディアシステム: {Webページ作成["media_system"]["active"]}」と表示。
+「  ネットワークシステム: {Webページ作成["network_system"]["active"]}」と表示。
+「  セキュリティシステム: {Webページ作成["security_system"]["active"]}」と表示。
+「  パフォーマンスシステム: {Webページ作成["performance_system"]["active"]}」と表示。
+「  アクセシビリティシステム: {Webページ作成["accessibility_system"]["active"]}」と表示。
+「  レスポンシブシステム: {Webページ作成["responsive_system"]["active"]}」と表示。
+
+「」と表示。
+
+# --- 自動Web機能監視 ---
+「15. 自動Web機能監視を実行中...」と表示。
+自動監視 = 自動Web機能監視
+「自動Web機能監視: {自動監視["message"]}」と表示。
+「総計測回数: {自動監視["total_measurements"]}」と表示。
+「平均ネットワーク速度: {自動監視["average_network_speed"]}Mbps」と表示。
+「平均パフォーマンススコア: {自動監視["average_performance_score"]}%」と表示。
+「平均セキュリティスコア: {自動監視["average_security_score"]}%」と表示。
+「平均ストレージ使用量: {自動監視["average_storage_usage"]}MB」と表示。
+「全体Webヘルス: {自動監視["overall_web_health"]}%」と表示。
+
+「計測結果:」と表示。
+自動監視["measurements"]を反復
+  計測 = 対象
+  「  {計測["timestamp"]}:」と表示。
+  「    ネットワーク状態: {計測["network_status"]}」と表示。
+  「    ネットワーク速度: {計測["network_speed"]}Mbps」と表示。
+  「    パフォーマンススコア: {計測["performance_score"]}%」と表示。
+  「    メモリ使用率: {計測["memory_usage"]}%」と表示。
+  「    CPU使用率: {計測["cpu_usage"]}%」と表示。
+  「    セキュリティスコア: {計測["security_score"]}%」と表示。
+  「    ストレージ使用量: {計測["storage_used"]}MB」と表示。
+  「    ストレージ利用可能: {計測["storage_available"]}MB」と表示。
+  「---」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 実用的な例：インタラクティブWebアプリケーション ---
+「16. 実用的な例：インタラクティブWebアプリケーション...」と表示。
+
+# インタラクティブダッシュボード作成
+「インタラクティブダッシュボードを作成します...」と表示。
+ダッシュボードコンポーネント = []
+
+# ダッシュボードの基本コンポーネントを作成
+コンポーネントリスト = ["button", "input", "select", "progress_bar", "slider"]
+
+コンポーネントリストを反復
+  コンポーネントタイプ = 対象
+  コンテナ = "dashboard_container"
+  
+  コンポーネント作成 = UIコンポーネント作成 コンポーネントタイプ コンテナ
+  
+  IF コンポーネント作成["success"] THEN
+    「✅ {コンポーネントタイプ}コンポーネント作成成功！」と表示。
+    ダッシュボードコンポーネントにコンポーネント作成["component"]を追加
+  ELSE
+    「❌ {コンポーネントタイプ}コンポーネント作成失敗」と表示。
+  ENDIF
+ここまで。
+
+# Canvasでチャート描画
+「Canvasでチャートを描画します...」と表示。
+チャート描画コマンド = {
+  "type": "draw_rectangle",
+  "parameters": {
+    "x": 50,
+    "y": 50,
+    "width": 200,
+    "height": 100,
+    "color": "#3498db",
+    "fill": true
+  }
+}
+チャート描画 = Canvas描画 チャート描画コマンド「chart_canvas」
+「チャート描画: {チャート描画["message"]}」と表示。
+
+# アニメーション効果を追加
+「アニメーション効果を追加します...」と表示。
+アニメーションリスト = ["fade_in", "slide_in", "bounce", "pulse"]
+
+アニメーションリストを反復
+  アニメーションタイプ = 対象
+  ターゲット = "dashboard_element"
+  
+  アニメーション実行 = アニメーション実行 アニメーションタイプ ターゲット
+  
+  IF アニメーション実行["success"] THEN
+    「✅ {アニメーションタイプ}アニメーション実行成功！」と表示。
+  ELSE
+    「❌ {アニメーションタイプ}アニメーション実行失敗」と表示。
+  ENDIF
+  
+  500を待つ
+ここまで。
+
+# データ保存と読み込み
+「ダッシュボード設定を保存します...」と表示。
+ダッシュボード設定 = {
+  "storage_type": "localStorage",
+  "key": "dashboard_settings",
+  "value": {
+    "theme": "dark",
+    "layout": "grid",
+    "auto_refresh": true,
+    "refresh_interval": 30,
+    "components": ダッシュボードコンポーネント
+  }
+}
+設定保存 = Webストレージ操作「save」ダッシュボード設定
+IF 設定保存["success"] THEN
+  「✅ ダッシュボード設定保存成功！」と表示。
+ELSE
+  「❌ ダッシュボード設定保存失敗」と表示。
+ENDIF
+
+# 設定を読み込み
+「ダッシュボード設定を読み込みます...」と表示。
+設定読み込み = Webストレージ操作「load」{
+  "storage_type": "localStorage",
+  "key": "dashboard_settings"
+}
+IF 設定読み込み["success"] THEN
+  「✅ ダッシュボード設定読み込み成功！」と表示。
+ELSE
+  「❌ ダッシュボード設定読み込み失敗」と表示。
+ENDIF
+
+# パフォーマンスとセキュリティチェック
+「パフォーマンスとセキュリティをチェックします...」と表示。
+パフォーマンスチェック = パフォーマンス監視
+IF パフォーマンスチェック["success"] THEN
+  「✅ パフォーマンスチェック完了！」と表示。
+  「パフォーマンススコア: {パフォーマンスチェック["performance"]["overall_score"]}%」と表示。
+ELSE
+  「❌ パフォーマンスチェック失敗」と表示。
+ENDIF
+
+セキュリティチェック = セキュリティチェック「comprehensive」
+IF セキュリティチェック["success"] THEN
+  「✅ セキュリティチェック完了！」と表示。
+  「セキュリティスコア: {セキュリティチェック["security"]["security_score"]}%」と表示。
+ELSE
+  「❌ セキュリティチェック失敗」と表示。
+ENDIF
+
+# レスポンシブデザイン適用
+「レスポンシブデザインを適用します...」と表示。
+レスポンシブ適用 = レスポンシブデザイン適用「mobile_first」「dashboard_container」
+IF レスポンシブ適用["success"] THEN
+  「✅ レスポンシブデザイン適用成功！」と表示。
+  「ブレークポイント数: {レスポンシブ適用["responsive"]["breakpoints"]のキー数}」と表示。
+ELSE
+  「❌ レスポンシブデザイン適用失敗」と表示。
+ENDIF
+
+「インタラクティブダッシュボード作成完了」と表示。
+「作成したコンポーネント数: {ダッシュボードコンポーネントのキー数}」と表示。
+
+「」と表示。
+
+# --- 英語モードでの使用例 ---
+「17. 英語モードでの使用例...」と表示。
+「言語モード設定」に「english」
+
+# 英語でUIコンポーネント作成
+english_button = CREATE_UI_COMPONENT "button" "main_container"
+PRINT "English UI component: {english_button["message"]}"
+PRINT "Component ID: {english_button["component"]["id"]}"
+PRINT "Component type: {english_button["component"]["type"]}"
+
+# 英語でCanvas描画
+english_canvas = EXECUTE_CANVAS_DRAW {
+  "type": "draw_circle",
+  "parameters": {
+    "center_x": 100,
+    "center_y": 100,
+    "radius": 50,
+    "color": "#ff0000",
+    "fill": true
+  }
+} "main_canvas"
+PRINT "English canvas draw: {english_canvas["message"]}"
+PRINT "Draw ID: {english_canvas["draw_result"]["id"]}"
+PRINT "Operation: {english_canvas["draw_result"]["operation"]}"
+
+# 英語でアニメーション実行
+english_animation = EXECUTE_ANIMATION "fade_in" "main_element"
+PRINT "English animation: {english_animation["message"]}"
+PRINT "Animation ID: {english_animation["animation"]["id"]}"
+PRINT "Duration: {english_animation["animation"]["duration"]}s"
+
+# 英語でストレージ操作
+english_storage = EXECUTE_STORAGE_OPERATION "save" {
+  "storage_type": "localStorage",
+  "key": "english_settings",
+  "value": {
+    "language": "en",
+    "theme": "light"
+  }
+}
+PRINT "English storage: {english_storage["message"]}"
+PRINT "Storage ID: {english_storage["storage"]["id"]}"
+
+# 英語でメディア操作
+english_media = EXECUTE_MEDIA_OPERATION "image" "process"
+PRINT "English media: {english_media["message"]}"
+PRINT "Media ID: {english_media["media"]["id"]}"
+PRINT "Format: {english_media["media"]["format"]}"
+
+# 英語でネットワーク状態確認
+english_network = GET_NETWORK_STATUS
+PRINT "English network: {english_network["message"]}"
+PRINT "Connection type: {english_network["network"]["connection_type"]}"
+PRINT "Download speed: {english_network["network"]["download_speed"]}Mbps"
+
+# 英語でセキュリティチェック
+english_security = EXECUTE_SECURITY_CHECK "comprehensive"
+PRINT "English security: {english_security["message"]}"
+PRINT "Security score: {english_security["security"]["security_score"]}%"
+
+# 英語でパフォーマンス監視
+english_performance = MONITOR_PERFORMANCE
+PRINT "English performance: {english_performance["message"]}"
+PRINT "Overall score: {english_performance["performance"]["overall_score"]}%"
+
+# 英語でアクセシビリティ設定
+english_accessibility = SET_ACCESSIBILITY "screen_reader" true
+PRINT "English accessibility: {english_accessibility["message"]}"
+PRINT "Feature: {english_accessibility["accessibility"]["feature"]}"
+
+# 英語でレスポンシブデザイン適用
+english_responsive = APPLY_RESPONSIVE_DESIGN "mobile_first" "main_container"
+PRINT "English responsive: {english_responsive["message"]}"
+PRINT "Pattern: {english_responsive["responsive"]["pattern"]}"
+
+# 英語でWebページ作成
+english_webpage = CREATE_WEB_PAGE
+PRINT "English webpage: {english_webpage["overall_status"]}"
+PRINT "Available operations: {english_webpage["available_operations"]のキー数}"
+
+# 英語で自動Web機能監視
+english_monitoring = AUTO_WEB_MONITORING
+PRINT "English auto monitoring: {english_monitoring["message"]}"
+PRINT "Total measurements: {english_monitoring["total_measurements"]}"
+PRINT "Overall web health: {english_monitoring["overall_web_health"]}%"
+
+「」と表示。
+
+# --- 子供向けモードでの使用例 ---
+「18. 子供向けモードでの使用例...」と表示。
+「かんたんモード」
+
+# 子供向けUIコンポーネント作成
+「🎨 かんたんなボタンをつくろう！」と表示。
+子供ボタン = UIコンポーネント作成「button」「game_container」
+ふくふくを「ボタンができたよ！{子供ボタン["component"]["properties"]["text"]}ってかいてあるよ！」
+ぴよぴよ
+
+# 子供向けCanvas描画
+「🖌️ えをかいてみよう！」と表示。
+子供絵 = Canvas描画{
+  "type": "draw_circle",
+  "parameters": {
+    "center_x": 100,
+    "center_y": 100,
+    "radius": 30,
+    "color": "#ff6b6b",
+    "fill": true
+  }
+}「game_canvas」
+ふくふくを「まるをかいたよ！きれいなあかいろだよ！」
+ぴよぴよ
+
+# 子供向けアニメーション
+「🎭 うごかしてみよう！」と表示。
+子供アニメーション = アニメーション実行「bounce」「game_element」
+ふくふくを「ぴょんぴょんうごいてるよ！たのしいね！」
+CAT_MEOW
+
+# 子供向けストレージ
+「💾 おもいでをセーブしよう！」と表示。
+子供メモリ = Webストレージ操作「save」{
+  "storage_type": "localStorage",
+  "key": "kids_game",
+  "value": {
+    "score": 100,
+    "level": 5,
+    "fun": true
+  }
+}
+ふくふくを「おもいでをセーブしたよ！スコアは100点だよ！」
+CAT_MEOW
+
+# 子供向けメディア
+「🎵 おんがくをかこう！」と表示。
+子供音楽 = メディア操作「audio」「play」
+ふくふくを「おんがくがなるよ！いっしょにうたおう！」
+CAT_MEOW
+
+# 子供向けアクセシビリティ
+「👁️ よくみえるようにしよう！」と表示。
+子供アクセシビリティ = アクセシビリティ設定「large_text」true
+ふくふくを「もじがおおきくなったよ！よみやすくなったね！」
+CAT_MEOW
+
+「」と表示。
+
+# --- 高度な機能：リアルタイムデータ可視化 ---
+「19. 高度な機能：リアルタイムデータ可視化...」と表示。
+
+# リアルタイムデータ可視化システム
+「リアルタイムデータ可視化システムを開始します...」と表示。
+可視化データ = []
+
+10回
+  # データ生成
+  現在時刻 = new Date().toISOString()
+  データ値 = Math.random() * 100
+  カテゴリ = ["売上", "訪問者", "コンバージョン", "エンゲージメント"][Math.floor(Math.random() * 4)]
+  
+  # Canvasにデータ点を描画
+  データ点描画 = Canvas描画{
+    "type": "draw_circle",
+    "parameters": {
+      "center_x": 50 + 回数 * 30,
+      "center_y": 200 - データ値,
+      "radius": 3,
+      "color": this._getCategoryColor(カテゴリ),
+      "fill": true
+    }
+  }「realtime_canvas」
+  
+  # データを保存
+  可視化データに{
+    "timestamp": 現在時刻,
+    "value": データ値,
+    "category": カテゴリ,
+    "x": 50 + 回数 * 30,
+    "y": 200 - データ値
+  }を追加
+  
+  「📊 データポイント追加: {カテゴリ} = {データ値.toFixed(1)}」と表示。
+  
+  # アニメーション効果
+  IF 回数 % 3 = 0 THEN
+    データアニメーション = アニメーション実行「pulse」「data_point_{回数}」
+    IF データアニメーション["success"] THEN
+      「✨ データアニメーション実行！」と表示。
+    ENDIF
+  ENDIF
+  
+  # パフォーマンス監視
+  IF 回数 % 5 = 0 THEN
+    パフォーマンスチェック = パフォーマンス監視
+    IF パフォーマンスチェック["success"] THEN
+      「⚡ パフォーマンススコア: {パフォーマンスチェック["performance"]["overall_score"]}%」と表示。
+    ENDIF
+  ENDIF
+  
+  500を待つ
+ここまで。
+
+# データ統計を計算
+「データ統計を計算中...」と表示。
+平均値 = 可視化データから「value」を平均
+最大値 = 可視化データから「value」を最大
+最小値 = 可視化データから「value」を最小
+データ点数 = 可視化データのキー数
+
+「データ統計結果:」と表示。
+「データ点数: {データ点数}」と表示。
+「平均値: {平均値.toFixed(2)}」と表示。
+「最大値: {最大値.toFixed(2)}」と表示。
+「最小値: {最小値.toFixed(2)}」と表示。
+
+# カテゴリ別集計
+「カテゴリ別集計:」と表示。
+カテゴリリスト = ["売上", "訪問者", "コンバージョン", "エンゲージメント"]
+カテゴリリストを反復
+  カテゴリ = 対象
+  カテゴリデータ = 可視化データ.filter(d => d["category"] === カテゴリ)
+  カテゴリ数 = カテゴリデータのキー数
+  カテゴリ平均 = カテゴリ数 > 0 ? カテゴリデータから「value」を平均 : 0
+  
+  「  {カテゴリ}: {カテゴリ数}件, 平均: {カテゴリ平均.toFixed(2)}」と表示。
+ここまで。
+
+「リアルタイムデータ可視化完了」と表示。
+
+「」と表示。
+
+「=== デモ完了 ===」と表示。
+「🌐 これでなでしこ3で完全なブラウザ機能拡張が使える！」と表示。
+「🎨 UIコンポーネントで美しいインターフェース！」と表示。
+「🖌️ Canvas描画でリッチなグラフィックス！」と表示。
+「🎭 アニメーションで動的な表現！」と表示。
+「💾 Webストレージでデータ永続化！」と表示。
+「🎵 メディア操作でマルチメディア対応！」と表示。
+「🌍 ネットワーク監視で接続状態管理！」と表示。
+「🔒 セキュリティチェックで安全なWeb！」と表示。
+「⚡ パフォーマンス監視で高速な体験！」と表示。
+「👁️ アクセシビリティで誰でも使える！」と表示。
+「📱 レスポンシブデザインで多デバイス対応！」と表示。
+「🏠 Webページ作成で完全なサイト構築！」と表示。
+「🤖 自動監視で24時間最適化！」と表示。
+「📊 リアルタイム可視化でデータ分析！」と表示。
+「🎈 子供でも簡単にWeb開発ができる！」と表示。
+「🌍 英語・日本語・子供向けモードで完全対応！」と表示。
+koko

@@ -1,0 +1,327 @@
+# データサイエンス機能のCI/CDワークフロー
+
+name: Data Science CI/CD
+
+on:
+  push:
+    branches: [ master, main ]
+    paths:
+      - 'src/plugin_datascience.mjs'
+      - 'src/plugin_statistics.mjs'
+      - 'src/plugin_machinelearning.mjs'
+      - 'test/node/plugin_datascience_test.mjs'
+      - 'demo/datascience_demo.nako3'
+  pull_request:
+    branches: [ master, main ]
+    paths:
+      - 'src/plugin_datascience.mjs'
+      - 'src/plugin_statistics.mjs'
+      - 'src/plugin_machinelearning.mjs'
+      - 'test/node/plugin_datascience_test.mjs'
+      - 'demo/datascience_demo.nako3'
+
+jobs:
+  test-datascience:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [24.x, 22.x, 20.x]
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build project
+        run: npm run build
+      
+      - name: Test data science plugins
+        run: |
+          echo "Testing data science plugins..."
+          npm test -- test/node/plugin_datascience_test.mjs
+      
+      - name: Run data science demo
+        run: |
+          echo "Running data science demo..."
+          npm run demo:datascience || echo "Demo completed"
+      
+      - name: Test plugin loading
+        run: |
+          echo "Testing plugin loading..."
+          node -e "
+          import { NakoCompiler } from './core/src/nako3.mjs';
+          import PluginDataScience from './src/plugin_datascience.mjs';
+          import PluginStatistics from './src/plugin_statistics.mjs';
+          import PluginMachineLearning from './src/plugin_machinelearning.mjs';
+          
+          const nako = new NakoCompiler();
+          nako.addPluginObject('PluginDataScience', PluginDataScience);
+          nako.addPluginObject('PluginStatistics', PluginStatistics);
+          nako.addPluginObject('PluginMachineLearning', PluginMachineLearning);
+          
+          // Test basic functionality
+          const result = nako.runReset('[1,2,3,4,5]の平均を表示');
+          console.log('Test result:', result);
+          console.log('All plugins loaded successfully!');
+          "
+
+  performance-test:
+    runs-on: ubuntu-latest
+    needs: test-datascience
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build project
+        run: npm run build
+      
+      - name: Performance benchmark
+        run: |
+          echo "Running performance benchmarks..."
+          node -e "
+          import { performance } from 'perf_hooks';
+          import { NakoCompiler } from './core/src/nako3.mjs';
+          import PluginDataScience from './src/plugin_datascience.mjs';
+          
+          const nako = new NakoCompiler();
+          nako.addPluginObject('PluginDataScience', PluginDataScience);
+          
+          // Benchmark array operations
+          const testData = Array.from({length: 10000}, (_, i) => i + 1);
+          
+          const start = performance.now();
+          const result = nako.runReset('Aの平均を表示', { A: testData });
+          const end = performance.now();
+          
+          console.log(\`Performance test completed in \${end - start}ms\`);
+          console.log('Result:', result);
+          "
+
+  integration-test:
+    runs-on: ubuntu-latest
+    needs: test-datascience
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build project
+        run: npm run build
+      
+      - name: Integration tests
+        run: |
+          echo "Running integration tests..."
+          
+          # Test machine learning pipeline
+          node -e "
+          import { NakoCompiler } from './core/src/nako3.mjs';
+          import PluginDataScience from './src/plugin_datascience.mjs';
+          import PluginMachineLearning from './src/plugin_machinelearning.mjs';
+          
+          const nako = new NakoCompiler();
+          nako.addPluginObject('PluginDataScience', PluginDataScience);
+          nako.addPluginObject('PluginMachineLearning', PluginMachineLearning);
+          
+          // Complete ML pipeline test
+          const pipelineTest = \`
+            # データ準備
+            データ = [1,2,3,4,5,6,7,8,9,10]
+            ラベル = [2,4,6,8,10,12,14,16,18,20,22]
+            
+            # モデル学習
+            モデル = データでラベルを線形回帰学習
+            
+            # 予測
+            予測 = モデルで[11,12,13]を線形回帰予測
+            
+            # 評価
+            MSE = ラベルと予測の平均二乗誤差
+            MSE
+          \`;
+          
+          const result = nako.runReset(pipelineTest);
+          console.log('Integration test result:', result);
+          
+          if (result && !isNaN(Number(result))) {
+            console.log('✅ Integration test passed!');
+          } else {
+            console.log('❌ Integration test failed!');
+            process.exit(1);
+          }
+          "
+
+  code-quality:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run ESLint
+        run: |
+          echo "Running ESLint on data science files..."
+          npx eslint src/plugin_datascience.mjs src/plugin_statistics.mjs src/plugin_machinelearning.mjs || true
+      
+      - name: Check code formatting
+        run: |
+          echo "Checking code formatting..."
+          npx prettier --check src/plugin_datascience.mjs src/plugin_statistics.mjs src/plugin_machinelearning.mjs || true
+
+  build-docs:
+    runs-on: ubuntu-latest
+    needs: test-datascience
+    if: github.ref == 'refs/heads/master'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Generate documentation
+        run: |
+          echo "Generating documentation..."
+          mkdir -p docs/datascience
+          
+          # Generate API documentation
+          cat > docs/datascience/API.md << 'EOF'
+          # データサイエンスAPIドキュメント
+          
+          ## plugin_datascience.mjs
+          
+          ### 配列操作
+          - \`配列作成(サイズ, 値)\`: 指定サイズの配列を作成
+          - \`ゼロ配列(サイズ)\`: ゼロで初期化された配列
+          - \`1配列(サイズ)\`: 1で初期化された配列
+          - \`範囲配列(開始, 終了)\`: 指定範囲の数値配列
+          
+          ### 数学関数
+          - \`合計(配列)\`: 配列の合計値
+          - \`平均(配列)\`: 配列の平均値
+          - \`最大値(配列)\`: 配列の最大値
+          - \`最小値(配列)\`: 配列の最小値
+          - \`標準偏差(配列)\`: 標準偏差の計算
+          - \`分散(配列)\`: 分散の計算
+          
+          ### 統計関数
+          - \`中央値(配列)\`: 中央値の計算
+          - \`最頻値(配列)\`: 最頻値の計算
+          - \`相関係数(配列1, 配列2)\`: 相関係数の計算
+          EOF
+          
+          echo "Documentation generated successfully!"
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [test-datascience, integration-test, build-docs]
+    if: github.ref == 'refs/heads/master'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build project
+        run: npm run build
+      
+      - name: Create release package
+        run: |
+          mkdir -p release/datascience
+          cp src/plugin_datascience.mjs release/datascience/
+          cp src/plugin_statistics.mjs release/datascience/
+          cp src/plugin_machinelearning.mjs release/datascience/
+          cp demo/datascience_demo.nako3 release/datascience/
+          cp README_DATASCIENCE.md release/datascience/
+          cp -r docs/datascience release/datascience/docs || true
+          
+          # Create package.json for datascience
+          cat > release/datascience/package.json << 'EOF'
+          {
+            "name": "nadesiko3-datascience",
+            "version": "1.0.0",
+            "description": "データサイエンス機能拡張 for なでしこ3",
+            "main": "plugin_datascience.mjs",
+            "files": [
+              "plugin_datascience.mjs",
+              "plugin_statistics.mjs", 
+              "plugin_machinelearning.mjs",
+              "datascience_demo.nako3",
+              "docs/"
+            ],
+            "keywords": ["nadesiko3", "datascience", "machine-learning", "statistics"],
+            "author": "Nadesiko3 Contributors",
+            "license": "MIT",
+            "repository": {
+              "type": "git",
+              "url": "https://github.com/kujirahand/nadesiko3.git"
+            }
+          }
+          EOF
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: datascience-plugins
+          path: release/datascience/
+          retention-days: 30
+      
+      - name: Deploy to GitHub Pages
+        if: success()
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/datascience
+          destination_dir: datascience

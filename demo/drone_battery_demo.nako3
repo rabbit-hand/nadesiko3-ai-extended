@@ -1,0 +1,523 @@
+# ドローンバッテリー残量監視・自動帰還システムデモ
+# Advanced Drone Battery Monitoring with Automatic Return-to-Home Demo
+
+「=== ドローンバッテリー残量監視・自動帰還システムデモ ===」と表示。
+
+# --- バッテリーシステム検出 ---
+「1. バッテリーシステムを検出中...」と表示。
+全バッテリーシステム = バッテリーシステム検出「全部」
+「検出されたシステム数: {全バッテリーシステムのキー数}」と表示。
+
+全バッテリーシステムを反復
+  IF 対象.key !== "initialized" AND 対象.key !== "timestamp" THEN
+    システム名 = 対象.value["name"] || 対象.key
+    「  {システム名}」と表示。
+  ENDIF
+ここまで。
+
+「」と表示。
+
+# --- バッテリー残量取得 ---
+「2. バッテリー残量を取得中...」と表示。
+バッテリー残量 = バッテリー残量取得
+「バッテリー残量: {バッテリー残量["message"]}」と表示。
+「現在のバッテリー残量: {バッテリー残量["measurement"]["level"]}%」と表示。
+「電圧: {バッテリー残量["measurement"]["voltage"]}V」と表示。
+「温度: {バッテリー残量["measurement"]["temperature"]}°C」と表示。
+「計測時刻: {バッテリー残量["measurement"]["timestamp"]}」と表示。
+
+「」と表示。
+
+# --- バッテリー状態取得 ---
+「3. バッテリー状態を取得中...」と表示。
+バッテリー状態 = バッテリー状態取得
+「バッテリー状態: {バッテリー状態["message"]}」と表示。
+「状態: {バッテリー状態["status"]["status"]}」と表示。
+「健康状態: {バッテリー状態["status"]["health"]}」と表示。
+「推定飛行時間: {バッテリー状態["status"]["estimated_flight_time"]}分」と表示。
+「充電状態: {バッテリー状態["status"]["charging_status"]}」と表示。
+「サイクル数: {バッテリー状態["status"]["cycle_count"]}」と表示。
+
+「」と表示。
+
+# --- バッテリー監視開始 ---
+「4. バッテリー監視を開始中...」と表示。
+監視開始 = バッテリー監視開始
+「監視開始: {監視開始["message"]}」と表示。
+「監視状態: {監視開始["monitoring_active"]}」と表示。
+「監視間隔: {監視開始["interval"]}ms」と表示。
+
+「」と表示。
+
+# --- 帰還距離計算 ---
+「5. 帰還距離を計算中...」と表示。
+帰還距離 = 帰還距離計算
+「帰還距離: {帰還距離["message"]}」と表示。
+「現在の距離: {帰還距離["current_distance"]}m」と表示。
+「帰還可能距離: {帰還距離["available_return_distance"]}m」と表示。
+「最大帰還距離: {帰還距離["max_return_distance"]}m」と表示。
+「帰還可能: {帰還距離["can_return"]}」と表示。
+「安全マージン: {帰還距離["safety_margin"]}m」と表示。
+「推定帰還時間: {帰還距離["estimated_return_time"]}分」と表示。
+
+「」と表示。
+
+# --- 自動帰還設定 ---
+「6. 自動帰還しきい値を設定中...」と表示。
+自動帰還設定 = 自動帰還設定 25
+「自動帰還設定: {自動帰還設定["message"]}」と表示。
+「しきい値: {自動帰還設定["threshold"]}%」と表示。
+
+「」と表示。
+
+# --- バッテリー消費率計算 ---
+「7. バッテリー消費率を計算中...」と表示。
+消費率 = バッテリー消費率計算
+「消費率: {消費率["message"]}」と表示。
+「消費率: {消費率["rate"]}%/分」と表示。
+「計測期間: {消費率["time_period"]}分」と表示。
+「レベル変化: {消費率["level_change"]}%」と表示。
+
+「」と表示。
+
+# --- 飛行可能時間予測 ---
+「8. 飛行可能時間を予測中...」と表示。
+飛行時間予測 = 飛行可能時間予測
+「飛行時間予測: {飛行時間予測["message"]}」と表示。
+「残り飛行時間: {飛行時間予測["remaining_minutes"]}分」と表示。
+「現在レベル: {飛行時間予測["current_level"]}%」と表示。
+「最大飛行時間: {飛行時間予測["max_flight_time"]}分」と表示。
+
+「」と表示。
+
+# --- バッテリー警告設定 ---
+「9. バッテリー警告を設定中...」と表示。
+警告設定 = {
+  "low_battery": 30,
+  "critical_battery": 20,
+  "emergency_battery": 10
+}
+バッテリー警告設定 = バッテリー警告設定 警告設定
+「バッテリー警告設定: {バッテリー警告設定["message"]}」と表示。
+「低バッテリー警告: {バッテリー警告設定["warnings"]["low_battery"]}%」と表示。
+「危険バッテリー警告: {バッテリー警告設定["warnings"]["critical_battery"]}%」と表示。
+「緊急バッテリー警告: {バッテリー警告設定["warnings"]["emergency_battery"]}%」と表示。
+
+「」と表示。
+
+# --- バッテリー性能評価 ---
+「10. バッテリー性能を評価中...」と表示。
+性能評価 = バッテリー性能評価
+「バッテリー性能評価: {性能評価["message"]}」と表示。
+「性能スコア: {性能評価["evaluation"]["performance_score"]}」と表示。
+「平均レベル: {性能評価["evaluation"]["average_level"]}%」と表示。
+「最低レベル: {性能評価["evaluation"]["min_level"]}%」と表示。
+「最高レベル: {性能評価["evaluation"]["max_level"]}%」と表示。
+「安定性: {性能評価["evaluation"]["stability"]}%」と表示。
+「健康状態: {性能評価["evaluation"]["health_status"]}」と表示。
+
+「推奨事項:」と表示。
+性能評価["evaluation"]["recommendations"]を反復
+  推奨 = 対象
+  「  {推奨}」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 緊急帰還実行 ---
+「11. 緊急帰還を実行中...」と表示。
+緊急帰還 = 緊急帰還実行
+「緊急帰還: {緊急帰還["message"]}」と表示。
+「帰還タイプ: {緊急帰還["return_operation"]["return_type"]}」と表示。
+「目的地: {緊急帰還["return_operation"]["destination"]["latitude"]}, {緊急帰還["return_operation"]["destination"]["longitude"]}」と表示。
+「推定時間: {緊急帰還["return_operation"]["estimated_time"]}分」と表示。
+「開始時バッテリー: {緊急帰還["return_operation"]["battery_level_at_initiation"]}%」と表示。
+「状態: {緊急帰還["return_operation"]["status"]}」と表示。
+
+「」と表示。
+
+# --- バッテリー履歴取得 ---
+「12. バッテリー履歴を取得中...」と表示。
+バッテリー履歴 = バッテリー履歴取得
+「バッテリー履歴: {バッテリー履歴["message"]}」と表示。
+「総記録数: {バッテリー履歴["total_records"]}」と表示。
+「最新レベル: {バッテリー履歴["latest"]["level"]}%」と表示。
+
+「最近のバッテリー履歴:」と表示。
+バッテリー履歴["history"]を反復
+  履歴 = 対象
+  「  {履歴["timestamp"]}: {履歴["level"]}% (電圧: {履歴["voltage"]}V)」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 自動バッテリー監視 ---
+「13. 自動バッテリー監視を実行中...」と表示。
+自動監視 = 自動バッテリー監視
+「自動バッテリー監視: {自動監視["message"]}」と表示。
+「総計測回数: {自動監視["total_measurements"]}」と表示。
+「平均バッテリーレベル: {自動監視["average_battery_level"]}%」と表示。
+「平均消費率: {自動監視["average_consumption_rate"]}%/分」と表示。
+「自動帰還トリガー: {自動監視["auto_return_triggered"]}」と表示。
+
+「計測結果:」と表示。
+自動監視["measurements"]を反復
+  計測 = 対象
+  「  {計測["timestamp"]}:」と表示。
+  「    バッテリーレベル: {計測["battery_level"]}%」と表示。
+  「    バッテリー状態: {計測["battery_status"]}」と表示。
+  「    帰還距離: {計測["return_distance"]}m」と表示。
+  「    消費率: {計測["consumption_rate"]}%/分」と表示。
+  「    残り飛行時間: {計測["remaining_flight_time"]}分」と表示。
+  「    自動帰還トリガー: {計測["auto_return_triggered"]}」と表示。
+  「    警告レベル: {計測["warning_level"]}」と表示。
+  「---」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 統合バッテリー管理 ---
+「14. 統合バッテリー管理システムを確認中...」と表示。
+統合管理 = 統合バッテリー管理
+「統合システム状態: {統合管理["overall_status"]}」と表示。
+「利用可能な操作数: {統合管理["available_operations"]のキー数}」と表示。
+
+「システム状態詳細:」と表示。
+「  バッテリーシステム: {統合管理["battery_system"]["active"]}」と表示。
+「  監視システム: {統合管理["monitoring_system"]["active"]}」と表示。
+「  帰還システム: {統合管理["return_system"]["active"]}」と表示。
+「  安全システム: {統合管理["safety_system"]["active"]}」と表示。
+
+「」と表示。
+
+# --- 実用的な例：安全飛行管理 ---
+「15. 実用的な例：安全飛行管理...」と表示。
+
+# 連続監視を開始
+「安全飛行管理を開始します...」と表示。
+安全飛行ログ = []
+
+15回
+  # 全ての計測を実行
+  バッテリー残量 = バッテリー残量取得
+  バッテリー状態 = バッテリー状態取得
+  帰還距離 = 帰還距離計算
+  消費率 = バッテリー消費率計算
+  飛行時間 = 飛行可能時間予測
+  
+  # 安全判定
+  バッテリーレベル = バッテリー残量["measurement"]["level"]
+  帰還可能 = 帰還距離["can_return"]
+  残り時間 = 飛行時間["remaining_minutes"]
+  
+  # 自動帰還判定
+  IF バッテリーレベル <= 10 THEN
+    「🚨 緊急バッテリー！即時帰還を実行します！」と表示。
+    緊急帰還 = 緊急帰還実行
+    IF 緊急帰還["success"] THEN
+      「🏠 緊急帰還を実行しました」と表示。
+    ENDIF
+    安全飛行ログに{
+      "timestamp": new Date().toISOString(),
+      "event": "emergency_return",
+      "battery_level": バッテリーレベル,
+      "action": "emergency_return_executed",
+      "severity": "critical"
+    }を追加
+    BREAK
+  ENDIF
+  
+  IF バッテリーレベル <= 20 THEN
+    「⚠️ 危険なバッテリーレベル！帰還準備を開始します」と表示。
+    安全飛行ログに{
+      "timestamp": new Date().toISOString(),
+      "event": "low_battery_warning",
+      "battery_level": バッテリーレベル,
+      "action": "prepare_return",
+      "severity": "warning"
+    }を追加
+  ENDIF
+  
+  IF 帰還可能 = false THEN
+    「🚫 帰還距離不足！安全な場所に着陸します」と表示。
+    安全飛行ログに{
+      "timestamp": new Date().toISOString(),
+      "event": "insufficient_return_distance",
+      "battery_level": バッテリーレベル,
+      "action": "safe_landing",
+      "severity": "high"
+    }を追加
+  ENDIF
+  
+  IF 残り時間 <= 5 THEN
+    「⏰ 残り飛行時間5分未満！帰還を推奨します」と表示。
+    安全飛行ログに{
+      "timestamp": new Date().toISOString(),
+      "event": "low_flight_time",
+      "remaining_time": 残り時間,
+      "action": "return_recommended",
+      "severity": "moderate"
+    }を追加
+  ENDIF
+  
+  IF 消費率["rate"] > 2 THEN
+    「📈 バッテリー消費率が高い！飛行モードを調整してください」と表示。
+    安全飛行ログに{
+      "timestamp": new Date().toISOString(),
+      "event": "high_consumption_rate",
+      "consumption_rate": 消費率["rate"],
+      "action": "adjust_flight_mode",
+      "severity": "moderate"
+    }を追加
+  ENDIF
+  
+  1000を待つ
+ここまで。
+
+「安全飛行管理完了」と表示。
+「安全飛行ログ:」と表示。
+安全飛行ログを反復
+  ログ = 対象
+  「  {ログ["timestamp"]}: {ログ["event"]} - {ログ["action"]}」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 英語モードでの使用例 ---
+「16. 英語モードでの使用例...」と表示。
+「言語モード設定」に「english」
+
+# 英語でバッテリーシステム検出
+english_battery = DISCOVER_DRONE_BATTERY "all"
+PRINT "English battery systems found: {english_batteryのキー数}"
+
+# 英語でバッテリー残量取得
+battery_level = GET_BATTERY_LEVEL
+PRINT "Battery level: {battery_level["message"]}"
+PRINT "Current battery level: {battery_level["measurement"]["level"]}%"
+
+# 英語でバッテリー状態取得
+battery_status = GET_BATTERY_STATUS
+PRINT "Battery status: {battery_status["message"]}"
+PRINT "Status: {battery_status["status"]["status"]}"
+PRINT "Health: {battery_status["status"]["health"]}"
+
+# 英語でバッテリー監視開始
+monitoring_start = START_BATTERY_MONITORING
+PRINT "Battery monitoring started: {monitoring_start["message"]}"
+PRINT "Monitoring active: {monitoring_start["monitoring_active"]}"
+
+# 英語で帰還距離計算
+return_distance = CALCULATE_RETURN_DISTANCE
+PRINT "Return distance: {return_distance["message"]}"
+PRINT "Current distance: {return_distance["current_distance"]}m"
+PRINT "Can return: {return_distance["can_return"]}"
+
+# 英語で自動帰還設定
+auto_return = SET_AUTO_RETURN_THRESHOLD 25
+PRINT "Auto return threshold: {auto_return["message"]}"
+PRINT "Threshold: {auto_return["threshold"]}%"
+
+# 英語でバッテリー消費率計算
+consumption_rate = CALCULATE_BATTERY_CONSUMPTION_RATE
+PRINT "Battery consumption rate: {consumption_rate["message"]}"
+PRINT "Rate: {consumption_rate["rate"]}%/min"
+
+# 英語で飛行可能時間予測
+flight_time = PREDICT_FLIGHT_TIME
+PRINT "Flight time prediction: {flight_time["message"]}"
+PRINT "Remaining minutes: {flight_time["remaining_minutes"]}"
+
+# 英語でバッテリー警告設定
+warnings = {
+  "low_battery": 30,
+  "critical_battery": 20,
+  "emergency_battery": 10
+}
+battery_warnings = SET_BATTERY_WARNINGS warnings
+PRINT "Battery warnings: {battery_warnings["message"]}"
+PRINT "Low battery: {battery_warnings["warnings"]["low_battery"]}%"
+
+# 英語でバッテリー性能評価
+performance = EVALUATE_BATTERY_PERFORMANCE
+PRINT "Battery performance: {performance["message"]}"
+PRINT "Performance score: {performance["evaluation"]["performance_score"]}"
+
+# 英語で緊急帰還実行
+emergency_return = EXECUTE_EMERGENCY_RETURN
+PRINT "Emergency return: {emergency_return["message"]}"
+PRINT "Return type: {emergency_return["return_operation"]["return_type"]}"
+
+# 英語でバッテリー履歴取得
+battery_history = GET_BATTERY_HISTORY
+PRINT "Battery history: {battery_history["message"]}"
+PRINT "Total records: {battery_history["total_records"]}"
+
+# 英語で自動バッテリー監視
+auto_monitoring = AUTO_BATTERY_MONITORING
+PRINT "Auto battery monitoring: {auto_monitoring["message"]}"
+PRINT "Total measurements: {auto_monitoring["total_measurements"]}"
+PRINT "Average battery level: {auto_monitoring["average_battery_level"]}%"
+
+# 英語で統合バッテリー管理
+integrated_management = INTEGRATED_BATTERY_MANAGEMENT
+PRINT "Integrated battery management: {integrated_management["overall_status"]}"
+PRINT "Available operations: {integrated_management["available_operations"]のキー数}"
+
+「」と表示。
+
+# --- 子供向けモードでの使用例 ---
+「17. 子供向けモードでの使用例...」と表示。
+「かんたんモード」
+
+# 子供向けバッテリー監視
+「🔋 ドローンのばってりーさん、こんにちは！」と表示。
+わんわん
+
+# バッテリー残量で遊ぶ
+「🔋 ばってりーの残りをしらべてみよう！」と表示。
+バッテリー残量 = バッテリー残量取得
+ふくふくを「ばってりーは{バッテリー残量["measurement"]["level"]}%あるよ！」
+ぴよぴよ
+
+# バッテリー状態で遊ぶ
+「🔋 ばってりーのげんきをしらべてみよう！」と表示。
+バッテリー状態 = バッテリー状態取得
+IF バッテリー状態["status"]["health"] = "good" THEN
+  ふくふくを「ばってりーはげんきだよ！」
+  CAT_MEOW
+ELSE IF バッテリー状態["status"]["health"] = "fair" THEN
+  ふくふくを「ばってりーはすこしつかれているかも！」
+ELSE
+  ふくふくを「ばってりーはよわれているよ！おうちに帰ろう！」
+ENDIF
+
+# 帰還距離で遊ぶ
+「🏠 おうちまでのきょりをしらべてみよう！」と表示。
+帰還距離 = 帰還距離計算
+IF 帰還距離["can_return"] THEN
+  ふくふくを「おうちに帰れるよ！やったー！」
+  にゃんにゃん
+ELSE
+  ふくふくを「おうちに帰れないよ！ちかくにおりよう！」
+ENDIF
+
+# 飛行時間で遊ぶ
+「⏰ あとどれくらいとべるかしらべてみよう！」と表示。
+飛行時間 = 飛行可能時間予測
+残り時間 = 飛行時間["remaining_minutes"]
+
+IF 残り時間 > 20 THEN
+  ふくふくを「まだまだとべるよ！たのしいね！」
+ELSE IF 残り時間 > 10 THEN
+  ふくふくを「あとすこしだけとべるよ！」
+ELSE IF 残り時間 > 5 THEN
+  ふくふくを「そろそろおうちに帰る時間だよ！」
+ELSE
+  ふくふくを「すぐにおうちに帰ろうね！」
+ENDIF
+
+# 緊急帰還で遊ぶ
+「🚨 きんきゅうに帰るれんしゅう！」と表示。
+緊急帰還 = 緊急帰還実行
+IF 緊急帰還["success"] THEN
+  ふくふくを「おうちにむかってかえっていくよ！」
+  CAT_MEOW
+ELSE
+  ふくふくを「かえれなかったよ！」
+ENDIF
+
+「」と表示。
+
+# --- 高度な機能：バッテリー最適化 ---
+「18. 高度な機能：バッテリー最適化...」と表示。
+
+# 30分間のデータを収集
+「30分間のバッテリーデータを収集中...」と表示。
+最適化データ = []
+
+30回
+  # 全ての計測を実行
+  バッテリー残量 = バッテリー残量取得
+  消費率 = バッテリー消費率計算
+  帰還距離 = 帰還距離計算
+  飛行時間 = 飛行可能時間予測
+  
+  最適化データに{
+    "minute": 最適化データのキー数 + 1,
+    "timestamp": new Date().toISOString(),
+    "battery_level": バッテリー残量["measurement"]["level"],
+    "consumption_rate": 消費率["rate"],
+    "return_distance": 帰還距離["available_return_distance"],
+    "remaining_flight_time": 飛行時間["remaining_minutes"],
+    "can_return": 帰還距離["can_return"]
+  }を追加
+  
+  1000を待つ
+ここまで。
+
+# データ分析
+「バッテリー最適化分析結果:」と表示。
+
+# 平均値計算
+平均バッテリー = 最適化データから「battery_level」を平均
+平均消費率 = 最適化データから「consumption_rate」を平均
+平均帰還距離 = 最適化データから「return_distance」を平均
+平均飛行時間 = 最適化データから「remaining_flight_time」を平均
+
+「  平均バッテリーレベル: {平均バッテリー.toFixed(1)}%」と表示。
+「  平均消費率: {平均消費率.toFixed(3)}%/分」と表示。
+「  平均帰還可能距離: {平均帰還距離.toFixed(1)}m」と表示。
+「  平均残り飛行時間: {平均飛行時間.toFixed(1)}分」と表示。
+
+# 最大値・最小値
+最高消費率 = 最適化データから「consumption_rate」を最大
+最低バッテリー = 最適化データから「battery_level」を最小
+最長飛行時間 = 最適化データから「remaining_flight_time」を最大
+
+「  最高消費率: {最高消費率.toFixed(3)}%/分」と表示。
+「  最低バッテリー: {最低バッテリー.toFixed(1)}%」と表示。
+「  最長飛行時間: {最長飛行時間.toFixed(1)}分」と表示。
+
+# 安全性評価
+安全フライト = 最適化データ.filter(d => d.can_return = true).length
+総フライト = 最適化データ.length
+安全率 = (安全フライト / 総フライト * 100)
+
+「  安全帰還率: {安全率.toFixed(1)}%」と表示。
+
+# 最適化推奨
+「バッテリー最適化推奨:」と表示。
+IF 平均消費率 > 1.5 THEN
+  「  ⚠️ 消費率が高いです。飛行モードを調整してください」を表示。
+ENDIF
+
+IF 安全率 < 80 THEN
+  「  🚫 安全帰還率が低いです。帰還計画を見直してください」を表示。
+ENDIF
+
+IF 平均バッテリー < 30 THEN
+  「  🔋 バッテリー残量が少ないです。頻繁な充電が必要です」を表示。
+ENDIF
+
+IF 平均飛行時間 < 10 THEN
+  「  ⏰ 飛行時間が短いです。バッテリー交換を検討してください」を表示。
+ENDIF
+
+「」と表示。
+
+「=== デモ完了 ===」と表示。
+「🔋 これでなでしこ3で完全なドローンバッテリー管理が使える！」と表示。
+「📊 バッテリー残量監視でリアルタイム状態把握！」と表示。
+「🏠 自動帰還システムで安全な帰還保証！」と表示。
+「⚠️ 緊急帰還でバッテリー切れ防止！」と表示。
+「📈 消費率分析で効率的な飛行管理！」と表示。
+「⏰ 飛行時間予測で計画的な運用！」と表示。
+「🔧 性能評価でバッテリー状態管理！」と表示。
+「🚨 安全警告でリスク防止！」と表示。
+「📊 履歴管理で長期的なデータ分析！」と表示。
+「🏠 スマート帰還で完全な安全性！」と表示。
+「🤖 自動監視で24時間体制！」と表示。
+「🎈 子供でも簡単にバッテリー管理が使える！」と表示。
+「🌍 英語・日本語・子供向けモードで完全対応！」と表示。
+koko

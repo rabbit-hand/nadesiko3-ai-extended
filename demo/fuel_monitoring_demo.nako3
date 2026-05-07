@@ -1,0 +1,672 @@
+# ガソリン・水素エンジン系残量監視システムデモ
+# Advanced Fuel Monitoring for Gasoline, Hydrogen, and Other Engine Systems Demo
+
+「=== ガソリン・水素エンジン系残量監視システムデモ ===」と表示。
+
+# --- 燃料システム検出 ---
+「1. 燃料システムを検出中...」と表示。
+全燃料システム = 燃料システム検出「全部」
+「検出されたシステム数: {全燃料システムのキー数}」と表示。
+
+全燃料システムを反復
+  IF 対象.key !== "initialized" AND 対象.key !== "timestamp" THEN
+    システム名 = 対象.value["name"] || 対象.key
+    「  {システム名}」と表示。
+  ENDIF
+ここまで。
+
+「」と表示。
+
+# --- ガソリン残量取得 ---
+「2. ガソリン残量を取得中...」と表示。
+ガソリン残量 = ガソリン残量取得
+「ガソリン残量: {ガソリン残量["message"]}」と表示。
+「現在のガソリン残量: {ガソリン残量["level"]}L」と表示。
+「タンク容量: {ガソリン残量["measurement"]["capacity"]}L」と表示。
+「残量割合: {ガソリン残量["measurement"]["percentage"]}%」と表示。
+「温度: {ガソリン残量["measurement"]["temperature"]}°C」と表示。
+
+「」と表示。
+
+# --- 水素残量取得 ---
+「3. 水素残量を取得中...」と表示。
+水素残量 = 水素残量取得
+「水素残量: {水素残量["message"]}」と表示。
+「現在の水素残量: {水素残量["level"]}kg」と表示。
+「タンク容量: {水素残量["measurement"]["capacity"]}kg」と表示。
+「残量割合: {水素残量["measurement"]["percentage"]}%」と表示。
+「圧力: {水素残量["measurement"]["pressure"]}bar」と表示。
+「温度: {水素残量["measurement"]["temperature"]}°C」と表示。
+
+「」と表示。
+
+# --- ディーゼル残量取得 ---
+「4. ディーゼル残量を取得中...」と表示。
+ディーゼル残量 = ディーゼル残量取得
+「ディーゼル残量: {ディーゼル残量["message"]}」と表示。
+「現在のディーゼル残量: {ディーゼル残量["level"]}L」と表示。
+「タンク容量: {ディーゼル残量["measurement"]["capacity"]}L」と表示。
+「残量割合: {ディーゼル残量["measurement"]["percentage"]}%」と表示。
+「温度: {ディーゼル残量["measurement"]["temperature"]}°C」と表示。
+
+「」と表示。
+
+# --- 電気残量取得 ---
+「5. 電気残量を取得中...」と表示。
+電気残量 = 電気残量取得
+「電気残量: {電気残量["message"]}」と表示。
+「現在の電気残量: {電気残量["level"]}kWh」と表示。
+「バッテリー容量: {電気残量["measurement"]["capacity"]}kWh」と表示。
+「残量割合: {電気残量["measurement"]["percentage"]}%」と表示。
+「電圧: {電気残量["measurement"]["voltage"]}V」と表示。
+「電流: {電気残量["measurement"]["current"]}A」と表示。
+「温度: {電気残量["measurement"]["temperature"]}°C」と表示。
+
+「」と表示。
+
+# --- ハイブリッド残量取得 ---
+「6. ハイブリッド残量を取得中...」と表示。
+ハイブリッド残量 = ハイブリッド残量取得
+「ハイブリッド残量: {ハイブリッド残量["message"]}」と表示。
+「ガソリン残量: {ハイブリッド残量["gasoline_level"]}L」と表示。
+「電気残量: {ハイブリッド残量["electric_level"]}kWh」と表示。
+「ガソリン割合: {ハイブリッド残量["measurement"]["gasoline_percentage"]}%」と表示。
+「電気割合: {ハイブリッド残量["measurement"]["electric_percentage"]}%」と表示。
+「統合効率: {ハイブリッド残量["measurement"]["combined_efficiency"]}km/L」と表示。
+
+「」と表示。
+
+# --- 燃料監視開始 ---
+「7. 燃料監視を開始中...」と表示。
+監視開始 = 燃料監視開始
+「監視開始: {監視開始["message"]}」と表示。
+「監視状態: {監視開始["monitoring_active"]}」と表示。
+「監視間隔: {監視開始["interval"]}ms」と表示。
+
+「」と表示。
+
+# --- 燃料消費率計算 ---
+「8. 燃料消費率を計算中...」と表示。
+消費率 = 燃料消費率計算
+「消費率: {消費率["message"]}」と表示。
+「全体消費率: {消費率["overall_rate"]}L/分」と表示。
+「計測期間: {消費率["time_period"]}分」と表示。
+
+「燃料タイプ別消費率:」と表示。
+消費率["rates"]を反復
+  燃料タイプ = 対象.key
+  レート = 対象.value
+  「  {燃料タイプ}: {レート.toFixed(4)}L/分」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 走行可能距離予測 ---
+「9. 走行可能距離を予測中...」と表示。
+走行距離 = 走行可能距離予測
+「走行可能距離: {走行距離["message"]}」と表示。
+「総走行可能距離: {走行距離["total_range"]}km」と表示。
+
+「燃料タイプ別走行距離:」と表示。
+走行距離["breakdown"]を反復
+  燃料タイプ = 対象.key
+  距離 = 対象.value
+  「  {燃料タイプ}: {距離}km」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 補給所検索 ---
+「10. 補給所を検索中...」と表示。
+補給所検索 = 補給所検索「全部」
+「補給所検索: {補給所検索["message"]}」と表示。
+「検出された補給所数: {補給所検索["total_found"]}」と表示。
+
+「補給所リスト:」と表示。
+補給所検索["stations"]を反復
+  補給所 = 対象
+  「  {補給所["id"]}: {補給所["name"]}」と表示。
+  「    タイプ: {補給所["type"]}」と表示。
+  「    場所: ({補給所["location"]["lat"]}, {補給所["location"]["lng"]})」と表示。
+  「    距離: {補給所["distance"]}km」と表示。
+  「    価格: {補給所["price"]}」と表示。
+  「    利用時間: {補給所["availability"]}」と表示。
+  「    サービス: {補給所["services"]を「,」で区切って表示}」と表示。
+  「---」と表示。
+ここまで。
+
+「」と表示。
+
+# --- ガソリン専用補給所検索 ---
+「11. ガソリン専用補給所を検索中...」と表示。
+ガソリン補給所 = 補給所検索「ガソリン」
+「ガソリン補給所: {ガソリン補給所["message"]}」と表示。
+「ガソリン補給所数: {ガソリン補給所["total_found"]}」と表示。
+
+「」と表示。
+
+# --- 水素専用補給所検索 ---
+「12. 水素専用補給所を検索中...」と表示。
+水素補給所 = 補給所検索「水素」
+「水素補給所: {水素補給所["message"]}」と表示。
+「水素補給所数: {水素補給所["total_found"]}」と表示。
+
+「」と表示。
+
+# --- 最適補給ルート計画 ---
+「13. 最適補給ルートを計画中...」と表示。
+最適ルート = 最適補給ルート計画「ガソリン」「大阪」
+「最適補給ルート: {最適ルート["message"]}」と表示。
+「目的地: {最適ルート["route_plan"]["destination"]}」と表示。
+「燃料タイプ: {最適ルート["route_plan"]["fuel_type"]}」と表示。
+「推奨補給所: {最適ルート["route_plan"]["recommended_station"]["name"]}」と表示。
+「推定コスト: {最適ルート["route_plan"]["estimated_cost"]}」と表示。
+「推定時間: {最適ルート["route_plan"]["estimated_time"]}分」と表示。
+「ルート距離: {最適ルート["route_plan"]["route_distance"]}km」と表示。
+
+「代替補給所:」と表示。
+最適ルート["route_plan"]["alternative_stations"]を反復
+  代替所 = 対象
+  「  {代替所["name"]}: {代替所["distance"]}km」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 燃料警告設定 ---
+「14. 燃料警告を設定中...」と表示。
+警告設定 = {
+  "low_gasoline": 20,
+  "low_hydrogen": 15,
+  "low_diesel": 25,
+  "low_electric": 20,
+  "low_hybrid_gasoline": 15,
+  "low_hybrid_electric": 15,
+  "critical_gasoline": 10,
+  "critical_hydrogen": 5,
+  "critical_diesel": 15,
+  "critical_electric": 10,
+  "critical_hybrid_gasoline": 8,
+  "critical_hybrid_electric": 8
+}
+燃料警告設定 = 燃料警告設定 警告設定
+「燃料警告設定: {燃料警告設定["message"]}」と表示。
+
+「警告しきい値:」と表示。
+燃料警告設定["warnings"]を反復
+  警告タイプ = 対象.key
+  しきい値 = 対象.value
+  「  {警告タイプ}: {しきい値}%」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 燃料履歴取得 ---
+「15. 燃料履歴を取得中...」と表示。
+燃料履歴 = 燃料履歴取得
+「燃料履歴: {燃料履歴["message"]}」と表示。
+「総記録数: {燃料履歴["total_records"]}」と表示。
+
+「燃料タイプ別最新値:」と表示。
+燃料履歴["latest_by_type"]を反復
+  燃料タイプ = 対象.key
+  最新値 = 対象.value
+  「  {燃料タイプ}: {最新値["level"]} ({最新値["percentage"]}%)」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 燃料効率評価 ---
+「16. 燃料効率を評価中...」と表示。
+効率評価 = 燃料効率評価
+「燃料効率評価: {効率評価["message"]}」と表示。
+「全体評価: {効率評価["overall_assessment"]}」と表示。
+
+「燃料タイプ別効率評価:」と表示。
+効率評価["efficiency_scores"]を反復
+  燃料タイプ = 対象.key
+  評価 = 対象.value
+  「  {燃料タイプ}:」と表示。
+  「    スコア: {評価["score"]}」と表示。
+  「    平均レベル: {評価["average_level"]}%」と表示。
+  「    最低レベル: {評価["min_level"]}%」と表示。
+  「    最高レベル: {評価["max_level"]}%」と表示。
+  「    安定性: {評価["stability"]}%」と表示。
+  「    推奨事項:」と表示。
+  評価["recommendations"]を反復
+    推奨 = 対象
+    「      {推奨}」と表示。
+  ここまで。
+  「---」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 統合燃料管理 ---
+「17. 統合燃料管理システムを確認中...」と表示。
+統合管理 = 統合燃料管理
+「統合システム状態: {統合管理["overall_status"]}」と表示。
+「利用可能な操作数: {統合管理["available_operations"]のキー数}」と表示。
+
+「システム状態詳細:」と表示。
+「  ガソリンシステム: {統合管理["gasoline_system"]["active"]}」と表示。
+「  水素システム: {統合管理["hydrogen_system"]["active"]}」と表示。
+「  ディーゼルシステム: {統合管理["diesel_system"]["active"]}」と表示。
+「  電気システム: {統合管理["electric_system"]["active"]}」と表示。
+「  ハイブリッドシステム: {統合管理["hybrid_system"]["active"]}」と表示。
+「  監視システム: {統合管理["monitoring_system"]["active"]}」と表示。
+「  補給システム: {統合管理["refueling_system"]["active"]}」と表示。
+
+「」と表示。
+
+# --- 自動燃料監視 ---
+「18. 自動燃料監視を実行中...」と表示。
+自動監視 = 自動燃料監視
+「自動燃料監視: {自動監視["message"]}」と表示。
+「総計測回数: {自動監視["total_measurements"]}」と表示。
+「平均ガソリン残量: {自動監視["average_gasoline_level"]}L」と表示。
+「平均水素残量: {自動監視["average_hydrogen_level"]}kg」と表示。
+「平均ディーゼル残量: {自動監視["average_diesel_level"]}L」と表示。
+「平均電気残量: {自動監視["average_electric_level"]}kWh」と表示。
+「平均ハイブリッド残量: {自動監視["average_hybrid_level"]}L」と表示。
+「全体消費率: {自動監視["overall_consumption_rate"]}L/分」と表示。
+
+「計測結果:」と表示。
+自動監視["measurements"]を反復
+  計測 = 対象
+  「  {計測["timestamp"]}:」と表示。
+  「    ガソリン: {計測["gasoline_level"]}L」と表示。
+  「    水素: {計測["hydrogen_level"]}kg」と表示。
+  「    ディーゼル: {計測["diesel_level"]}L」と表示。
+  「    電気: {計測["electric_level"]}kWh」と表示。
+  「    ハイブリッド: {計測["hybrid_level"]}L」と表示。
+  「    消費率: {計測["consumption_rate"]}L/分」と表示。
+  「    予測走行距離: {計測["predicted_range"]}km」と表示。
+  「    警告トリガー: {計測["warning_triggered"]}」と表示。
+  「---」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 実用的な例：スマート車両燃料管理 ---
+「19. 実用的な例：スマート車両燃料管理...」と表示。
+
+# 連続監視を開始
+「スマート車両燃料管理を開始します...」と表示。
+燃料管理ログ = []
+
+15回
+  # 全ての燃料を計測
+  ガソリン残量 = ガソリン残量取得
+  水素残量 = 水素残量取得
+  ディーゼル残量 = ディーゼル残量取得
+  電気残量 = 電気残量取得
+  ハイブリッド残量 = ハイブリッド残量取得
+  
+  # 走行可能距離予測
+  走行距離 = 走行可能距離予測
+  
+  # 安全判定
+  ガソリン割合 = ガソリン残量["measurement"]["percentage"]
+  水素割合 = 水素残量["measurement"]["percentage"]
+  ディーゼル割合 = ディーゼル残量["measurement"]["percentage"]
+  電気割合 = 電気残量["measurement"]["percentage"]
+  ハイブリッドガソリン割合 = ハイブリッド残量["measurement"]["gasoline_percentage"]
+  総走行距離 = 走行距離["total_range"]
+  
+  # 燃料警告判定
+  IF ガソリン割合 <= 15 THEN
+    「⚠️ ガソリン残量が少ないです！最寄りの補給所を検索中」と表示。
+    ガソリン補給所 = 補給所検索「ガソリン」
+    IF ガソリン補給所["total_found"] > 0 THEN
+      「最寄りのガソリンスタンド: {ガソリン補給所["stations"][0]["name"]}」と表示。
+    ENDIF
+    燃料管理ログに{
+      "timestamp": new Date().toISOString(),
+      "event": "low_gasoline",
+      "fuel_type": "gasoline",
+      "level": ガソリン割合,
+      "action": "search_station",
+      "severity": "warning"
+    }を追加
+  ENDIF
+  
+  IF 水素割合 <= 10 THEN
+    「⚠️ 水素残量が少ないです！最寄りの水素ステーションを検索中」と表示。
+    水素補給所 = 補給所検索「水素」
+    IF 水素補給所["total_found"] > 0 THEN
+      「最寄りの水素ステーション: {水素補給所["stations"][0]["name"]}」と表示。
+    ENDIF
+    燃料管理ログに{
+      "timestamp": new Date().toISOString(),
+      "event": "low_hydrogen",
+      "fuel_type": "hydrogen",
+      "level": 水素割合,
+      "action": "search_station",
+      "severity": "warning"
+    }を追加
+  ENDIF
+  
+  IF ディーゼル割合 <= 20 THEN
+    「⚠️ ディーゼル残量が少ないです！最寄りのディーゼルスタンドを検索中」と表示。
+    ディーゼル補給所 = 補給所検索「ディーゼル」
+    IF ディーゼル補給所["total_found"] > 0 THEN
+      「最寄りのディーゼルスタンド: {ディーゼル補給所["stations"][0]["name"]}」と表示。
+    ENDIF
+    燃料管理ログに{
+      "timestamp": new Date().toISOString(),
+      "event": "low_diesel",
+      "fuel_type": "diesel",
+      "level": ディーゼル割合,
+      "action": "search_station",
+      "severity": "warning"
+    }を追加
+  ENDIF
+  
+  IF 電気割合 <= 15 THEN
+    「⚠️ 電気残量が少ないです！最寄りの充電ステーションを検索中」と表示。
+    電気補給所 = 補給所検索「電気」
+    IF 電気補給所["total_found"] > 0 THEN
+      「最寄りの充電ステーション: {電気補給所["stations"][0]["name"]}」と表示。
+    ENDIF
+    燃料管理ログに{
+      "timestamp": new Date().toISOString(),
+      "event": "low_electric",
+      "fuel_type": "electric",
+      "level": 電気割合,
+      "action": "search_station",
+      "severity": "warning"
+    }を追加
+  ENDIF
+  
+  IF 総走行距離 <= 50 THEN
+    「⚠️ 走行可能距離が短いです！補給を推奨します」と表示。
+    燃料管理ログに{
+      "timestamp": new Date().toISOString(),
+      "event": "short_range",
+      "total_range": 総走行距離,
+      "action": "refuel_recommended",
+      "severity": "moderate"
+    }を追加
+  ENDIF
+  
+  1000を待つ
+ここまで。
+
+「スマート車両燃料管理完了」と表示。
+「燃料管理ログ:」と表示。
+燃料管理ログを反復
+  ログ = 対象
+  「  {ログ["timestamp"]}: {ログ["event"]} - {ログ["action"]}」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 英語モードでの使用例 ---
+「20. 英語モードでの使用例...」と表示。
+「言語モード設定」に「english」
+
+# 英語で燃料システム検出
+english_fuel = DISCOVER_FUEL_SYSTEMS "all"
+PRINT "English fuel systems found: {english_fuelのキー数}"
+
+# 英語でガソリン残量取得
+gasoline_level = GET_GASOLINE_LEVEL
+PRINT "Gasoline level: {gasoline_level["message"]}"
+PRINT "Current gasoline level: {gasoline_level["level"]}L"
+
+# 英語で水素残量取得
+hydrogen_level = GET_HYDROGEN_LEVEL
+PRINT "Hydrogen level: {hydrogen_level["message"]}"
+PRINT "Current hydrogen level: {hydrogen_level["level"]}kg"
+
+# 英語でディーゼル残量取得
+diesel_level = GET_DIESEL_LEVEL
+PRINT "Diesel level: {diesel_level["message"]}"
+PRINT "Current diesel level: {diesel_level["level"]}L"
+
+# 英語で電気残量取得
+electric_level = GET_ELECTRIC_LEVEL
+PRINT "Electric level: {electric_level["message"]}"
+PRINT "Current electric level: {electric_level["level"]}kWh"
+
+# 英語でハイブリッド残量取得
+hybrid_level = GET_HYBRID_LEVEL
+PRINT "Hybrid level: {hybrid_level["message"]}"
+PRINT "Current gasoline level: {hybrid_level["gasoline_level"]}L"
+PRINT "Current electric level: {hybrid_level["electric_level"]}kWh"
+
+# 英語で燃料監視開始
+monitoring_start = START_FUEL_MONITORING
+PRINT "Fuel monitoring started: {monitoring_start["message"]}"
+PRINT "Monitoring active: {monitoring_start["monitoring_active"]}"
+
+# 英語で燃料消費率計算
+consumption_rate = CALCULATE_FUEL_CONSUMPTION_RATE
+PRINT "Fuel consumption rate: {consumption_rate["message"]}"
+PRINT "Overall rate: {consumption_rate["overall_rate"]}L/min"
+
+# 英語で走行可能距離予測
+driving_range = PREDICT_DRIVING_RANGE
+PRINT "Driving range: {driving_range["message"]}"
+PRINT "Total range: {driving_range["total_range"]}km"
+
+# 英語で補給所検索
+stations = SEARCH_REFUELING_STATIONS "all"
+PRINT "Refueling stations: {stations["message"]}"
+PRINT "Total stations found: {stations["total_found"]}"
+
+# 英語で最適補給ルート計画
+route_plan = PLAN_OPTIMAL_REFUELING_ROUTE "gasoline" "Tokyo"
+PRINT "Optimal refueling route: {route_plan["message"]}"
+PRINT "Recommended station: {route_plan["route_plan"]["recommended_station"]["name"]}"
+
+# 英語で燃料警告設定
+warnings = {
+  "low_gasoline": 20,
+  "low_hydrogen": 15,
+  "low_diesel": 25,
+  "low_electric": 20,
+  "critical_gasoline": 10,
+  "critical_hydrogen": 5,
+  "critical_diesel": 15,
+  "critical_electric": 10
+}
+fuel_warnings = SET_FUEL_WARNINGS warnings
+PRINT "Fuel warnings: {fuel_warnings["message"]}"
+
+# 英語で燃料履歴取得
+fuel_history = GET_FUEL_HISTORY
+PRINT "Fuel history: {fuel_history["message"]}"
+PRINT "Total records: {fuel_history["total_records"]}"
+
+# 英語で燃料効率評価
+efficiency = EVALUATE_FUEL_EFFICIENCY
+PRINT "Fuel efficiency: {efficiency["message"]}"
+PRINT "Overall assessment: {efficiency["overall_assessment"]}"
+
+# 英語で自動燃料監視
+auto_monitoring = AUTO_FUEL_MONITORING
+PRINT "Auto fuel monitoring: {auto_monitoring["message"]}"
+PRINT "Total measurements: {auto_monitoring["total_measurements"]}"
+PRINT "Average gasoline level: {auto_monitoring["average_gasoline_level"]}L"
+
+# 英語で統合燃料管理
+integrated_management = INTEGRATED_FUEL_MANAGEMENT
+PRINT "Integrated fuel management: {integrated_management["overall_status"]}"
+PRINT "Available operations: {integrated_management["available_operations"]のキー数}"
+
+「」と表示。
+
+# --- 子供向けモードでの使用例 ---
+「21. 子供向けモードでの使用例...」と表示。
+「かんたんモード」
+
+# 子供向け燃料監視
+「⛽ ねんりゅうさん、こんにちは！」と表示。
+わんわん
+
+# ガソリンで遊ぶ
+「⛽ がそりんの残りをしらべてみよう！」と表示。
+ガソリン残量 = ガソリン残量取得
+ふくふくを「がそりんは{ガソリン残量["measurement"]["percentage"]}%あるよ！」
+ぴよぴよ
+
+# 水素で遊ぶ
+「💧 すいその残りをしらべてみよう！」と表示。
+水素残量 = 水素残量取得
+ふくふくを「すいそは{水素残量["measurement"]["percentage"]}%あるよ！」
+ぴよぴよ
+
+# ディーゼルで遊ぶ
+「🚛 でぃぜるの残りをしらべてみよう！」と表示。
+ディーゼル残量 = ディーゼル残量取得
+ふくふくを「でぃぜるは{ディーゼル残量["measurement"]["percentage"]}%あるよ！」
+ぴよぴよ
+
+# 電気で遊ぶ
+「🔋 でんきの残りをしらべてみよう！」と表示。
+電気残量 = 電気残量取得
+ふくふくを「でんきは{電気残量["measurement"]["percentage"]}%あるよ！」
+ぴよぴよ
+
+# ハイブリッドで遊ぶ
+「🚗 はいぶりっどの残りをしらべてみよう！」と表示。
+ハイブリッド残量 = ハイブリッド残量取得
+ふくふくを「はいぶりっどはがそりん{ハイブリッド残量["measurement"]["gasoline_percentage"]}%、でんき{ハイブリッド残量["measurement"]["electric_percentage"]}%あるよ！」
+ぴよぴよ
+
+# 走行距離で遊ぶ
+「🚗 あとどれくらいはしれるかしらべてみよう！」と表示。
+走行距離 = 走行可能距離予測
+総距離 = 走行距離["total_range"]
+
+IF 総距離 > 500 THEN
+  ふくふくを「まだまだはしれるよ！たのしいね！」
+ELSE IF 総距離 > 200 THEN
+  ふくふくを「あとすこしだけはしれるよ！」
+ELSE IF 総距離 > 100 THEN
+  ふくふくを「そろそろがそりんすたんどにいこうね！」
+ELSE
+  ふくふくを「すぐにがそりんすたんどにいこうね！」
+ENDIF
+
+# 補給所で遊ぶ
+「⛽ きゅうきゅうじょをさがしてみよう！」と表示。
+補給所検索 = 補給所検索「全部」
+IF 補給所検索["total_found"] > 0 THEN
+  ふくふくを「きゅうきゅうじょが{補給所検索["total_found"]}個みつかったよ！」
+  CAT_MEOW
+ELSE
+  ふくふくを「きゅうきゅうじょがみつからなかったよ！」
+ENDIF
+
+「」と表示。
+
+# --- 高度な機能：燃料最適化 ---
+「22. 高度な機能：燃料最適化...」と表示。
+
+# 30分間のデータを収集
+「30分間の燃料データを収集中...」と表示。
+最適化データ = []
+
+30回
+  # 全ての計測を実行
+  ガソリン残量 = ガソリン残量取得
+  水素残量 = 水素残量取得
+  ディーゼル残量 = ディーゼル残量取得
+  電気残量 = 電気残量取得
+  ハイブリッド残量 = ハイブリッド残量取得
+  走行距離 = 走行可能距離予測
+  
+  最適化データに{
+    "minute": 最適化データのキー数 + 1,
+    "timestamp": new Date().toISOString(),
+    "gasoline_level": ガソリン残量["measurement"]["percentage"],
+    "hydrogen_level": 水素残量["measurement"]["percentage"],
+    "diesel_level": ディーゼル残量["measurement"]["percentage"],
+    "electric_level": 電気残量["measurement"]["percentage"],
+    "hybrid_gasoline_level": ハイブリッド残量["measurement"]["gasoline_percentage"],
+    "hybrid_electric_level": ハイブリッド残量["measurement"]["electric_percentage"],
+    "total_range": 走行距離["total_range"]
+  }を追加
+  
+  1000を待つ
+ここまで。
+
+# データ分析
+「燃料最適化分析結果:」と表示。
+
+# 平均値計算
+平均ガソリン = 最適化データから「gasoline_level」を平均
+平均水素 = 最適化データから「hydrogen_level」を平均
+平均ディーゼル = 最適化データから「diesel_level」を平均
+平均電気 = 最適化データから「electric_level」を平均
+平均ハイブリッドガソリン = 最適化データから「hybrid_gasoline_level」を平均
+平均ハイブリッド電気 = 最適化データから「hybrid_electric_level」を平均
+平均総距離 = 最適化データから「total_range」を平均
+
+「  平均ガソリン残量: {平均ガソリン.toFixed(1)}%」と表示。
+「  平均水素残量: {平均水素.toFixed(1)}%」と表示。
+「  平均ディーゼル残量: {平均ディーゼル.toFixed(1)}%」と表示。
+「  平均電気残量: {平均電気.toFixed(1)}%」と表示。
+「  平均ハイブリッドガソリン: {平均ハイブリッドガソリン.toFixed(1)}%」と表示。
+「  平均ハイブリッド電気: {平均ハイブリッド電気.toFixed(1)}%」と表示。
+「  平均総走行距離: {平均総距離.toFixed(1)}km」と表示。
+
+# 最大値・最小値
+最低ガソリン = 最適化データから「gasoline_level」を最小
+最低水素 = 最適化データから「hydrogen_level」を最小
+最低ディーゼル = 最適化データから「diesel_level」を最小
+最低電気 = 最適化データから「electric_level」を最小
+最長走行距離 = 最適化データから「total_range」を最大
+
+「  最低ガソリン残量: {最低ガソリン.toFixed(1)}%」と表示。
+「  最低水素残量: {最低水素.toFixed(1)}%」と表示。
+「  最低ディーゼル残量: {最低ディーゼル.toFixed(1)}%」と表示。
+「  最低電気残量: {最低電気.toFixed(1)}%」と表示。
+「  最長走行距離: {最長走行距離.toFixed(1)}km」と表示。
+
+# 燃料効率評価
+効率評価 = 燃料効率評価
+「全体効率評価: {効率評価["overall_assessment"]}」と表示。
+
+# 最適化推奨
+「燃料最適化推奨:」と表示。
+IF 平均ガソリン < 30 THEN
+  「  ⚠️ ガソリン残量が少ないです。頻繁な補給が必要です」を表示。
+ENDIF
+
+IF 平均水素 < 20 THEN
+  「  💧 水素残量が少ないです。水素ステーションを検索してください」を表示。
+ENDIF
+
+IF 平均ディーゼル < 25 THEN
+  「  🚛 ディーゼル残量が少ないです。ディーゼルスタンドを検索してください」を表示。
+ENDIF
+
+IF 平均電気 < 20 THEN
+  「  🔋 電気残量が少ないです。充電ステーションを検索してください」を表示。
+ENDIF
+
+IF 平均総距離 < 100 THEN
+  「  🚗 走行可能距離が短いです。燃料補給を検討してください」を表示。
+ENDIF
+
+「」と表示。
+
+「=== デモ完了 ===」と表示。
+「⛽ これでなでしこ3で完全な燃料監視が使える！」と表示。
+「🚗 ガソリン・水素・ディーゼル・電気・ハイブリッドの多種燃料監視！」と表示。
+「📊 リアルタイム燃料残量監視！」と表示。
+「📈 燃料消費率分析で効率的な運用！」と表示。
+「🚗 走行可能距離予測で計画的な運用！」と表示。
+「⛽ 補給所検索で最適な補給計画！」と表示。
+「🗺️ 最適ルート計画でコスト削減！」と表示。
+「⚠️ 燃料警告システムで空っぽ防止！」と表示。
+「📊 燃料履歴管理で長期的なデータ分析！」と表示。
+「🔧 燃料効率評価で性能最適化！」と表示。
+「🏠 スマート補給で完全な利便性！」と表示。
+「🤖 自動監視で24時間体制！」と表示。
+「🎈 子供でも簡単に燃料管理が使える！」と表示。
+「🌍 英語・日本語・子供向けモードで完全対応！」と表示。
+koko

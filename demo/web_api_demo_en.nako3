@@ -1,0 +1,254 @@
+# Web API Features Demo - English Version
+# Implementing Python requests and web scraping capabilities in Nadesiko3
+
+DISPLAY "=== Web API Features Demo ==="
+
+# --- App Store Information Retrieval ---
+DISPLAY "1. Getting App Store Information..."
+
+# iOS App Information
+DISPLAY "--- Getting iOS App Info ---"
+ios_url = "https://itunes.apple.com/lookup?bundleId=com.waze.iphone&country=jp"
+ios_result = ios_urlをJSON API GET
+
+IF ios_result["resultCount"] > 0 THEN
+  ios_app = ios_result["results"][0]
+  ios_version = ios_app["version"]
+  ios_updated = ios_app["currentVersionReleaseDate"]
+  PRINT "iOS Version: {ios_version}"
+  PRINT "iOS Updated: {ios_updated}"
+ELSE
+  PRINT "iOS App: Not found"
+koko
+
+# Android App Information  
+DISPLAY "--- Getting Android App Info ---"
+android_url = "https://play.google.com/store/apps/details?id=com.waze&hl=ja&gl=JP"
+android_headers = {
+  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+  "Accept-Language": "ja-JP,ja;q=0.9,en-US;q=0.8,en;q=0.7"
+}
+
+android_html = android_urlをWEBページ取得 android_headers
+android_text = android_htmlをテキスト抽出
+
+# Extract version using regex (simplified)
+version_patterns = ["\"(\\d+\\.\\d+\\.\\d+\\.\\d+)\"", "\"(\\d+\\.\\d+\\.\\d+)\""]
+android_version = "Unknown"
+
+FOR EACH pattern IN version_patterns
+  matches = android_textを正規表現マッチ pattern
+  IF matchesの要素数 > 0 THEN
+    android_version = matches[0]
+    BREAK
+  ENDIF
+NEXT
+
+# Extract update date (simplified)
+date_patterns = ["\"(\\d{4}年\\d{1,2}月\\d{1,2}日)\"", "\"(\\d{4}/\\d{2}/\\d{2})\""]
+android_updated = "Unknown"
+
+FOR EACH pattern IN date_patterns
+  matches = android_textを正規表現マッチ pattern
+  IF matchesの要素数 > 0 THEN
+    android_updated = matches[0]
+    BREAK
+  ENDIF
+NEXT
+
+PRINT "Android Version: {android_version}"
+PRINT "Android Updated: {android_updated}"
+
+# --- GitHub API Integration ---
+DISPLAY ""
+DISPLAY "2. GitHub API Integration"
+
+# Repository information
+DISPLAY "--- Getting Repository Info ---"
+repo_info = "https://api.github.com/repos/kujirahand/nadesiko3"をHTTP GET
+PRINT "Repository: {repo_info["name"]}"
+PRINT "Stars: {repo_info["stargazers_count"]}"
+PRINT "Forks: {repo_info["forks_count"]}"
+PRINT "Language: {repo_info["language"]}"
+
+# Recent commits
+DISPLAY "--- Getting Recent Commits ---"
+commits = "https://api.github.com/repos/kujirahand/nadesiko3/commits"をHTTP GET
+FOR i FROM 0 TO 2
+  IF i < commitsの要素数 THEN
+    commit = commits[i]
+    commit_message = commit["commit"]["message"]
+    commit_author = commit["commit"]["author"]["name"]
+    PRINT "Commit {i+1}: {commit_message} by {commit_author}"
+  ENDIF
+NEXT
+
+# Issues information
+DISPLAY "--- Getting Issues ---"
+issues = "https://api.github.com/repos/kujirahand/nadesiko3/issues"をHTTP GET
+FOR i FROM 0 TO 2
+  IF i < issuesの要素数 THEN
+    issue = issues[i]
+    issue_title = issue["title"]
+    issue_state = issue["state"]
+    PRINT "Issue {i+1}: {issue_title} ({issue_state})"
+  ENDIF
+NEXT
+
+# --- Generic REST API Calls ---
+DISPLAY ""
+DISPLAY "3. Generic REST API Calls"
+
+# GET request example
+DISPLAY "--- GET Request Example ---"
+get_response = "https://jsonplaceholder.typicode.com/posts/1"をHTTP GET
+PRINT "GET Response: {get_response["title"]}"
+
+# POST request example
+DISPLAY "--- POST Request Example ---"
+post_data = {
+  "title": "Nadesiko3 API Test",
+  "body": "Testing POST requests with Nadesiko3",
+  "userId": 1
+}
+post_response = "https://jsonplaceholder.typicode.com/posts"をHTTP POST post_data
+PRINT "POST Response ID: {post_response["id"]}"
+
+# PUT request example
+DISPLAY "--- PUT Request Example ---"
+put_data = {
+  "id": 1,
+  "title": "Updated Nadesiko3 Test",
+  "body": "Testing PUT requests with Nadesiko3"
+}
+put_response = "https://jsonplaceholder.typicode.com/posts/1"をHTTP PUT put_data
+PRINT "PUT Response Title: {put_response["title"]}"
+
+# DELETE request example
+DISPLAY "--- DELETE Request Example ---"
+delete_response = "https://jsonplaceholder.typicode.com/posts/1"をHTTP DELETE
+PRINT "DELETE Status: {delete_response["status"]}"
+
+# --- JSON Processing Features ---
+DISPLAY ""
+DISPLAY "4. JSON Processing Features"
+
+# Create sample JSON
+sample_json = {
+  "user": "Nadesiko3",
+  "version": "3.6.0",
+  "features": ["data science", "machine learning", "web api"],
+  "ai_enhanced": true
+}
+
+PRINT "Original JSON: {sample_json}"
+
+# JSON path operations
+user_name = sample_jsonから"user"をJSONパス取得
+features_list = sample_jsonから"features"をJSONパス取得
+ai_status = sample_jsonから"ai_enhanced"をJSONパス取得
+
+PRINT "User: {user_name}"
+PRINT "Features: {features_list}"
+PRINT "AI Enhanced: {ai_status}"
+
+# JSON array operations
+new_json = sample_jsonと{"last_updated": "2026-05-06"}をJSONマージ
+PRINT "Merged JSON: {new_json}"
+
+# JSON validation
+is_valid = new_jsonをJSONバリデーション
+PRINT "JSON Valid: {is_valid}"
+
+# --- Web Scraping Features ---
+DISPLAY ""
+DISPLAY "5. Web Scraping Features"
+
+# Get web page content
+DISPLAY "--- Web Page Content Extraction ---"
+scrape_url = "https://example.com"
+page_content = scrape_urlをWEBページ取得
+
+# Extract text
+page_text = page_contentをテキスト抽出
+PRINT "Page Text Length: {page_textの文字数}"
+PRINT "First 100 chars: {page_textを左から文字数取得 100}"
+
+# Extract links
+page_links = page_contentをリンク一覧取得
+PRINT "Found {page_linksの要素数} links"
+FOR i FROM 0 TO 2
+  IF i < page_linksの要素数 THEN
+    PRINT "Link {i+1}: {page_links[i]}"
+  ENDIF
+NEXT
+
+# Extract images
+page_images = page_contentを画像一覧取得
+PRINT "Found {page_imagesの要素数} images"
+FOR i FROM 0 TO 2
+  IF i < page_imagesの要素数 THEN
+    PRINT "Image {i+1}: {page_images[i]}"
+  ENDIF
+NEXT
+
+# Extract metadata
+page_title = page_contentから"title"をメタデータ取得
+page_description = page_contentから"description"をメタデータ取得
+PRINT "Page Title: {page_title}"
+PRINT "Page Description: {page_description}"
+
+# --- Encoding/Decoding Features ---
+DISPLAY ""
+DISPLAY "6. Encoding/Decoding Features"
+
+# URL encoding
+test_url = "https://example.com/search?q=なでしこ3"
+encoded_url = test_urlをURLエンコード
+PRINT "Original URL: {test_url}"
+PRINT "Encoded URL: {encoded_url}"
+
+# Base64 encoding
+test_text = "Hello Nadesiko3!"
+encoded_text = test_textをBASE64エンコード
+PRINT "Original Text: {test_text}"
+PRINT "Base64 Encoded: {encoded_text}"
+
+# Base64 decoding
+decoded_text = encoded_textをBASE64デコード
+PRINT "Decoded Text: {decoded_text}"
+
+# --- API Key Management ---
+DISPLAY ""
+DISPLAY "7. API Key Management"
+
+# Set API key (in practice, use secure methods)
+api_key = "demo_api_key_12345"
+api_keys = {
+  "jsonplaceholder": api_key,
+  "github": "demo_github_token"
+}
+
+# Rate limiting simulation
+request_count = 0
+FOR i FROM 1 TO 5
+  request_count = request_count + 1
+  IF request_count <= 3 THEN
+    PRINT "API Request {i}: Success"
+  ELSE
+    PRINT "API Request {i}: Rate limited (max 3 requests)"
+  ENDIF
+NEXT
+
+# --- Summary ---
+DISPLAY ""
+DISPLAY "=== Web API Demo Complete ==="
+PRINT "Nadesiko3 now has Python-like web capabilities!"
+PRINT "✅ HTTP requests (GET/POST/PUT/DELETE)"
+PRINT "✅ JSON processing and manipulation"
+PRINT "✅ Web scraping and data extraction"
+PRINT "✅ GitHub API integration"
+PRINT "✅ Encoding/decoding utilities"
+PRINT "✅ API key management features"
+
+koko

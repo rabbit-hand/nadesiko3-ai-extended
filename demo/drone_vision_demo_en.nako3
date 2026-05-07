@@ -1,0 +1,361 @@
+# Advanced Drone Vision System Demo - English Version
+# Multiple cameras, obstacle avoidance, and target tracking
+
+DISPLAY "=== Advanced Drone Vision System Demo ==="
+
+# --- Camera System Discovery ---
+DISPLAY "1. Discovering camera system..."
+all_cameras = DISCOVER_CAMERA_SYSTEM
+PRINT "Cameras found: {all_camerasのキー数}"
+
+FOR EACH camera IN all_cameras
+  IF camera.key !== "initialized" AND camera.key !== "timestamp" THEN
+    camera_name = camera.value["name"]
+    camera_type = camera.value["type"]
+    resolution_width = camera.value["resolution"]["width"]
+    resolution_height = camera.value["resolution"]["height"]
+    fov = camera.value["fov"]
+    PRINT "  {camera_name} ({camera_type}) - {resolution_width}x{resolution_height}, FOV: {fov}°"
+  ENDIF
+NEXT
+
+DISPLAY ""
+
+# --- Set Safety Distance ---
+DISPLAY "2. Setting safety distance..."
+safety_result = SET_SAFETY_DISTANCE 8
+PRINT safety_result["message"]
+
+DISPLAY ""
+
+# --- Obstacle Detection ---
+DISPLAY "3. Detecting obstacles..."
+
+# Detect obstacles from front camera
+front_obstacles = DETECT_OBSTACLES "front"
+PRINT "Front camera obstacles:"
+PRINT "  Detected: {front_obstacles["total_count"]}"
+PRINT "  Critical obstacles: {front_obstacles["critical_obstacles"]}"
+
+FOR EACH obstacle IN front_obstacles["obstacles"]
+  obstacle_id = obstacle["id"]
+  obstacle_type = obstacle["type"]
+  distance = obstacle["distance"]
+  size_width = obstacle["size"]["width"]
+  size_height = obstacle["size"]["height"]
+  PRINT "  {obstacle_id} ({obstacle_type}) - Distance: {distance}m, Size: {size_width}x{size_height}m"
+NEXT
+
+# Detect obstacles from bottom camera
+bottom_obstacles = DETECT_OBSTACLES "bottom"
+PRINT "Bottom camera obstacles: {bottom_obstacles["total_count"]}"
+
+DISPLAY ""
+
+# --- Automatic Obstacle Avoidance ---
+DISPLAY "4. Executing automatic obstacle avoidance..."
+avoidance_strategy = AUTO_AVOID_OBSTACLES
+PRINT "Safety level: {avoidance_strategy["safety_level"]}"
+PRINT "Strategy: {avoidance_strategy["strategy"]["action"]}"
+PRINT "Direction: {avoidance_strategy["strategy"]["direction"]}"
+
+FOR EACH command IN avoidance_strategy["action"]["commands"]
+  command_type = command["type"]
+  description = command["description"]
+  PRINT "  Executed command: {command_type} - {description}"
+NEXT
+
+DISPLAY ""
+
+# --- Target Detection ---
+DISPLAY "5. Detecting targets..."
+
+# Detect person
+person_detection = DETECT_TARGET "person" "front"
+PRINT "Person detection:"
+IF person_detection["detected"] THEN
+  PRINT "  Position: ({person_detection["position"]["x"]}, {person_detection["position"]["y"]}, {person_detection["position"]["z"]})"
+  PRINT "  Distance: {person_detection["distance"]}m"
+  PRINT "  Confidence: {person_detection["confidence"]}"
+ELSE
+  PRINT "  No person detected"
+ENDIF
+
+# Detect vehicle
+vehicle_detection = DETECT_TARGET "vehicle" "front"
+PRINT "Vehicle detection:"
+IF vehicle_detection["detected"] THEN
+  PRINT "  Position: ({vehicle_detection["position"]["x"]}, {vehicle_detection["position"]["y"]}, {vehicle_detection["position"]["z"]})"
+  PRINT "  Distance: {vehicle_detection["distance"]}m"
+ELSE
+  PRINT "  No vehicle detected"
+ENDIF
+
+DISPLAY ""
+
+# --- Target Tracking ---
+DISPLAY "6. Starting target tracking..."
+
+# Track person if detected
+IF person_detection["detected"] THEN
+  tracking_strategy = TRACK_TARGET person_detection
+  PRINT "Tracking target: {tracking_strategy["target"]["target_type"]}"
+  PRINT "Tracking status: {tracking_strategy["tracking_status"]}"
+  
+  FOR EACH command IN tracking_strategy["action"]["tracking_commands"]
+    command_type = command["type"]
+    description = command["description"]
+    PRINT "  Tracking command: {command_type} - {description}"
+  NEXT
+ENDIF
+
+DISPLAY ""
+
+# --- Image Processing ---
+DISPLAY "7. Executing image processing..."
+
+# Edge detection
+edge_process = PROCESS_IMAGE "front" "edge_detection"
+PRINT "Edge detection: {edge_process["processing_name"]}"
+PRINT "Processing time: {edge_process["processed_data"]["processing_time"]}ms"
+
+# Object detection
+object_process = PROCESS_IMAGE "front" "object_detection"
+PRINT "Object detection: {object_process["processing_name"]}"
+PRINT "Confidence: {object_process["confidence"]}"
+
+# Face detection
+face_process = PROCESS_IMAGE "front" "face_detection"
+PRINT "Face detection: {face_process["processing_name"]}"
+PRINT "Confidence: {face_process["confidence"]}"
+
+DISPLAY ""
+
+# --- Vision Status Monitoring ---
+DISPLAY "8. Monitoring vision status..."
+vision_status = MONITOR_VISION
+PRINT "Monitor timestamp: {vision_status["timestamp"]}"
+PRINT "System status: {vision_status["system_status"]}"
+PRINT "Safety level: {vision_status["safety_level"]}"
+
+# Tracking status
+tracking_status = vision_status["tracking_status"]
+PRINT "Active tracking: {tracking_status["active_tracking"]}"
+PRINT "Locked targets: {tracking_status["locked_targets"]}"
+PRINT "Tracking quality: {tracking_status["tracking_quality"]}"
+
+DISPLAY ""
+
+# --- Practical Example: Autonomous Flight Pattern ---
+DISPLAY "9. Practical example: Autonomous flight pattern..."
+
+flight_log = []
+REPEAT 5 times
+  # Get vision status
+  latest_vision = MONITOR_VISION
+  
+  # Execute automatic obstacle avoidance
+  avoidance_result = AUTO_AVOID_OBSTACLES
+  
+  # Create log entry
+  log_entry = {
+    "timestamp": latest_vision["timestamp"],
+    "safety_level": avoidance_result["safety_level"],
+    "obstacles_count": 0,
+    "action_taken": avoidance_result["strategy"]["action"]
+  }
+  
+  # Count obstacles
+  FOR EACH camera_key IN latest_vision["obstacles"]
+    IF camera_key !== "total_count" AND camera_key !== "critical_obstacles" AND camera_key !== "safe_distance" THEN
+      log_entry["obstacles_count"] = log_entry["obstacles_count"] + latest_vision["obstacles"][camera_key]["total_count"]
+    ENDIF
+  NEXT
+  
+  flight_logにlog_entryを追加
+  PRINT "Log: {log_entry["timestamp"]} - Safety: {log_entry["safety_level"]}, Obstacles: {log_entry["obstacles_count"]}, Action: {log_entry["action_taken"]}"
+  
+  WAIT 1000
+NEXT
+
+DISPLAY ""
+
+# --- Advanced Features: Multi-Camera Coordination ---
+DISPLAY "10. Advanced features: Multi-camera coordination..."
+
+# Simultaneous obstacle detection from all cameras
+front_obstacles = DETECT_OBSTACLES "front"
+bottom_obstacles = DETECT_OBSTACLES "bottom"
+rear_obstacles = DETECT_OBSTACLES "rear"
+side_obstacles = DETECT_OBSTACLES "side"
+
+# Create comprehensive obstacle map
+comprehensive_obstacles = {
+  "front": front_obstacles["obstacles"],
+  "bottom": bottom_obstacles["obstacles"],
+  "rear": rear_obstacles["obstacles"],
+  "side": side_obstacles["obstacles"],
+  "total_count": front_obstacles["total_count"] + bottom_obstacles["total_count"] + rear_obstacles["total_count"] + side_obstacles["total_count"]
+}
+
+PRINT "=== Comprehensive Obstacle Map ==="
+PRINT "Front: {front_obstacles["total_count"]}"
+PRINT "Bottom: {bottom_obstacles["total_count"]}"
+PRINT "Rear: {rear_obstacles["total_count"]}"
+PRINT "Side: {side_obstacles["total_count"]}"
+PRINT "Total: {comprehensive_obstacles["total_count"]}"
+
+# Calculate safest flight path
+safest_path = "forward"  // Simplified example
+IF comprehensive_obstacles["total_count"] > 5 THEN
+  safest_path = "hover"
+ELSEIF comprehensive_obstacles["front"]["total_count"] > 2 THEN
+  safest_path = "altitude_up"
+ENDIF
+
+PRINT "Recommended flight path: {safest_path}"
+
+DISPLAY ""
+
+# --- Kid-Friendly Mode Example ---
+DISPLAY "11. Kid-friendly mode example..."
+「かんたんモード」
+
+# Kid-friendly camera operations
+PRINT "📷 Hello Drone Camera-san!"
+DOG_BARK
+
+# Play with obstacle detection
+PRINT "🚧 Let's look for obstacles!"
+obstacles = DETECT_OBSTACLES "front"
+IF obstacles["total_count"] > 0 THEN
+  DECORATE "Found {obstacles["total_count"]} obstacles! Be careful!"
+ELSE
+  DECORATE "All clear! Safe to fly!"
+ENDIF
+
+# Play with target detection
+PRINT "👤 Let's look for people!"
+person_detection = DETECT_TARGET "person" "front"
+IF person_detection["detected"] THEN
+  DECORATE "Found a person {person_detection["distance"]} meters away!"
+  CAT_MEOW
+ELSE
+  DECORATE "No people found!"
+ENDIF
+
+# Play with automatic avoidance
+PRINT "🛡️ Let's try automatic avoidance!"
+avoidance_result = AUTO_AVOID_OBSTACLES
+IF avoidance_result["safety_level"] = "danger" THEN
+  DECORATE "Danger! Auto-avoiding!"
+  CHIRP_CHIRP
+ELSE
+  DECORATE "All safe! Continuing flight!"
+ENDIF
+
+DISPLAY ""
+
+# --- Advanced Target Tracking Features ---
+DISPLAY "12. Advanced target tracking features..."
+
+# Multiple target detection
+targets = {
+  "person": DETECT_TARGET "person" "front",
+  "vehicle": DETECT_TARGET "vehicle" "front",
+  "building": DETECT_TARGET "building" "front"
+}
+
+PRINT "=== Multiple Target Detection ==="
+FOR EACH target_type IN targets
+  target = targets[target_type]
+  IF target["detected"] THEN
+    PRINT "{target_type}: Found at {target["distance"]}m (confidence: {target["confidence"]})"
+  ELSE
+    PRINT "{target_type}: Not detected"
+  ENDIF
+NEXT
+
+# Priority-based tracking
+priority_target = null
+best_confidence = 0
+
+FOR EACH target_type IN targets
+  target = targets[target_type]
+  IF target["detected"] AND target["confidence"] > best_confidence THEN
+    best_confidence = target["confidence"]
+    priority_target = target
+  ENDIF
+NEXT
+
+IF priority_target THEN
+  PRINT "Priority target: {priority_target["target_type"]}"
+  tracking = TRACK_TARGET priority_target
+  PRINT "Tracking initiated with confidence: {best_confidence}"
+ELSE
+  PRINT "No suitable targets for tracking"
+ENDIF
+
+DISPLAY ""
+
+# --- Safety and Emergency Features ---
+DISPLAY "13. Safety and emergency features..."
+
+# Emergency landing zone detection
+landing_zone = DETECT_TARGET "landing_pad" "bottom"
+IF landing_zone["detected"] THEN
+  PRINT "Landing zone detected:"
+  PRINT "  Position: ({landing_zone["position"]["x"]}, {landing_zone["position"]["y"]})"
+  PRINT "  Size: {landing_zone["size"]["width"]}x{landing_zone["size"]["height"]}m"
+  PRINT "  Confidence: {landing_zone["confidence"]}"
+  PRINT "  Recommendation: Safe to land"
+ELSE
+  PRINT "No suitable landing zone detected"
+  PRINT "  Recommendation: Continue searching or use alternative landing site"
+ENDIF
+
+# Collision prediction
+collision_risk = "low"
+front_obstacles = DETECT_OBSTACLES "front"
+IF front_obstacles["critical_obstacles"] > 0 THEN
+  collision_risk = "high"
+ELSEIF front_obstacles["total_count"] > 3 THEN
+  collision_risk = "medium"
+ENDIF
+
+PRINT "Collision risk assessment: {collision_risk}"
+IF collision_risk = "high" THEN
+  PRINT "  Recommendation: Immediate evasive action"
+ELSEIF collision_risk = "medium" THEN
+  PRINT "  Recommendation: Reduce speed and increase altitude"
+ELSE
+  PRINT "  Recommendation: Continue normal flight"
+ENDIF
+
+DISPLAY ""
+
+# --- Advanced Vision Benefits ---
+DISPLAY ""
+DISPLAY "=== Advanced Vision Benefits ==="
+PRINT "✅ Multiple camera system support!"
+PRINT "✅ Real-time obstacle detection!"
+PRINT "✅ Automatic collision avoidance!"
+PRINT "✅ Target detection and tracking!"
+PRINT "✅ Image processing capabilities!"
+PRINT "✅ Multi-camera coordination!"
+PRINT "✅ Safety distance configuration!"
+PRINT "✅ Emergency landing detection!"
+PRINT "✅ Collision risk prediction!"
+PRINT "✅ Priority-based target tracking!"
+PRINT "✅ Kid-friendly commands available!"
+PRINT "✅ English and Japanese support!"
+
+DISPLAY ""
+DISPLAY "=== Demo Complete ==="
+PRINT "📷 Now Nadesiko3 has advanced drone vision capabilities!"
+PRINT "🚧 Automatic obstacle avoidance for safe flight!"
+PRINT "👤 Smart target detection and tracking!"
+PRINT "🎈 Kids can easily use drone vision features!"
+PRINT "🌍 Perfect for international drone developers!"
+
+koko

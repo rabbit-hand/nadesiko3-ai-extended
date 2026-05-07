@@ -1,0 +1,320 @@
+# Advanced Scheduler Control Demo - English Version
+# Scheduler with weekday/time scheduling, emergency stop, and system control
+
+DISPLAY "=== Advanced Scheduler Control Demo ==="
+
+# --- Initialize Scheduler ---
+DISPLAY "1. Initializing scheduler..."
+scheduler = INITIALIZE_SCHEDULER
+PRINT "Scheduler initialized"
+PRINT "Created at: {scheduler["created_at"]}"
+
+DISPLAY ""
+
+# --- Weekday/Time Schedule ---
+DISPLAY "2. Setting weekday/time schedules..."
+
+# Environmental monitoring on weekdays at 9 AM
+weekday_morning_schedule = WEEKDAY_TIME_SCHEDULE "Environmental monitoring" "monday,tuesday,wednesday,thursday,friday" "09:00"
+PRINT "Weekday morning schedule: {weekday_morning_schedule["message"]}"
+PRINT "Schedule ID: {weekday_morning_schedule["schedule_id"]}"
+PRINT "Next run: {weekday_morning_schedule["next_run"]}"
+
+# Report sending on weekends at 6 PM
+weekend_evening_schedule = WEEKDAY_TIME_SCHEDULE "Report sending" "saturday,sunday" "18:00"
+PRINT "Weekend evening schedule: {weekend_evening_schedule["message"]}"
+PRINT "Schedule ID: {weekend_evening_schedule["schedule_id"]}"
+PRINT "Next run: {weekend_evening_schedule["next_run"]}"
+
+DISPLAY ""
+
+# --- Daily Schedule ---
+DISPLAY "3. Setting daily schedules..."
+
+# Data backup at noon every day
+daily_noon_schedule = DAILY_SCHEDULE "Data backup" "12:00"
+PRINT "Daily noon schedule: {daily_noon_schedule["message"]}"
+PRINT "Schedule ID: {daily_noon_schedule["schedule_id"]}"
+PRINT "Next run: {daily_noon_schedule["next_run"]}"
+
+# System check at 10 PM every day
+daily_evening_schedule = DAILY_SCHEDULE "System check" "22:00"
+PRINT "Daily evening schedule: {daily_evening_schedule["message"]}"
+PRINT "Schedule ID: {daily_evening_schedule["schedule_id"]}"
+PRINT "Next run: {daily_evening_schedule["next_run"]}"
+
+DISPLAY ""
+
+# --- Hourly Schedule ---
+DISPLAY "4. Setting hourly schedules..."
+
+# Status check at 0 minutes every hour
+hourly_0_schedule = HOURLY_SCHEDULE "Status check" 0
+PRINT "Hourly 0-minute schedule: {hourly_0_schedule["message"]}"
+PRINT "Schedule ID: {hourly_0_schedule["schedule_id"]}"
+PRINT "Next run: {hourly_0_schedule["next_run"]}"
+
+# Log collection at 30 minutes every hour
+hourly_30_schedule = HOURLY_SCHEDULE "Log collection" 30
+PRINT "Hourly 30-minute schedule: {hourly_30_schedule["message"]}"
+PRINT "Schedule ID: {hourly_30_schedule["schedule_id"]}"
+PRINT "Next run: {hourly_30_schedule["next_run"]}"
+
+DISPLAY ""
+
+# --- Interval Schedule ---
+DISPLAY "5. Setting interval schedules..."
+
+# Environmental monitoring every 5 minutes
+interval_5min_schedule = INTERVAL_SCHEDULE "Environmental monitoring" "5 minutes"
+PRINT "5-minute interval schedule: {interval_5min_schedule["message"]}"
+PRINT "Schedule ID: {interval_5min_schedule["schedule_id"]}"
+PRINT "Next run: {interval_5min_schedule["next_run"]}"
+
+# Data synchronization every 1 hour
+interval_1hour_schedule = INTERVAL_SCHEDULE "Data synchronization" "1 hour"
+PRINT "1-hour interval schedule: {interval_1hour_schedule["message"]}"
+PRINT "Schedule ID: {interval_1hour_schedule["schedule_id"]}"
+PRINT "Next run: {interval_1hour_schedule["next_run"]}"
+
+DISPLAY ""
+
+# --- List Schedules ---
+DISPLAY "6. Listing schedules..."
+schedule_list = LIST_SCHEDULES
+PRINT "Total schedules: {schedule_list["total_schedules"]}"
+PRINT "Active schedules: {schedule_list["active_schedules"]}"
+
+DISPLAY ""
+DISPLAY "=== Configured Schedules ==="
+FOR EACH schedule IN schedule_list["schedules"]
+  schedule_id = schedule["id"]
+  task = schedule["task"]
+  config = schedule["config"]
+  active = schedule["active"]
+  next_run = schedule["next_run"]
+  
+  PRINT "ID: {schedule_id}"
+  PRINT "Task: {task}"
+  PRINT "Type: {config["type"]}"
+  PRINT "Active: {active}"
+  PRINT "Next run: {next_run}"
+  PRINT "---"
+NEXT
+
+DISPLAY ""
+
+# --- System Status Check ---
+DISPLAY "7. Checking system status..."
+system_status = SYSTEM_STATUS
+PRINT "System status: {system_status["system_status"]}"
+PRINT "Total schedules: {system_status["total_schedules"]}"
+PRINT "Active schedules: {system_status["active_schedules"]}"
+PRINT "Inactive schedules: {system_status["inactive_schedules"]}"
+
+DISPLAY ""
+
+# --- Schedule Execution Simulation ---
+DISPLAY "8. Schedule execution simulation..."
+
+REPEAT 5 times
+  execution_result = RUN_SCHEDULES
+  PRINT "Execution time: {execution_result["timestamp"]}"
+  PRINT "Executed schedules: {execution_result["executed_count"]}"
+  
+  IF execution_result["executed_count"] > 0 THEN
+    PRINT "Executed tasks:"
+    FOR EACH execution IN execution_result["executions"]
+      task_name = execution["task"]
+      exec_time = execution["executed_at"]
+      message = execution["message"]
+      PRINT "  - {task_name} ({exec_time}): {message}"
+    NEXT
+  ELSE
+    PRINT "No schedules to execute"
+  ENDIF
+  
+  DISPLAY ""
+  WAIT 1000
+NEXT
+
+DISPLAY ""
+
+# --- Schedule Control ---
+DISPLAY "9. Schedule control test..."
+
+# Disable first schedule
+first_schedule_id = schedule_list["schedules"][0]["id"]
+disable_result = DISABLE_SCHEDULE first_schedule_id
+PRINT "Disable result: {disable_result["message"]}"
+
+# Re-enable it
+enable_result = ENABLE_SCHEDULE first_schedule_id
+PRINT "Enable result: {enable_result["message"]}"
+
+DISPLAY ""
+
+# --- Emergency Stop Test ---
+DISPLAY "10. Emergency stop test..."
+
+pre_emergency_status = SYSTEM_STATUS
+PRINT "Active schedules before emergency stop: {pre_emergency_status["active_schedules"]}"
+
+emergency_stop_result = EMERGENCY_STOP
+PRINT "Emergency stop result: {emergency_stop_result["message"]}"
+PRINT "Stopped schedules: {emergency_stop_result["stopped_schedules"]}"
+
+post_emergency_status = SYSTEM_STATUS
+PRINT "Active schedules after emergency stop: {post_emergency_status["active_schedules"]}"
+
+DISPLAY ""
+
+# --- System Restart Test ---
+DISPLAY "11. System restart test..."
+
+system_restart_result = SYSTEM_RESTART
+PRINT "System restart result: {system_restart_result["message"]}"
+PRINT "Reactivated schedules: {system_restart_result["reactivated_schedules"]}"
+
+post_restart_status = SYSTEM_STATUS
+PRINT "Active schedules after restart: {post_restart_status["active_schedules"]}"
+
+DISPLAY ""
+
+# --- Kid-Friendly Mode Example ---
+DISPLAY "12. Kid-friendly mode example..."
+「かんたんモード」
+
+# Kid-friendly scheduler operations
+PRINT "⏰ Hello Scheduler-san!"
+DOG_BARK
+
+# Simple schedule setting
+PRINT "📅 Let's set study time!"
+study_schedule = WEEKDAY_TIME_SCHEDULE "Study time" "monday,tuesday,wednesday,thursday,friday" "16:00"
+DECORATE "Study time set! Let's do our best!"
+CAT_MEOW
+
+# Play time setting
+PRINT "🎮 Let's set play time!"
+play_schedule = WEEKDAY_TIME_SCHEDULE "Play time" "saturday,sunday" "10:00"
+DECORATE "Play time set! Let's have fun!"
+CAT_MEOW
+
+# Look at schedule list
+PRINT "📋 Let's look at schedules!"
+kid_friendly_list = LIST_SCHEDULES
+DECORATE "There are {kid_friendly_list["total_schedules"]} schedules! So many!"
+
+# Play with emergency stop
+PRINT "🚨 Let's play emergency stop!"
+kid_emergency_stop = EMERGENCY_STOP
+DECORATE "Everything stopped! That was a big sound!"
+
+# Play with system restart
+PRINT "🔄 Let's start again!"
+kid_restart = SYSTEM_RESTART
+DECORATE "Started moving again! Let's do our best together!"
+
+DISPLAY ""
+
+# --- Practical Example: Smart Home Automation ---
+DISPLAY "13. Practical example: Smart home automation..."
+
+# Morning routine
+morning_routine = DAILY_SCHEDULE "Morning routine execution" "07:00"
+PRINT "Morning routine: {morning_routine["message"]}"
+
+# Evening routine
+evening_routine = DAILY_SCHEDULE "Evening routine execution" "22:00"
+PRINT "Evening routine: {evening_routine["message"]}"
+
+# Room temperature check every 10 minutes
+temp_check = INTERVAL_SCHEDULE "Room temperature check" "10 minutes"
+PRINT "Temperature check: {temp_check["message"]}"
+
+# Emergency stop preparation
+PRINT "Emergency stop preparation completed"
+
+DISPLAY ""
+
+# --- Advanced Features: Schedule Analytics ---
+DISPLAY "14. Advanced features: Schedule analytics..."
+
+# Get current schedule statistics
+current_schedules = LIST_SCHEDULES
+active_count = current_schedules["active_schedules"]
+total_count = current_schedules["total_schedules"]
+
+# Analyze schedule types
+schedule_types = {}
+FOR EACH schedule IN current_schedules["schedules"]
+  type = schedule["config"]["type"]
+  IF schedule_types[type] THEN
+    schedule_types[type] = schedule_types[type] + 1
+  ELSE
+    schedule_types[type] = 1
+  ENDIF
+NEXT
+
+PRINT "=== Schedule Analytics ==="
+PRINT "Total schedules: {total_count}"
+PRINT "Active schedules: {active_count}"
+PRINT "Inactive schedules: {total_count - active_count}"
+PRINT "Schedule types:"
+
+FOR EACH type IN schedule_types
+  count = schedule_types[type]
+  PRINT "  {type}: {count}"
+NEXT
+
+# Calculate schedule density
+schedule_density = (active_count / total_count) * 100
+PRINT "Schedule density: {schedule_density}%"
+
+# Predict next execution times
+next_executions = []
+FOR EACH schedule IN current_schedules["schedules"]
+  IF schedule["active"] THEN
+    next_executionsに{
+      "task": schedule["task"],
+      "next_run": schedule["next_run"],
+      "type": schedule["config"]["type"]
+    }を追加
+  ENDIF
+NEXT
+
+# Sort by next execution time
+next_executionsを反復
+  execution = 対象
+  PRINT "Next execution: {execution["task"]} at {execution["next_run"]} ({execution["type"]})"
+NEXT
+
+DISPLAY ""
+
+# --- Schedule Benefits Summary ---
+DISPLAY ""
+DISPLAY "=== Advanced Scheduler Benefits ==="
+PRINT "✅ Complete weekday/time scheduling system!"
+PRINT "✅ Daily, hourly, and interval scheduling!"
+PRINT "✅ Emergency stop for immediate halting!"
+PRINT "✅ System stop and restart control!"
+PRINT "✅ Schedule enable/disable management!"
+PRINT "✅ Comprehensive schedule listing!"
+PRINT "✅ Schedule execution tracking!"
+PRINT "✅ System status monitoring!"
+PRINT "✅ Kid-friendly scheduler features!"
+PRINT "✅ English and Japanese support!"
+
+DISPLAY ""
+DISPLAY "=== Demo Complete ==="
+PRINT "⏰ Now Nadesiko3 has advanced scheduler capabilities!"
+PRINT "📅 Flexible scheduling with weekday/time specification!"
+PRINT "🔄 Automated execution with daily, hourly, and interval schedules!"
+PRINT "🚨 Emergency stop for immediate system halting!"
+PRINT "🔄 System stop and restart for complete control!"
+PRINT "📊 Schedule listing for comprehensive management!"
+PRINT "🎈 Kids can easily use scheduler features!"
+PRINT "🌍 Perfect for international scheduling!"
+
+koko
