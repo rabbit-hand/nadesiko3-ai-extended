@@ -273,77 +273,12 @@ const PluginMachineLearning = {
     }
   },
 
-  '決定木分類': { // @決定木分類器 // @けっていぎぶんるい
+  '平均二乗誤差': { // @平均二乗誤差を計算 // @へいきんにじょうごさ
     type: 'func',
-    josi: [['で'], ['を']],
+    josi: [['と'], ['の']],
     pure: true,
-    fn: function (x: any, y: any): any {
-      if (!Array.isArray(x) || !Array.isArray(y) || x.length !== y.length || x.length === 0) 
-        return { tree: null }
-      
-      // 簡単な決定木の実装
-      const buildTree = (data: any[], features: number[], depth: number = 0): any => {
-        if (depth > 3 || data.length === 0) return null
-        
-        const labels = [...new Set(data.map(d => d.label))]
-        if (labels.length === 1) return { label: labels[0], count: data.length }
-        
-        let bestGain = 0
-        let bestFeature = -1
-        let bestThreshold = 0
-        let bestLeftData: any[] = []
-        let bestRightData: any[] = []
-        
-        for (let f = 0; f < features.length; f++) {
-          const values = data.map(d => Number(d.features[f]) || 0).sort((a, b) => a - b)
-          
-          for (let i = 0; i < values.length - 1; i++) {
-            const threshold = (values[i] + values[i + 1]) / 2
-            const leftData = data.filter(d => Number(d.features[f]) || 0 <= threshold)
-            const rightData = data.filter(d => Number(d.features[f]) || 0 > threshold)
-            
-            const leftLabels = leftData.map(d => d.label)
-            const rightLabels = rightData.map(d => d.label)
-            
-            const leftGini = 1 - Math.pow(leftLabels.length / data.length, 2) - 
-                            Math.pow(leftLabels.filter(l => l === leftLabels[0]).length / leftLabels.length, 2) - 
-                            Math.pow(leftLabels.filter(l => l === leftLabels[1]).length / leftLabels.length, 2)
-            
-            const rightGini = 1 - Math.pow(rightLabels.length / data.length, 2) - 
-                             Math.pow(rightLabels.filter(l => l === rightLabels[0]).length / rightLabels.length, 2) - 
-                             Math.pow(rightLabels.filter(l => l === rightLabels[1]).length / rightLabels.length, 2)
-            
-            const weightedGini = (leftData.length * leftGini + rightData.length * rightGini) / data.length
-            const gain = 1 - weightedGini
-            
-            if (gain > bestGain) {
-              bestGain = gain
-              bestFeature = f
-              bestThreshold = threshold
-              bestLeftData = leftData
-              bestRightData = rightData
-            }
-          }
-        }
-        
-        if (bestGain === 0) {
-          const labels = data.map(d => d.label)
-          const labelCounts: any = {}
-          labels.forEach(label => {
-            labelCounts[label] = (labelCounts[label] || 0) + 1
-          })
-          const majorityLabel = Object.keys(labelCounts).reduce((a, b) => 
-            labelCounts[a] > labelCounts[b] ? a : b
-          )
-          return { label: majorityLabel, count: data.length }
-        }
-        
-        return {
-          feature: bestFeature,
-          threshold: bestThreshold,
-          left: buildTree(bestLeftData, features, depth + 1),
-          right: buildTree(bestRightData, features, depth + 1)
-        }
+    fn: function (actual: any, predicted: any): number {
+      if (!Array.isArray(actual) || !Array.isArray(predicted) ||
           actual.length !== predicted.length || actual.length === 0) {
         return 0
       }

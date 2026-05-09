@@ -370,7 +370,7 @@ const PluginDataScience = {
     pure: true,
     fn: function (df: any, column: string): any[] {
       if (!df || !df.data || !column) return []
-      return df.data.map(row => row[column])
+      return df.data.map((row: any) => row[column])
     }
   },
 
@@ -380,7 +380,7 @@ const PluginDataScience = {
     pure: true,
     fn: function (df: any, condition: any): any[] {
       if (!df || !df.data) return []
-      return df.data.filter(row => {
+      return df.data.filter((row: any) => {
         if (typeof condition === 'function') {
           return condition(row)
         }
@@ -396,7 +396,7 @@ const PluginDataScience = {
     fn: function (df: any, key: string): any {
       if (!df || !df.data || !key) return {}
       const groups: any = {}
-      df.data.forEach(row => {
+      df.data.forEach((row: any) => {
         const groupKey = row[key]
         if (!groups[groupKey]) groups[groupKey] = []
         groups[groupKey].push(row)
@@ -415,9 +415,9 @@ const PluginDataScience = {
       Object.keys(groups).forEach(key => {
         const group = groups[key]
         if (aggFunc === '合計') {
-          result[key] = group.reduce((sum, row) => sum + (Number(row.value) || 0), 0)
+          result[key] = group.reduce((sum: any, row: any) => sum + (Number(row.value) || 0), 0)
         } else if (aggFunc === '平均') {
-          result[key] = group.reduce((sum, row) => sum + (Number(row.value) || 0), 0) / group.length
+          result[key] = group.reduce((sum: any, row: any) => sum + (Number(row.value) || 0), 0) / group.length
         } else if (aggFunc === 'カウント') {
           result[key] = group.length
         } else {
