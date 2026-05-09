@@ -1,0 +1,596 @@
+# ドローン姿勢安定化・自動水平補正システムデモ
+# Advanced Drone Stabilization with Automatic Level Correction Demo
+
+「=== ドローン姿勢安定化・自動水平補正システムデモ ===」と表示。
+
+# --- 安定化システム検出 ---
+「1. 安定化システムを検出中...」と表示。
+全安定化システム = 安定化システム検出「全部」
+「検出されたシステム数: {全安定化システムのキー数}」と表示。
+
+全安定化システムを反復
+  IF 対象.key !== "initialized" AND 対象.key !== "timestamp" THEN
+    システム名 = 対象.value["name"] || 対象.key
+    「  {システム名}」と表示。
+  ENDIF
+ここまで。
+
+「」と表示。
+
+# --- ジャイロデータ取得 ---
+「2. ジャイロデータを取得中...」と表示。
+ジャイロデータ = ジャイロデータ取得
+「ジャイロデータ: {ジャイロデータ["message"]}」と表示。
+「ロール角: {ジャイロデータ["measurement"]["roll"]}°」と表示。
+「ピッチ角: {ジャイロデータ["measurement"]["pitch"]}°」と表示。
+「ヨー角: {ジャイロデータ["measurement"]["yaw"]}°」と表示。
+「ロール角速度: {ジャイロデータ["measurement"]["roll_rate"]}°/s」と表示。
+「ピッチ角速度: {ジャイロデータ["measurement"]["pitch_rate"]}°/s」と表示。
+「ヨー角速度: {ジャイロデータ["measurement"]["yaw_rate"]}°/s」と表示。
+
+「」と表示。
+
+# --- 加速度データ取得 ---
+「3. 加速度データを取得中...」と表示。
+加速度データ = 加速度データ取得
+「加速度データ: {加速度データ["message"]}」と表示。
+「X軸加速度: {加速度データ["measurement"]["x"]}g」と表示。
+「Y軸加速度: {加速度データ["measurement"]["y"]}g」と表示。
+「Z軸加速度: {加速度データ["measurement"]["z"]}g」と表示。
+「合成加速度: {加速度データ["measurement"]["total_acceleration"]}g」と表示。
+
+「」と表示。
+
+# --- 地磁気データ取得 ---
+「4. 地磁気データを取得中...」と表示。
+地磁気データ = 地磁気データ取得
+「地磁気データ: {地磁気データ["message"]}」と表示。
+「X軸磁場: {地磁気データ["measurement"]["x"]}μT」と表示。
+「Y軸磁場: {地磁気データ["measurement"]["y"]}μT」と表示。
+「Z軸磁場: {地磁気データ["measurement"]["z"]}μT」と表示。
+「方位角: {地磁気データ["measurement"]["heading"]}°」と表示。
+「磁場強度: {地磁気データ["measurement"]["magnetic_field_strength"]}μT」と表示。
+
+「」と表示。
+
+# --- 姿勢角度取得 ---
+「5. 姿勢角度を取得中...」と表示。
+姿勢角度 = 姿勢角度取得
+「姿勢角度: {姿勢角度["message"]}」と表示。
+「ロール角: {姿勢角度["measurement"]["roll"]}°」と表示。
+「ピッチ角: {姿勢角度["measurement"]["pitch"]}°」と表示。
+「ヨー角: {姿勢角度["measurement"]["yaw"]}°」と表示。
+「安定性係数: {姿勢角度["measurement"]["stability_factor"]}%」と表示。
+
+「」と表示。
+
+# --- 突風検出 ---
+「6. 突風を検出中...」と表示。
+突風検出 = 突風検出
+「突風検出: {突風検出["message"]}」と表示。
+「風速: {突風検出["detection"]["wind_speed"]}m/s」と表示。
+「風向: {突風検出["detection"]["wind_direction"]}°」と表示。
+「突風検出: {突風検出["detection"]["gust_detected"]}」と表示。
+IF 突風検出["detection"]["gust_detected"] THEN
+  「突風強度: {突風検出["detection"]["gust_strength"]}m/s」と表示。
+ENDIF
+
+「」と表示。
+
+# --- 急傾斜検出 ---
+「7. 急傾斜を検出中...」と表示。
+急傾斜検出 = 急傾斜検出
+「急傾斜検出: {急傾斜検出["message"]}」と表示。
+「ロール角: {急傾斜検出["detection"]["roll"]}°」と表示。
+「ピッチ角: {急傾斜検出["detection"]["pitch"]}°」と表示。
+「最大傾斜角: {急傾斜検出["detection"]["max_tilt_angle"]}°」と表示。
+「傾斜検出: {急傾斜検出["detection"]["tilt_detected"]}」と表示。
+IF 急傾斜検出["detection"]["tilt_detected"] THEN
+  「傾斜深刻度: {急傾斜検出["detection"]["tilt_severity"]}°」と表示。
+ENDIF
+
+「」と表示。
+
+# --- 自動水平補正 ---
+「8. 自動水平補正を実行中...」と表示。
+水平補正 = 自動水平補正
+「自動水平補正: {水平補正["message"]}」と表示。
+「現在ロール角: {水平補正["correction"]["current_roll"]}°」と表示。
+「現在ピッチ角: {水平補正["correction"]["current_pitch"]}°」と表示。
+「ロール補正量: {水平補正["correction"]["roll_correction"]}°」と表示。
+「ピッチ補正量: {水平補正["correction"]["pitch_correction"]}°」と表示。
+「補正適用: {水平補正["correction"]["correction_applied"]}」と表示。
+「補正時間: {水平補正["correction"]["correction_time"]}秒」と表示。
+
+「」と表示。
+
+# --- 進路方向復帰 ---
+「9. 進路方向復帰を実行中...」と表示。
+進路補正 = 進路方向復帰
+「進路補正: {進路補正["message"]}」と表示。
+「現在ヨー角: {進路補正["correction"]["current_yaw"]}°」と表示。
+「目標ヨー角: {進路補正["correction"]["target_yaw"]}°」と表示。
+「ヨー補正量: {進路補正["correction"]["yaw_correction"]}°」と表示。
+「補正適用: {進路補正["correction"]["correction_applied"]}」と表示。
+「補正時間: {進路補正["correction"]["correction_time"]}秒」と表示。
+
+「」と表示。
+
+# --- 地形追従 ---
+「10. 地形追従を実行中...」と表示。
+地形追従 = 地形追従
+「地形追従: {地形追従["message"]}」と表示。
+「現在高度: {地形追従["correction"]["current_altitude"]}m」と表示。
+「地形高度: {地形追従["correction"]["terrain_altitude"]}m」と表示。
+「目標高度: {地形追従["correction"]["target_altitude"]}m」と表示。
+「高度補正量: {地形追従["correction"]["altitude_correction"]}m」と表示。
+「補正適用: {地形追従["correction"]["correction_applied"]}」と表示。
+「補正時間: {地形追従["correction"]["correction_time"]}秒」と表示。
+
+「」と表示。
+
+# --- 進路逸脱検出 ---
+「11. 進路逸脱を検出中...」と表示。
+進路逸脱検出 = 進路逸脱検出
+「進路逸脱検出: {進路逸脱検出["message"]}」と表示。
+「現在位置: ({進路逸脱検出["detection"]["current_position"]["x"]}, {進路逸脱検出["detection"]["current_position"]["y"]})」と表示。
+「目標位置: ({進路逸脱検出["detection"]["target_position"]["x"]}, {進路逸脱検出["detection"]["target_position"]["y"]})」と表示。
+「逸脱距離: {進路逸脱検出["detection"]["deviation"]}m」と表示。
+「逸脱検出: {進路逸脱検出["detection"]["deviation_detected"]}」と表示。
+IF 進路逸脱検出["detection"]["deviation_detected"] THEN
+  「逸脱深刻度: {進路逸脱検出["detection"]["deviation_severity"]}m」と表示。
+ENDIF
+
+「」と表示。
+
+# --- 安定化パラメータ設定 ---
+「12. 安定化パラメータを設定中...」と表示。
+パラメータ = {
+  "roll_pid": { "p": 5.0, "i": 0.2, "d": 0.1 },
+  "pitch_pid": { "p": 5.0, "i": 0.2, "d": 0.1 },
+  "yaw_pid": { "p": 3.0, "i": 0.15, "d": 0.05 },
+  "max_tilt_angle": 35,
+  "max_correction_rate": 15
+}
+パラメータ設定 = 安定化パラメータ設定 パラメータ
+「パラメータ設定: {パラメータ設定["message"]}」と表示。
+
+「設定されたPIDパラメータ:」と表示。
+「  ロールPID: P={パラメータ設定["parameters"]["roll_pid"]["p"]}, I={パラメータ設定["parameters"]["roll_pid"]["i"]}, D={パラメータ設定["parameters"]["roll_pid"]["d"]}」と表示。
+「  ピッチPID: P={パラメータ設定["parameters"]["pitch_pid"]["p"]}, I={パラメータ設定["parameters"]["pitch_pid"]["i"]}, D={パラメータ設定["parameters"]["pitch_pid"]["d"]}」と表示。
+「  ヨーPID: P={パラメータ設定["parameters"]["yaw_pid"]["p"]}, I={パラメータ設定["parameters"]["yaw_pid"]["i"]}, D={パラメータ設定["parameters"]["yaw_pid"]["d"]}」と表示。
+「  最大傾斜角: {パラメータ設定["parameters"]["max_tilt_angle"]}°」と表示。
+「  最大補正率: {パラメータ設定["parameters"]["max_correction_rate"]}°/s」と表示。
+
+「」と表示。
+
+# --- 安定化履歴取得 ---
+「13. 安定化履歴を取得中...」と表示。
+安定化履歴 = 安定化履歴取得
+「安定化履歴: {安定化履歴["message"]}」と表示。
+「総記録数: {安定化履歴["total_records"]}」と表示。
+「最新記録: {安定化履歴["latest"]["sensor_type"]}」と表示。
+
+「最近の安定化履歴:」と表示。
+安定化履歴["history"]を反復
+  履歴 = 対象
+  「  {履歴["timestamp"]}: {履歴["sensor_type"]}」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 安定化性能評価 ---
+「14. 安定化性能を評価中...」と表示。
+性能評価 = 安定化性能評価
+「安定化性能評価: {性能評価["message"]}」と表示。
+「全体評価: {性能評価["overall_assessment"]}」と表示。
+
+「センサー別性能評価:」と表示。
+性能評価["performance_scores"]を反復
+  センサータイプ = 対象.key
+  評価 = 対象.value
+  「  {センサータイプ}:」と表示。
+  「    スコア: {評価["score"]}」と表示。
+  「    ノイズレベル: {評価["noise_level"]}」と表示。
+  「    ドリフト率: {評価["drift_rate"]}°/hr」と表示。
+  「    データ点数: {評価["data_points"]}」と表示。
+  「    推奨事項:」と表示。
+  評価["recommendations"]を反復
+    推奨 = 対象
+    「      {推奨}」と表示。
+  ここまで。
+  「---」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 統合安定化管理 ---
+「15. 統合安定化管理システムを確認中...」と表示。
+統合管理 = 統合安定化管理
+「統合システム状態: {統合管理["overall_status"]}」と表示。
+「利用可能な操作数: {統合管理["available_operations"]のキー数}」と表示。
+
+「システム状態詳細:」と表示。
+「  ジャイロシステム: {統合管理["gyroscope_system"]["active"]}」と表示。
+「  加速度計システム: {統合管理["accelerometer_system"]["active"]}」と表示。
+「  地磁気計システム: {統合管理["magnetometer_system"]["active"]}」と表示。
+「  気圧計システム: {統合管理["barometer_system"]["active"]}」と表示。
+「  風検出システム: {統合管理["wind_detection_system"]["active"]}」と表示。
+「  地形追従システム: {統合管理["terrain_following_system"]["active"]}」と表示。
+「  安定化システム: {統合管理["stabilization_system"]["active"]}」と表示。
+「  補正システム: {統合管理["correction_system"]["active"]}」と表示。
+
+「」と表示。
+
+# --- 自動安定化監視 ---
+「16. 自動安定化監視を実行中...」と表示。
+自動監視 = 自動安定化監視
+「自動安定化監視: {自動監視["message"]}」と表示。
+「総計測回数: {自動監視["total_measurements"]}」と表示。
+「平均安定性スコア: {自動監視["average_stability_score"]}%」と表示。
+「突風検出回数: {自動監視["wind_gust_count"]}」と表示。
+「急傾斜検出回数: {自動監視["rapid_tilt_count"]}」と表示。
+「進路逸脱検出回数: {自動監視["course_deviation_count"]}」と表示。
+
+「計測結果:」と表示。
+自動監視["measurements"]を反復
+  計測 = 対象
+  「  {計測["timestamp"]}:」と表示。
+  「    ジャイロ: ロール={計測["gyro_roll"]}°, ピッチ={計測["gyro_pitch"]}°, ヨー={計測["gyro_yaw"]}°」と表示。
+  「    加速度: X={計測["accel_x"]}g, Y={計測["accel_y"]}g, Z={計測["accel_z"]}g」と表示。
+  「    姿勢: ロール={計測["attitude_roll"]}°, ピッチ={計測["attitude_pitch"]}°, ヨー={計測["attitude_yaw"]}°」と表示。
+  「    突風検出: {計測["wind_gust_detected"]}」と表示。
+  「    急傾斜検出: {計測["rapid_tilt_detected"]}」と表示。
+  「    進路逸脱検出: {計測["course_deviation_detected"]}」と表示。
+  「    安定性スコア: {計測["stability_score"]}%」と表示。
+  「---」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 実用的な例：突風対応自動安定化 ---
+「17. 実用的な例：突風対応自動安定化...」と表示。
+
+# 突風シミュレーションと自動対応
+「突風シミュレーションを開始します...」と表示。
+安定化ログ = []
+
+20回
+  # 全てのセンサーデータを取得
+  ジャイロデータ = ジャイロデータ取得
+  加速度データ = 加速度データ取得
+  姿勢角度 = 姿勢角度取得
+  
+  # 突風をシミュレート（5回に1回）
+  回数_mod = 回数 % 5
+  IF 回数_mod = 0 THEN
+    「💨 突風発生！」と表示。
+    # 突風による急傾斜をシミュレート
+    突風検出 = 突風検出
+    急傾斜検出 = 急傾斜検出
+    
+    IF 突風検出["detection"]["gust_detected"] THEN
+      「⚠️ 突風を検出！自動水平補正を実行」と表示。
+      水平補正 = 自動水平補正
+      IF 水平補正["success"] THEN
+        「🔄 水平補正完了: ロール補正{水平補正["correction"]["roll_correction"]}°, ピッチ補正{水平補正["correction"]["pitch_correction"]}°」と表示。
+        安定化ログに{
+          "timestamp": new Date().toISOString(),
+          "event": "wind_gust_correction",
+          "wind_speed": 突風検出["detection"]["wind_speed"],
+          "correction_applied": true,
+          "roll_correction": 水平補正["correction"]["roll_correction"],
+          "pitch_correction": 水平補正["correction"]["pitch_correction"],
+          "severity": "moderate"
+        }を追加
+      ENDIF
+    ENDIF
+    
+    IF 急傾斜検出["detection"]["tilt_detected"] THEN
+      「⚠️ 急傾斜を検出！進路補正を実行」と表示。
+      進路補正 = 進路方向復帰
+      IF 進路補正["success"] THEN
+        「🧭 進路補正完了: ヨー補正{進路補正["correction"]["yaw_correction"]}°」と表示。
+        安定化ログに{
+          "timestamp": new Date().toISOString(),
+          "event": "rapid_tilt_correction",
+          "tilt_angle": 急傾斜検出["detection"]["tilt_severity"],
+          "correction_applied": true,
+          "yaw_correction": 進路補正["correction"]["yaw_correction"],
+          "severity": "high"
+        }を追加
+      ENDIF
+    ENDIF
+  ENDIF
+  
+  # 進路逸脱検出（3回に1回）
+  進路_mod = 回数 % 3
+  IF 進路_mod = 0 THEN
+    進路逸脱検出 = 進路逸脱検出
+    IF 進路逸脱検出["detection"]["deviation_detected"] THEN
+      「🗺️ 進路逸脱を検出！地形追従を実行」と表示。
+      地形追従 = 地形追従
+      IF 地形追従["success"] THEN
+        「🏔️ 地形追従完了: 高度補正{地形追従["correction"]["altitude_correction"]}m」と表示。
+        安定化ログに{
+          "timestamp": new Date().toISOString(),
+          "event": "course_deviation_correction",
+          "deviation_distance": 進路逸脱検出["detection"]["deviation"],
+          "correction_applied": true,
+          "altitude_correction": 地形追従["correction"]["altitude_correction"],
+          "severity": "moderate"
+        }を追加
+      ENDIF
+    ENDIF
+  ENDIF
+  
+  # 安定性スコアを表示
+  安定性スコア = 姿勢角度["measurement"]["stability_factor"]
+  IF 安定性スコア < 70 THEN
+    「📊 安定性スコア: {安定性スコア}% (要注意)」と表示。
+  ELSE
+    「📊 安定性スコア: {安定性スコア}% (良好)」と表示。
+  ENDIF
+  
+  500を待つ
+ここまで。
+
+「突風対応自動安定化完了」と表示。
+「安定化ログ:」と表示。
+安定化ログを反復
+  ログ = 対象
+  「  {ログ["timestamp"]}: {ログ["event"]} - 重大度: {ログ["severity"]}」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 英語モードでの使用例 ---
+「18. 英語モードでの使用例...」と表示。
+「言語モード設定」に「english」
+
+# 英語で安定化システム検出
+english_stabilization = DISCOVER_STABILIZATION_SYSTEMS "all"
+PRINT "English stabilization systems found: {english_stabilizationのキー数}"
+
+# 英語でジャイロデータ取得
+gyro_data = GET_GYROSCOPE_DATA
+PRINT "Gyroscope data: {gyro_data["message"]}"
+PRINT "Roll angle: {gyro_data["measurement"]["roll"]}°"
+
+# 英語で加速度データ取得
+accel_data = GET_ACCELEROMETER_DATA
+PRINT "Accelerometer data: {accel_data["message"]}"
+PRINT "X acceleration: {accel_data["measurement"]["x"]}g"
+
+# 英語で地磁気データ取得
+magnet_data = GET_MAGNETOMETER_DATA
+PRINT "Magnetometer data: {magnet_data["message"]}"
+PRINT "Heading: {magnet_data["measurement"]["heading"]}°"
+
+# 英語で姿勢角度取得
+attitude_data = GET_ATTITUDE_ANGLES
+PRINT "Attitude angles: {attitude_data["message"]}"
+PRINT "Roll: {attitude_data["measurement"]["roll"]}°"
+PRINT "Stability factor: {attitude_data["measurement"]["stability_factor"]}%"
+
+# 英語で突風検出
+wind_gust = DETECT_WIND_GUST
+PRINT "Wind gust detection: {wind_gust["message"]}"
+PRINT "Wind speed: {wind_gust["detection"]["wind_speed"]}m/s"
+PRINT "Gust detected: {wind_gust["detection"]["gust_detected"]}"
+
+# 英語で急傾斜検出
+rapid_tilt = DETECT_RAPID_TILT
+PRINT "Rapid tilt detection: {rapid_tilt["message"]}"
+PRINT "Tilt detected: {rapid_tilt["detection"]["tilt_detected"]}"
+
+# 英語で自動水平補正
+level_correction = EXECUTE_AUTO_LEVEL_CORRECTION
+PRINT "Auto level correction: {level_correction["message"]}"
+PRINT "Roll correction: {level_correction["correction"]["roll_correction"]}°"
+
+# 英語で進路方向復帰
+course_correction = EXECUTE_COURSE_CORRECTION
+PRINT "Course correction: {course_correction["message"]}"
+PRINT "Yaw correction: {course_correction["correction"]["yaw_correction"]}°"
+
+# 英語で地形追従
+terrain_following = EXECUTE_TERRAIN_FOLLOWING
+PRINT "Terrain following: {terrain_following["message"]}"
+PRINT "Altitude correction: {terrain_following["correction"]["altitude_correction"]}m"
+
+# 英語で進路逸脱検出
+course_deviation = DETECT_COURSE_DEVIATION
+PRINT "Course deviation detection: {course_deviation["message"]}"
+PRINT "Deviation detected: {course_deviation["detection"]["deviation_detected"]}"
+
+# 英語で安定化パラメータ設定
+parameters = {
+  "roll_pid": { "p": 5.0, "i": 0.2, "d": 0.1 },
+  "pitch_pid": { "p": 5.0, "i": 0.2, "d": 0.1 },
+  "yaw_pid": { "p": 3.0, "i": 0.15, "d": 0.05 }
+}
+stabilization_params = SET_STABILIZATION_PARAMETERS parameters
+PRINT "Stabilization parameters: {stabilization_params["message"]}"
+
+# 英語で安定化履歴取得
+stabilization_history = GET_STABILIZATION_HISTORY
+PRINT "Stabilization history: {stabilization_history["message"]}"
+PRINT "Total records: {stabilization_history["total_records"]}"
+
+# 英語で安定化性能評価
+performance = EVALUATE_STABILIZATION_PERFORMANCE
+PRINT "Stabilization performance: {performance["message"]}"
+PRINT "Overall assessment: {performance["overall_assessment"]}"
+
+# 英語で自動安定化監視
+auto_monitoring = AUTO_STABILIZATION_MONITORING
+PRINT "Auto stabilization monitoring: {auto_monitoring["message"]}"
+PRINT "Total measurements: {auto_monitoring["total_measurements"]}"
+PRINT "Average stability score: {auto_monitoring["average_stability_score"]}%"
+
+# 英語で統合安定化管理
+integrated_management = INTEGRATED_STABILIZATION_MANAGEMENT
+PRINT "Integrated stabilization management: {integrated_management["overall_status"]}"
+PRINT "Available operations: {integrated_management["available_operations"]のキー数}"
+
+「」と表示。
+
+# --- 子供向けモードでの使用例 ---
+「19. 子供向けモードでの使用例...」と表示。
+「かんたんモード」
+
+# 子供向け安定化監視
+「🚁 ドローンのじょうたいかんりさん、こんにちは！」と表示。
+わんわん
+
+# ジャイロで遊ぶ
+「🌀 じゃいろのデータをしらべてみよう！」と表示。
+ジャイロデータ = ジャイロデータ取得
+ふくふくを「ロールは{ジャイロデータ["measurement"]["roll"]}ど、ピッチは{ジャイロデータ["measurement"]["pitch"]}どだよ！」
+ぴよぴよ
+
+# 加速度で遊ぶ
+「📊 かそくどのデータをしらべてみよう！」と表示。
+加速度データ = 加速度データ取得
+ふくふくを「Xかそくどは{加速度データ["measurement"]["x"]}、Yかそくどは{加速度データ["measurement"]["y"]}だよ！」
+ぴよぴよ
+
+# 姿勢で遊ぶ
+「🎯 しせいのデータをしらべてみよう！」と表示。
+姿勢角度 = 姿勢角度取得
+ふくふくを「しせいは{姿勢角度["measurement"]["stability_factor"]}%ていどあんてんだよ！」
+ぴよぴよ
+
+# 突風で遊ぶ
+「💨 たつふうをしらべてみよう！」と表示。
+突風検出 = 突風検出
+IF 突風検出["detection"]["gust_detected"] THEN
+  ふくふくを「たつふうがふいているよ！じょうたいをなおすね！」
+  CAT_MEOW
+ELSE
+  ふくふくを「かぜはだいじょうぶだよ！」
+ENDIF
+
+# 傾斜で遊ぶ
+「📐 かたむきをしらべてみよう！」と表示。
+急傾斜検出 = 急傾斜検出
+IF 急傾斜検出["detection"]["tilt_detected"] THEN
+  ふくふくを「ドローンがかたむいているよ！なおすね！」
+  CAT_MEOW
+ELSE
+  ふくふくを「ドローンはまっすぐだよ！」
+ENDIF
+
+# 水平補正で遊ぶ
+「🔄 すいへいにほせいしてみよう！」と表示。
+水平補正 = 自動水平補正
+IF 水平補正["success"] THEN
+  ふくふくを「すいへいにほせいしたよ！びっくりだね！」
+  CAT_MEOW
+ELSE
+  ふくふくを「ほせいできなかったよ！」
+ENDIF
+
+# 進路補正で遊ぶ
+「🧭 しんろをほせいしてみよう！」と表示。
+進路補正 = 進路方向復帰
+IF 進路補正["success"] THEN
+  ふくふくを「しんろをほせいしたよ！かしこいね！」
+  CAT_MEOW
+ELSE
+  ふくふくを「しんろをほせいできなかったよ！」
+ENDIF
+
+# 地形追従で遊ぶ
+「🏔️ ちけいについていってみよう！」と表示。
+地形追従 = 地形追従
+IF 地形追従["success"] THEN
+  ふくふくを「ちけいについていけるよ！すごいね！」
+  CAT_MEOW
+ELSE
+  ふくふくを「ちけいについていけなかったよ！」
+ENDIF
+
+「」と表示。
+
+# --- 高度な機能：PIDチューニング ---
+「20. 高度な機能：PIDチューニング...」と表示。
+
+# PIDパラメータの最適化テスト
+「PIDパラメータ最適化テストを実行中...」と表示。
+最適化結果 = []
+
+# 異なるPIDパラメータセットをテスト
+3回
+  パラメータセット = [
+    { "roll_pid": { "p": 3.0, "i": 0.1, "d": 0.05 }, "pitch_pid": { "p": 3.0, "i": 0.1, "d": 0.05 }, "yaw_pid": { "p": 2.0, "i": 0.1, "d": 0.0 } },
+    { "roll_pid": { "p": 5.0, "i": 0.2, "d": 0.1 }, "pitch_pid": { "p": 5.0, "i": 0.2, "d": 0.1 }, "yaw_pid": { "p": 3.0, "i": 0.15, "d": 0.05 } },
+    { "roll_pid": { "p": 7.0, "i": 0.3, "d": 0.15 }, "pitch_pid": { "p": 7.0, "i": 0.3, "d": 0.15 }, "yaw_pid": { "p": 4.0, "i": 0.2, "d": 0.1 } }
+  ]
+  
+  現在パラメータ = パラメータセット[回数]
+  パラメータ設定 = 安定化パラメータ設定 現在パラメータ
+  
+  「パラメータセット {回数 + 1} をテスト中...」と表示。
+  
+  # 10回の安定性テスト
+  テスト結果 = []
+  10回
+    姿勢角度 = 姿勢角度取得
+    安定性スコア = 姿勢角度["measurement"]["stability_factor"]
+    テスト結果に安定性スコアを追加
+    100を待つ
+  ここまで。
+  
+  平均安定性 = テスト結果から平均
+  最小安定性 = テスト結果から最小
+  最大安定性 = テスト結果から最大
+  
+  最適化結果に{
+    "parameter_set": 回数 + 1,
+    "roll_p": 現在パラメータ["roll_pid"]["p"],
+    "pitch_p": 現在パラメータ["pitch_pid"]["p"],
+    "yaw_p": 現在パラメータ["yaw_pid"]["p"],
+    "average_stability": 平均安定性,
+    "min_stability": 最小安定性,
+    "max_stability": 最大安定性
+  }を追加
+  
+  「  平均安定性: {平均安定性.toFixed(1)}%」と表示。
+  「  最小安定性: {最小安定性.toFixed(1)}%」と表示。
+  「  最大安定性: {最大安定性.toFixed(1)}%」と表示。
+  
+  500を待つ
+ここまで。
+
+# 最適なパラメータを選択
+最適結果 = 最適化結果から「average_stability」を最大
+「最適なパラメータセット: {最適結果["parameter_set"]}」と表示。
+「最適安定性: {最適結果["average_stability"].toFixed(1)}%」と表示。
+
+# 最適パラメータを再設定
+最適パラメータ = パラメータセット[最適結果["parameter_set"] - 1]
+最終設定 = 安定化パラメータ設定 最適パラメータ
+「最適PIDパラメータを設定しました」と表示。
+
+「」と表示。
+
+「=== デモ完了 ===」と表示。
+「🚁 これでなでしこ3で完全なドローン姿勢安定化が使える！」と表示。
+「🌀 ジャイロ・加速度・地磁気センサーで完全な姿勢検出！」と表示。
+「💨 突風検出で即時対応！」と表示。
+「📐 急傾斜検出で自動復帰！」と表示。
+「🔄 自動水平補正で常に安定！」と表示。
+「🧭 進路方向復帰で正確な飛行！」と表示。
+「🏔️ 地形追従で安全な低空飛行！」と表示。
+「🗺️ 進路逸脱検出でルート維持！」と表示。
+「⚙️ PIDチューニングで最適な制御！」と表示。
+「📊 安定性スコアでリアルタイム評価！」と表示。
+「🔧 性能評価でシステム最適化！」と表示。
+「📊 履歴管理で長期的なデータ分析！」と表示。
+「🏠 統合管理で完全な制御！」と表示。
+「🤖 自動監視で24時間体制！」と表示。
+「🎈 子供でも簡単に姿勢管理が使える！」と表示。
+「🌍 英語・日本語・子供向けモードで完全対応！」と表示。
+koko

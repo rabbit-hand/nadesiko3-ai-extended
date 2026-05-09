@@ -1,0 +1,551 @@
+# Advanced Drone Stabilization Demo - English Version
+# Automatic Level Correction and Terrain Following System
+
+DISPLAY "=== Advanced Drone Stabilization Demo ==="
+
+# --- Stabilization System Discovery ---
+DISPLAY "1. Discovering stabilization systems..."
+all_stabilization_systems = DISCOVER_STABILIZATION_SYSTEMS "all"
+PRINT "Stabilization systems found: {all_stabilization_systemsのキー数}"
+
+FOR EACH system IN all_stabilization_systems
+  IF system.key !== "initialized" AND system.key !== "timestamp" THEN
+    system_name = system.value["name"] || system.key
+    PRINT "  {system_name}"
+  ENDIF
+NEXT
+
+DISPLAY ""
+
+# --- Get Gyroscope Data ---
+DISPLAY "2. Getting gyroscope data..."
+gyro_data = GET_GYROSCOPE_DATA
+PRINT "Gyroscope data: {gyro_data["message"]}"
+PRINT "Roll angle: {gyro_data["measurement"]["roll"]}°"
+PRINT "Pitch angle: {gyro_data["measurement"]["pitch"]}°"
+PRINT "Yaw angle: {gyro_data["measurement"]["yaw"]}°"
+PRINT "Roll rate: {gyro_data["measurement"]["roll_rate"]}°/s"
+PRINT "Pitch rate: {gyro_data["measurement"]["pitch_rate"]}°/s"
+PRINT "Yaw rate: {gyro_data["measurement"]["yaw_rate"]}°/s"
+
+DISPLAY ""
+
+# --- Get Accelerometer Data ---
+DISPLAY "3. Getting accelerometer data..."
+accel_data = GET_ACCELEROMETER_DATA
+PRINT "Accelerometer data: {accel_data["message"]}"
+PRINT "X acceleration: {accel_data["measurement"]["x"]}g"
+PRINT "Y acceleration: {accel_data["measurement"]["y"]}g"
+PRINT "Z acceleration: {accel_data["measurement"]["z"]}g"
+PRINT "Total acceleration: {accel_data["measurement"]["total_acceleration"]}g"
+
+DISPLAY ""
+
+# --- Get Magnetometer Data ---
+DISPLAY "4. Getting magnetometer data..."
+magnet_data = GET_MAGNETOMETER_DATA
+PRINT "Magnetometer data: {magnet_data["message"]}"
+PRINT "X magnetic field: {magnet_data["measurement"]["x"]}μT"
+PRINT "Y magnetic field: {magnet_data["measurement"]["y"]}μT"
+PRINT "Z magnetic field: {magnet_data["measurement"]["z"]}μT"
+PRINT "Heading: {magnet_data["measurement"]["heading"]}°"
+PRINT "Magnetic field strength: {magnet_data["measurement"]["magnetic_field_strength"]}μT"
+
+DISPLAY ""
+
+# --- Get Attitude Angles ---
+DISPLAY "5. Getting attitude angles..."
+attitude_data = GET_ATTITUDE_ANGLES
+PRINT "Attitude angles: {attitude_data["message"]}"
+PRINT "Roll: {attitude_data["measurement"]["roll"]}°"
+PRINT "Pitch: {attitude_data["measurement"]["pitch"]}°"
+PRINT "Yaw: {attitude_data["measurement"]["yaw"]}°"
+PRINT "Stability factor: {attitude_data["measurement"]["stability_factor"]}%"
+
+DISPLAY ""
+
+# --- Detect Wind Gust ---
+DISPLAY "6. Detecting wind gust..."
+wind_gust = DETECT_WIND_GUST
+PRINT "Wind gust detection: {wind_gust["message"]}"
+PRINT "Wind speed: {wind_gust["detection"]["wind_speed"]}m/s"
+PRINT "Wind direction: {wind_gust["detection"]["wind_direction"]}°"
+PRINT "Gust detected: {wind_gust["detection"]["gust_detected"]}"
+IF wind_gust["detection"]["gust_detected"] THEN
+  PRINT "Gust strength: {wind_gust["detection"]["gust_strength"]}m/s"
+ENDIF
+
+DISPLAY ""
+
+# --- Detect Rapid Tilt ---
+DISPLAY "7. Detecting rapid tilt..."
+rapid_tilt = DETECT_RAPID_TILT
+PRINT "Rapid tilt detection: {rapid_tilt["message"]}"
+PRINT "Roll angle: {rapid_tilt["detection"]["roll"]}°"
+PRINT "Pitch angle: {rapid_tilt["detection"]["pitch"]}°"
+PRINT "Max tilt angle: {rapid_tilt["detection"]["max_tilt_angle"]}°"
+PRINT "Tilt detected: {rapid_tilt["detection"]["tilt_detected"]}"
+IF rapid_tilt["detection"]["tilt_detected"] THEN
+  PRINT "Tilt severity: {rapid_tilt["detection"]["tilt_severity"]}°"
+ENDIF
+
+DISPLAY ""
+
+# --- Execute Auto Level Correction ---
+DISPLAY "8. Executing auto level correction..."
+level_correction = EXECUTE_AUTO_LEVEL_CORRECTION
+PRINT "Auto level correction: {level_correction["message"]}"
+PRINT "Current roll: {level_correction["correction"]["current_roll"]}°"
+PRINT "Current pitch: {level_correction["correction"]["current_pitch"]}°"
+PRINT "Roll correction: {level_correction["correction"]["roll_correction"]}°"
+PRINT "Pitch correction: {level_correction["correction"]["pitch_correction"]}°"
+PRINT "Correction applied: {level_correction["correction"]["correction_applied"]}"
+PRINT "Correction time: {level_correction["correction"]["correction_time"]} seconds"
+
+DISPLAY ""
+
+# --- Execute Course Correction ---
+DISPLAY "9. Executing course correction..."
+course_correction = EXECUTE_COURSE_CORRECTION
+PRINT "Course correction: {course_correction["message"]}"
+PRINT "Current yaw: {course_correction["correction"]["current_yaw"]}°"
+PRINT "Target yaw: {course_correction["correction"]["target_yaw"]}°"
+PRINT "Yaw correction: {course_correction["correction"]["yaw_correction"]}°"
+PRINT "Correction applied: {course_correction["correction"]["correction_applied"]}"
+PRINT "Correction time: {course_correction["correction"]["correction_time"]} seconds"
+
+DISPLAY ""
+
+# --- Execute Terrain Following ---
+DISPLAY "10. Executing terrain following..."
+terrain_following = EXECUTE_TERRAIN_FOLLOWING
+PRINT "Terrain following: {terrain_following["message"]}"
+PRINT "Current altitude: {terrain_following["correction"]["current_altitude"]}m"
+PRINT "Terrain altitude: {terrain_following["correction"]["terrain_altitude"]}m"
+PRINT "Target altitude: {terrain_following["correction"]["target_altitude"]}m"
+PRINT "Altitude correction: {terrain_following["correction"]["altitude_correction"]}m"
+PRINT "Correction applied: {terrain_following["correction"]["correction_applied"]}"
+PRINT "Correction time: {terrain_following["correction"]["correction_time"]} seconds"
+
+DISPLAY ""
+
+# --- Detect Course Deviation ---
+DISPLAY "11. Detecting course deviation..."
+course_deviation = DETECT_COURSE_DEVIATION
+PRINT "Course deviation detection: {course_deviation["message"]}"
+PRINT "Current position: ({course_deviation["detection"]["current_position"]["x"]}, {course_deviation["detection"]["current_position"]["y"]})"
+PRINT "Target position: ({course_deviation["detection"]["target_position"]["x"]}, {course_deviation["detection"]["target_position"]["y"]})"
+PRINT "Deviation: {course_deviation["detection"]["deviation"]}m"
+PRINT "Deviation detected: {course_deviation["detection"]["deviation_detected"]}"
+IF course_deviation["detection"]["deviation_detected"] THEN
+  PRINT "Deviation severity: {course_deviation["detection"]["deviation_severity"]}m"
+ENDIF
+
+DISPLAY ""
+
+# --- Set Stabilization Parameters ---
+DISPLAY "12. Setting stabilization parameters..."
+parameters = {
+  "roll_pid": { "p": 5.0, "i": 0.2, "d": 0.1 },
+  "pitch_pid": { "p": 5.0, "i": 0.2, "d": 0.1 },
+  "yaw_pid": { "p": 3.0, "i": 0.15, "d": 0.05 },
+  "max_tilt_angle": 35,
+  "max_correction_rate": 15
+}
+stabilization_params = SET_STABILIZATION_PARAMETERS parameters
+PRINT "Stabilization parameters: {stabilization_params["message"]}"
+
+PRINT "Set PID parameters:"
+PRINT "  Roll PID: P={stabilization_params["parameters"]["roll_pid"]["p"]}, I={stabilization_params["parameters"]["roll_pid"]["i"]}, D={stabilization_params["parameters"]["roll_pid"]["d"]}"
+PRINT "  Pitch PID: P={stabilization_params["parameters"]["pitch_pid"]["p"]}, I={stabilization_params["parameters"]["pitch_pid"]["i"]}, D={stabilization_params["parameters"]["pitch_pid"]["d"]}"
+PRINT "  Yaw PID: P={stabilization_params["parameters"]["yaw_pid"]["p"]}, I={stabilization_params["parameters"]["yaw_pid"]["i"]}, D={stabilization_params["parameters"]["yaw_pid"]["d"]}"
+PRINT "  Max tilt angle: {stabilization_params["parameters"]["max_tilt_angle"]}°"
+PRINT "  Max correction rate: {stabilization_params["parameters"]["max_correction_rate"]}°/s"
+
+DISPLAY ""
+
+# --- Get Stabilization History ---
+DISPLAY "13. Getting stabilization history..."
+stabilization_history = GET_STABILIZATION_HISTORY
+PRINT "Stabilization history: {stabilization_history["message"]}"
+PRINT "Total records: {stabilization_history["total_records"]}"
+PRINT "Latest record: {stabilization_history["latest"]["sensor_type"]}"
+
+PRINT "Recent stabilization history:"
+FOR EACH record IN stabilization_history["history"]
+  PRINT "  {record["timestamp"]}: {record["sensor_type"]}"
+NEXT
+
+DISPLAY ""
+
+# --- Evaluate Stabilization Performance ---
+DISPLAY "14. Evaluating stabilization performance..."
+performance = EVALUATE_STABILIZATION_PERFORMANCE
+PRINT "Stabilization performance: {performance["message"]}"
+PRINT "Overall assessment: {performance["overall_assessment"]}"
+
+PRINT "Performance evaluation by sensor:"
+FOR EACH sensor_type IN performance["performance_scores"]
+  evaluation = sensor_type.value
+  PRINT "  {sensor_type.key}:"
+  PRINT "    Score: {evaluation["score"]}"
+  PRINT "    Noise level: {evaluation["noise_level"]}"
+  PRINT "    Drift rate: {evaluation["drift_rate"]}°/hr"
+  PRINT "    Data points: {evaluation["data_points"]}"
+  PRINT "    Recommendations:"
+  FOR EACH recommendation IN evaluation["recommendations"]
+    PRINT "      {recommendation}"
+  NEXT
+  PRINT "---"
+NEXT
+
+DISPLAY ""
+
+# --- Integrated Stabilization Management ---
+DISPLAY "15. Checking integrated stabilization management..."
+integrated_management = INTEGRATED_STABILIZATION_MANAGEMENT
+PRINT "Integrated system status: {integrated_management["overall_status"]}"
+PRINT "Available operations: {integrated_management["available_operations"]のキー数}"
+
+PRINT "System status details:"
+PRINT "  Gyroscope system: {integrated_management["gyroscope_system"]["active"]}"
+PRINT "  Accelerometer system: {integrated_management["accelerometer_system"]["active"]}"
+PRINT "  Magnetometer system: {integrated_management["magnetometer_system"]["active"]}"
+PRINT "  Barometer system: {integrated_management["barometer_system"]["active"]}"
+PRINT "  Wind detection system: {integrated_management["wind_detection_system"]["active"]}"
+PRINT "  Terrain following system: {integrated_management["terrain_following_system"]["active"]}"
+PRINT "  Stabilization system: {integrated_management["stabilization_system"]["active"]}"
+PRINT "  Correction system: {integrated_management["correction_system"]["active"]}"
+
+DISPLAY ""
+
+# --- Auto Stabilization Monitoring ---
+DISPLAY "16. Running auto stabilization monitoring..."
+auto_monitoring = AUTO_STABILIZATION_MONITORING
+PRINT "Auto stabilization monitoring: {auto_monitoring["message"]}"
+PRINT "Total measurements: {auto_monitoring["total_measurements"]}"
+PRINT "Average stability score: {auto_monitoring["average_stability_score"]}%"
+PRINT "Wind gust count: {auto_monitoring["wind_gust_count"]}"
+PRINT "Rapid tilt count: {auto_monitoring["rapid_tilt_count"]}"
+PRINT "Course deviation count: {auto_monitoring["course_deviation_count"]}"
+
+PRINT "Measurement results:"
+FOR EACH measurement IN auto_monitoring["measurements"]
+  PRINT "  {measurement["timestamp"]}:"
+  PRINT "    Gyro: Roll={measurement["gyro_roll"]}°, Pitch={measurement["gyro_pitch"]}°, Yaw={measurement["gyro_yaw"]}°"
+  PRINT "    Accel: X={measurement["accel_x"]}g, Y={measurement["accel_y"]}g, Z={measurement["accel_z"]}g"
+  PRINT "    Attitude: Roll={measurement["attitude_roll"]}°, Pitch={measurement["attitude_pitch"]}°, Yaw={measurement["attitude_yaw"]}°"
+  PRINT "    Wind gust detected: {measurement["wind_gust_detected"]}"
+  PRINT "    Rapid tilt detected: {measurement["rapid_tilt_detected"]}"
+  PRINT "    Course deviation detected: {measurement["course_deviation_detected"]}"
+  PRINT "    Stability score: {measurement["stability_score"]}%"
+  PRINT "---"
+NEXT
+
+DISPLAY ""
+
+# --- Practical Example: Wind Gust Response Auto Stabilization ---
+DISPLAY "17. Practical example: Wind gust response auto stabilization..."
+
+# Wind gust simulation and automatic response
+PRINT "Starting wind gust simulation..."
+stabilization_log = []
+
+REPEAT 20 times
+  # Get all sensor data
+  gyro_data = GET_GYROSCOPE_DATA
+  accel_data = GET_ACCELEROMETER_DATA
+  attitude_data = GET_ATTITUDE_ANGLES
+  
+  # Simulate wind gust (every 5 iterations)
+  iteration_mod = iteration % 5
+  IF iteration_mod = 0 THEN
+    PRINT "💨 Wind gust occurred!"
+    # Simulate rapid tilt from wind gust
+    wind_gust = DETECT_WIND_GUST
+    rapid_tilt = DETECT_RAPID_TILT
+    
+    IF wind_gust["detection"]["gust_detected"] THEN
+      PRINT "⚠️ Wind gust detected! Executing auto level correction"
+      level_correction = EXECUTE_AUTO_LEVEL_CORRECTION
+      IF level_correction["success"] THEN
+        PRINT "🔄 Level correction complete: Roll correction {level_correction["correction"]["roll_correction"]}°, Pitch correction {level_correction["correction"]["pitch_correction"]}°"
+        stabilization_logに{
+          "timestamp": new Date().toISOString(),
+          "event": "wind_gust_correction",
+          "wind_speed": wind_gust["detection"]["wind_speed"],
+          "correction_applied": true,
+          "roll_correction": level_correction["correction"]["roll_correction"],
+          "pitch_correction": level_correction["correction"]["pitch_correction"],
+          "severity": "moderate"
+        }を追加
+      ENDIF
+    ENDIF
+    
+    IF rapid_tilt["detection"]["tilt_detected"] THEN
+      PRINT "⚠️ Rapid tilt detected! Executing course correction"
+      course_correction = EXECUTE_COURSE_CORRECTION
+      IF course_correction["success"] THEN
+        PRINT "🧭 Course correction complete: Yaw correction {course_correction["correction"]["yaw_correction"]}°"
+        stabilization_logに{
+          "timestamp": new Date().toISOString(),
+          "event": "rapid_tilt_correction",
+          "tilt_angle": rapid_tilt["detection"]["tilt_severity"],
+          "correction_applied": true,
+          "yaw_correction": course_correction["correction"]["yaw_correction"],
+          "severity": "high"
+        }を追加
+      ENDIF
+    ENDIF
+  ENDIF
+  
+  # Course deviation detection (every 3 iterations)
+  deviation_mod = iteration % 3
+  IF deviation_mod = 0 THEN
+    course_deviation = DETECT_COURSE_DEVIATION
+    IF course_deviation["detection"]["deviation_detected"] THEN
+      PRINT "🗺️ Course deviation detected! Executing terrain following"
+      terrain_following = EXECUTE_TERRAIN_FOLLOWING
+      IF terrain_following["success"] THEN
+        PRINT "🏔️ Terrain following complete: Altitude correction {terrain_following["correction"]["altitude_correction"]}m"
+        stabilization_logに{
+          "timestamp": new Date().toISOString(),
+          "event": "course_deviation_correction",
+          "deviation_distance": course_deviation["detection"]["deviation"],
+          "correction_applied": true,
+          "altitude_correction": terrain_following["correction"]["altitude_correction"],
+          "severity": "moderate"
+        }を追加
+      ENDIF
+    ENDIF
+  ENDIF
+  
+  # Display stability score
+  stability_score = attitude_data["measurement"]["stability_factor"]
+  IF stability_score < 70 THEN
+    PRINT "📊 Stability score: {stability_score}% (Attention needed)"
+  ELSE
+    PRINT "📊 Stability score: {stability_score}% (Good)"
+  ENDIF
+  
+  WAIT 500
+NEXT
+
+PRINT "Wind gust response auto stabilization completed"
+PRINT "Stabilization log:"
+FOR EACH log IN stabilization_log
+  PRINT "  {log["timestamp"]}: {log["event"]} - Severity: {log["severity"]}"
+NEXT
+
+DISPLAY ""
+
+# --- Kid-Friendly Mode Example ---
+DISPLAY "18. Kid-friendly mode example..."
+「かんたんモード」
+
+# Kid-friendly stabilization monitoring
+PRINT "🚁 Hello drone attitude manager!"
+DOG_BARK
+
+# Play with gyroscope
+PRINT "🌀 Let's check gyroscope data!"
+gyro_data = GET_GYROSCOPE_DATA
+DECORATE "Roll is {gyro_data["measurement"]["roll"]} degrees, Pitch is {gyro_data["measurement"]["pitch"]} degrees!"
+CAT_MEOW
+
+# Play with accelerometer
+PRINT "📊 Let's check accelerometer data!"
+accel_data = GET_ACCELEROMETER_DATA
+DECORATE "X acceleration is {accel_data["measurement"]["x"]}, Y acceleration is {accel_data["measurement"]["y"]}!"
+CAT_MEOW
+
+# Play with attitude
+PRINT "🎯 Let's check attitude data!"
+attitude_data = GET_ATTITUDE_ANGLES
+DECORATE "Attitude is {attitude_data["measurement"]["stability_factor"]}% stable!"
+CAT_MEOW
+
+# Play with wind gust
+PRINT "💨 Let's check for wind gusts!"
+wind_gust = DETECT_WIND_GUST
+IF wind_gust["detection"]["gust_detected"] THEN
+  DECORATE "Wind is blowing! Let's fix the attitude!"
+  CAT_MEOW
+ELSE
+  DECORATE "Wind is calm!"
+ENDIF
+
+# Play with tilt
+PRINT "📐 Let's check for tilting!"
+rapid_tilt = DETECT_RAPID_TILT
+IF rapid_tilt["detection"]["tilt_detected"] THEN
+  DECORATE "Drone is tilting! Let's fix it!"
+  CAT_MEOW
+ELSE
+  DECORATE "Drone is straight!"
+ENDIF
+
+# Play with level correction
+PRINT "🔄 Let's try level correction!"
+level_correction = EXECUTE_AUTO_LEVEL_CORRECTION
+IF level_correction["success"] THEN
+  DECORATE "Made it level! Amazing!"
+  CAT_MEOW
+ELSE
+  DECORATE "Couldn't level it!"
+ENDIF
+
+# Play with course correction
+PRINT "🧭 Let's try course correction!"
+course_correction = EXECUTE_COURSE_CORRECTION
+IF course_correction["success"] THEN
+  DECORATE "Fixed the course! So smart!"
+  CAT_MEOW
+ELSE
+  DECORATE "Couldn't fix the course!"
+ENDIF
+
+# Play with terrain following
+PRINT "🏔️ Let's try terrain following!"
+terrain_following = EXECUTE_TERRAIN_FOLLOWING
+IF terrain_following["success"] THEN
+  DECORATE "Can follow terrain! So cool!"
+  CAT_MEOW
+ELSE
+  DECORATE "Couldn't follow terrain!"
+ENDIF
+
+DISPLAY ""
+
+# --- Advanced Features: PID Tuning ---
+DISPLAY "19. Advanced features: PID tuning..."
+
+# PID parameter optimization test
+PRINT "Running PID parameter optimization test..."
+optimization_results = []
+
+# Test different PID parameter sets
+REPEAT 3 times
+  parameter_sets = [
+    { "roll_pid": { "p": 3.0, "i": 0.1, "d": 0.05 }, "pitch_pid": { "p": 3.0, "i": 0.1, "d": 0.05 }, "yaw_pid": { "p": 2.0, "i": 0.1, "d": 0.0 } },
+    { "roll_pid": { "p": 5.0, "i": 0.2, "d": 0.1 }, "pitch_pid": { "p": 5.0, "i": 0.2, "d": 0.1 }, "yaw_pid": { "p": 3.0, "i": 0.15, "d": 0.05 } },
+    { "roll_pid": { "p": 7.0, "i": 0.3, "d": 0.15 }, "pitch_pid": { "p": 7.0, "i": 0.3, "d": 0.15 }, "yaw_pid": { "p": 4.0, "i": 0.2, "d": 0.1 } }
+  ]
+  
+  current_parameters = parameter_sets[iteration]
+  parameter_setting = SET_STABILIZATION_PARAMETERS current_parameters
+  
+  PRINT "Testing parameter set {iteration + 1}..."
+  
+  # 10 stability tests
+  test_results = []
+  REPEAT 10 times
+    attitude_data = GET_ATTITUDE_ANGLES
+    stability_score = attitude_data["measurement"]["stability_factor"]
+    test_resultsにstability_scoreを追加
+    WAIT 100
+  NEXT
+  
+  average_stability = test_resultsから平均
+  min_stability = test_resultsから最小
+  max_stability = test_resultsから最大
+  
+  optimization_resultsに{
+    "parameter_set": iteration + 1,
+    "roll_p": current_parameters["roll_pid"]["p"],
+    "pitch_p": current_parameters["pitch_pid"]["p"],
+    "yaw_p": current_parameters["yaw_pid"]["p"],
+    "average_stability": average_stability,
+    "min_stability": min_stability,
+    "max_stability": max_stability
+  }を追加
+  
+  PRINT "  Average stability: {average_stability.toFixed(1)}%"
+  PRINT "  Min stability: {min_stability.toFixed(1)}%"
+  PRINT "  Max stability: {max_stability.toFixed(1)}%"
+  
+  WAIT 500
+NEXT
+
+# Select optimal parameters
+optimal_result = optimization_resultsから "average_stability" を最大
+PRINT "Optimal parameter set: {optimal_result["parameter_set"]}"
+PRINT "Optimal stability: {optimal_result["average_stability"].toFixed(1)}%"
+
+# Re-apply optimal parameters
+optimal_parameters = parameter_sets[optimal_result["parameter_set"] - 1]
+final_setting = SET_STABILIZATION_PARAMETERS optimal_parameters
+PRINT "Applied optimal PID parameters"
+
+DISPLAY ""
+
+# --- Drone Stabilization Data Export ---
+DISPLAY "20. Exporting drone stabilization data..."
+
+# Create comprehensive stabilization report
+stabilization_report = {
+  "report_date": new Date().toISOString(),
+  "analysis_period": "auto_monitoring",
+  "data_points": auto_monitoring["total_measurements"],
+  "statistics": {
+    "average_stability_score": auto_monitoring["average_stability_score"],
+    "wind_gust_count": auto_monitoring["wind_gust_count"],
+    "rapid_tilt_count": auto_monitoring["rapid_tilt_count"],
+    "course_deviation_count": auto_monitoring["course_deviation_count"],
+    "optimal_pid_parameters": optimal_result,
+    "overall_performance": performance["overall_assessment"]
+  },
+  "optimization_recommendations": this._generateStabilizationOptimizationRecommendations(auto_monitoring, performance)
+}
+
+PRINT "Stabilization data exported successfully!"
+PRINT "Report includes:"
+PRINT "  Data points: {stabilization_report["data_points"]}"
+PRINT "  Average stability: {stabilization_report["statistics"]["average_stability_score"]}%"
+PRINT "  Overall performance: {stabilization_report["statistics"]["overall_performance"]}"
+PRINT "  Recommendations: {stabilization_report["optimization_recommendations"].length} items"
+
+DISPLAY ""
+
+# --- Advanced Drone Stabilization Benefits Summary ---
+DISPLAY ""
+DISPLAY "=== Advanced Drone Stabilization Benefits ==="
+PRINT "✅ Complete drone stabilization system!"
+PRINT "✅ Real-time gyroscope monitoring!"
+PRINT "✅ Real-time accelerometer monitoring!"
+PRINT "✅ Real-time magnetometer monitoring!"
+PRINT "✅ Wind gust detection and response!"
+PRINT "✅ Rapid tilt detection and correction!"
+PRINT "✅ Auto level correction!"
+PRINT "✅ Course correction!"
+PRINT "✅ Terrain following!"
+PRINT "✅ Course deviation detection!"
+PRINT "✅ PID parameter tuning!"
+PRINT "✅ Stability score monitoring!"
+PRINT "✅ Performance evaluation!"
+PRINT "✅ History tracking!"
+PRINT "✅ Integrated management!"
+PRINT "✅ Smart auto stabilization!"
+PRINT "✅ Kid-friendly stabilization monitoring!"
+PRINT "✅ English and Japanese support!"
+
+DISPLAY ""
+DISPLAY "=== Demo Complete ==="
+PRINT "🚁 Now Nadesiko3 has advanced drone stabilization!"
+PRINT "🌀 Complete attitude detection with gyroscope, accelerometer, and magnetometer!"
+PRINT "💨 Wind gust detection for immediate response!"
+PRINT "📐 Rapid tilt detection for automatic recovery!"
+PRINT "🔄 Auto level correction for constant stability!"
+PRINT "🧭 Course correction for accurate flight!"
+PRINT "🏔️ Terrain following for safe low-altitude flight!"
+PRINT "🗺️ Course deviation detection for route maintenance!"
+PRINT "⚙️ PID tuning for optimal control!"
+PRINT "📊 Stability score for real-time evaluation!"
+PRINT "🔧 Performance evaluation for system optimization!"
+PRINT "📊 History tracking for long-term analysis!"
+PRINT "🏠 Integrated management for complete control!"
+PRINT "🤖 24/7 auto monitoring for continuous protection!"
+PRINT "🎈 Kids can easily manage drone attitude!"
+PRINT "🌍 Perfect for international drone operations!"
+
+koko

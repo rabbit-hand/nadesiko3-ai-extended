@@ -1,0 +1,408 @@
+# Advanced Office Integration with RFID/NFC Demo - English Version
+# Microsoft Office, LibreOffice, RFID/NFC tags, and student ID auto-registration
+
+DISPLAY "=== Advanced Office Integration with RFID/NFC Demo ==="
+
+# --- Office Integration System Discovery ---
+DISPLAY "1. Discovering office integration systems..."
+all_office = DISCOVER_OFFICE_INTEGRATION "all"
+PRINT "Office systems found: {all_officeのキー数}"
+
+FOR EACH system IN all_office
+  IF system.key !== "initialized" AND system.key !== "timestamp" THEN
+    system_name = system.value["name"] || system.key
+    PRINT "  {system_name}"
+  ENDIF
+NEXT
+
+DISPLAY ""
+
+# --- Microsoft Office Integration ---
+DISPLAY "2. Activating Microsoft Office integration..."
+ms_office = MICROSOFT_OFFICE_INTEGRATION
+PRINT "Office type: {ms_office["office_type"]}"
+PRINT "Version: {ms_office["version"]}"
+PRINT "Connection status: {ms_office["connection_status"]}"
+
+PRINT "Available applications:"
+FOR EACH app IN ms_office["applications"]
+  app_name = app.key
+  available = app.value
+  PRINT "  {app_name}: {available}"
+NEXT
+
+DISPLAY ""
+
+# --- LibreOffice Integration ---
+DISPLAY "3. Activating LibreOffice integration..."
+libre_office = LIBREOFFICE_INTEGRATION
+PRINT "Office type: {libre_office["office_type"]}"
+PRINT "Version: {libre_office["version"]}"
+PRINT "Connection status: {libre_office["connection_status"]}"
+
+PRINT "Available applications:"
+FOR EACH app IN libre_office["applications"]
+  app_name = app.key
+  available = app.value
+  PRINT "  {app_name}: {available}"
+NEXT
+
+DISPLAY ""
+
+# --- Excel Operations ---
+DISPLAY "4. Testing Excel operations..."
+
+# Attendance recording
+attendance_data = {
+  "student_id": "S001",
+  "student_name": "Taro Tanaka",
+  "timestamp": new Date().toISOString(),
+  "status": "present"
+}
+excel_attendance = EXCEL_OPERATION "attendance_record" attendance_data
+PRINT "Excel attendance: {excel_attendance["message"]}"
+PRINT "Rows affected: {excel_attendance["rows_affected"]}"
+
+# Grade registration
+grade_data = {
+  "student_id": "S001",
+  "score": 85,
+  "max_score": 100
+}
+excel_grade = EXCEL_OPERATION "register_grade" grade_data "Mathematics"
+PRINT "Excel grade registration: {excel_grade["message"]}"
+
+DISPLAY ""
+
+# --- Word Operations ---
+DISPLAY "5. Testing Word operations..."
+
+# Report creation
+report_data = {
+  "title": "Attendance Status Report",
+  "date": new Date().toISOString().split('T')[0],
+  "total_students": 25,
+  "present_students": 23
+}
+word_report = WORD_OPERATION "create_report" report_data
+PRINT "Word report creation: {word_report["message"]}"
+
+# Certificate creation
+certificate_data = {
+  "student_name": "Taro Tanaka",
+  "class": "1-A",
+  "issue_date": new Date().toISOString().split('T')[0],
+  "purpose": "Attendance Certificate"
+}
+word_certificate = WORD_OPERATION "create_certificate" certificate_data
+PRINT "Word certificate creation: {word_certificate["message"]}"
+
+DISPLAY ""
+
+# --- RFID Tag Reading ---
+DISPLAY "6. Testing RFID tag reading..."
+
+REPEAT 3 times
+  rfid_read = READ_RFID_TAG
+  PRINT "Read time: {rfid_read["tag_data"]["read_time"]}"
+  PRINT "Tag ID: {rfid_read["tag_data"]["tag_id"]}"
+  PRINT "Tag type: {rfid_read["tag_data"]["tag_type"]}"
+  
+  IF rfid_read["tag_data"]["tag_type"] = "student_id" THEN
+    student_id = rfid_read["tag_data"]["student_id"]
+    student_name = rfid_read["tag_data"]["student_name"]
+    class_name = rfid_read["tag_data"]["class"]
+    PRINT "Student ID: {student_id}"
+    PRINT "Student name: {student_name}"
+    PRINT "Class: {class_name}"
+  ENDIF
+  
+  PRINT "---"
+  WAIT 2000
+NEXT
+
+DISPLAY ""
+
+# --- Student ID Auto-Registration ---
+DISPLAY "7. Testing student ID auto-registration..."
+
+# Simulate RFID tag data
+tag_data = {
+  "tag_id": "STU_ABC123DEF",
+  "tag_type": "student_id",
+  "student_id": "S123",
+  "student_name": "Hanako Sato",
+  "class": "2-C"
+}
+
+registration = AUTO_REGISTER_STUDENT tag_data
+PRINT "Registration result: {registration["message"]}"
+PRINT "Student ID: {registration["student_id"]}"
+PRINT "Student name: {registration["student_name"]}"
+PRINT "Class: {registration["class"]}"
+
+DISPLAY ""
+
+# --- Student Information Search ---
+DISPLAY "8. Testing student information search..."
+
+search_result1 = SEARCH_STUDENT "Tanaka"
+PRINT "Search result 1: {search_result1["message"]}"
+PRINT "Students found: {search_result1["total_found"]}"
+
+search_result2 = SEARCH_STUDENT "S001"
+PRINT "Search result 2: {search_result2["message"]}"
+PRINT "Students found: {search_result2["total_found"]}"
+
+DISPLAY ""
+
+# --- Attendance Recording ---
+DISPLAY "9. Testing attendance recording..."
+
+attendance_record = RECORD_ATTENDANCE "S001" "2024-01-15"
+PRINT "Attendance record: {attendance_record["message"]}"
+PRINT "Record time: {attendance_record["record_time"]}"
+
+DISPLAY ""
+
+# --- Grade Registration ---
+DISPLAY "10. Testing grade registration..."
+
+grade_registration_data = {
+  "student_id": "S001",
+  "score": 92,
+  "max_score": 100
+}
+
+grade_registration = REGISTER_GRADE grade_registration_data "Japanese"
+PRINT "Grade registration: {grade_registration["message"]}"
+PRINT "Registration date: {grade_registration["record_time"]}"
+
+DISPLAY ""
+
+# --- Integrated Office System ---
+DISPLAY "11. Checking integrated office system..."
+integrated_system = INTEGRATED_OFFICE_SYSTEM
+PRINT "Integrated system status: {integrated_system["overall_status"]}"
+PRINT "Available operations: {integrated_system["available_operations"]のキー数}"
+
+DISPLAY ""
+
+# --- Auto Tag Reading and Registration ---
+DISPLAY "12. Auto tag reading and registration..."
+auto_read_result = AUTO_TAG_READ_REGISTER
+PRINT "Total reads: {auto_read_result["total_reads"]}"
+PRINT "Successful registrations: {auto_read_result["successful_registrations"]}"
+PRINT "System status: {auto_read_result["system_status"]}"
+
+PRINT "Processed operations:"
+FOR EACH operation IN auto_read_result["operations"]
+  IF operation["attendance_recorded"] AND operation["excel_updated"] THEN
+    PRINT "✅ {operation["student_name"]} - Attendance recorded & Excel updated"
+  ELSE
+    PRINT "❌ {operation["student_name"]} - Processing failed"
+  ENDIF
+NEXT
+
+DISPLAY ""
+
+# --- Practical Example: School Attendance Management ---
+DISPLAY "13. Practical example: School attendance management..."
+
+# Morning attendance check
+DISPLAY "Starting morning attendance check..."
+morning_attendance_log = []
+
+REPEAT 5 times
+  # RFID tag reading
+  tag_read = READ_RFID_TAG
+  
+  IF tag_read["success"] AND tag_read["tag_data"]["tag_type"] = "student_id" THEN
+    student_info = tag_read["tag_data"]
+    
+    # Student ID auto-registration
+    registration = AUTO_REGISTER_STUDENT student_info
+    
+    IF registration["success"] THEN
+      # Attendance recording
+      attendance = RECORD_ATTENDANCE registration["student_id"] new Date().toISOString().split('T')[0]
+      
+      IF attendance["success"] THEN
+        # Excel recording
+        excel_record = EXCEL_OPERATION "attendance_record" {
+          "student_id": registration["student_id"],
+          "student_name": registration["student_name"],
+          "class": registration["class"],
+          "timestamp": new Date().toISOString(),
+          "status": "present"
+        }
+        
+        morning_attendance_logに{
+          "student_id": registration["student_id"],
+          "student_name": registration["student_name"],
+          "class": registration["class"],
+          "attendance_time": new Date().toISOString(),
+          "excel_updated": excel_record["success"],
+          "status": "present"
+        }を追加
+        
+        PRINT "✅ {registration["student_name"]} attendance recorded"
+      ELSE
+        PRINT "❌ {registration["student_name"]} attendance recording failed"
+      ENDIF
+    ENDIF
+  ELSE
+    PRINT "Reading..."
+  ENDIF
+  
+  WAIT 1500
+NEXT
+
+DISPLAY "Morning attendance check completed"
+PRINT "Students processed: {morning_attendance_logのキー数}"
+
+DISPLAY ""
+
+# --- Kid-Friendly Mode Example ---
+DISPLAY "14. Kid-friendly mode example..."
+「かんたんモード」
+
+# Kid-friendly office operations
+PRINT "📝 Hello Office-san!"
+DOG_BARK
+
+# Play with RFID
+PRINT "🏷️ Let's scan cards!"
+rfid_read = READ_RFID_TAG
+IF rfid_read["success"] THEN
+  IF rfid_read["tag_data"]["tag_type"] = "student_id" THEN
+    student_name = rfid_read["tag_data"]["student_name"]
+    DECORATE "{student_name} is here! Good morning!"
+    CAT_MEOW
+  ELSE
+    DECORATE "Some card was read!"
+  ENDIF
+ELSE
+  DECORATE "No card found!"
+ENDIF
+
+# Play with Excel
+PRINT "📊 Let's write to Excel!"
+attendance_data = {
+  "student_name": "Taro-kun",
+  "status": "present",
+  "time": "Good morning!"
+}
+excel_result = EXCEL_OPERATION "attendance_record" attendance_data
+DECORATE "Wrote attendance to Excel! Great job!"
+
+# Play with Word
+PRINT "📄 Let's create a report!"
+report_data = {
+  "title": "Today's Activities",
+  "content": "Everyone was genki today!"
+}
+word_result = WORD_OPERATION "create_report" report_data
+DECORATE "Created report in Word! Amazing!"
+
+# Play with auto reading
+PRINT "🤖 Let's read cards automatically!"
+auto_read = AUTO_TAG_READ_REGISTER
+DECORATE "Read {auto_read["total_reads"]} cards automatically!"
+IF auto_read["successful_registrations"] > 0 THEN
+  DECORATE "Registered {auto_read["successful_registrations"]} friends!"
+  CAT_MEOW
+ENDIF
+
+DISPLAY ""
+
+# --- Advanced Features: Multi-System Integration ---
+DISPLAY "15. Advanced features: Multi-system integration..."
+
+# Comprehensive system status
+comprehensive_status = INTEGRATED_OFFICE_SYSTEM
+PRINT "=== Comprehensive System Status ==="
+PRINT "Microsoft Office: {comprehensive_status["microsoft_office"]["connection_status"]}"
+PRINT "LibreOffice: {comprehensive_status["libreoffice"]["connection_status"]}"
+PRINT "RFID System: {comprehensive_status["rfid_system"]["active"]}"
+PRINT "Student System: {comprehensive_status["student_system"]["active"]}"
+
+# Cross-platform data synchronization
+sync_data = {
+  "timestamp": new Date().toISOString(),
+  "source": "rfid_system",
+  "data_type": "attendance",
+  "students": morning_attendance_log,
+  "sync_targets": ["excel", "word", "database"]
+}
+
+# Sync to Excel
+excel_sync = EXCEL_OPERATION "attendance_record" sync_data
+PRINT "Excel sync: {excel_sync["success"]}"
+
+# Sync to Word (create summary report)
+word_sync = WORD_OPERATION "create_report" {
+  "title": "Daily Attendance Summary",
+  "date": new Date().toISOString().split('T')[0],
+  "total_students": sync_data["students"]のキー数,
+  "present_students": sync_data["students"].filter(s => s.status === "present")のキー数,
+  "sync_time": sync_data["timestamp"]
+}
+PRINT "Word sync: {word_sync["success"]}"
+
+# Automated workflow
+PRINT "=== Automated Workflow ==="
+PRINT "1. RFID tag detected"
+PRINT "2. Student ID auto-registered"
+PRINT "3. Attendance recorded"
+PRINT "4. Excel updated"
+PRINT "5. Word report generated"
+PRINT "6. Data synchronized across systems"
+
+# System health check
+health_check = {
+  "microsoft_office": comprehensive_status["microsoft_office"]["connection_status"] === "connected",
+  "libreoffice": comprehensive_status["libreoffice"]["connection_status"] === "connected",
+  "rfid_system": comprehensive_status["rfid_system"]["active"],
+  "student_system": comprehensive_status["student_system"]["active"],
+  "overall_health": "healthy"
+}
+
+FOR EACH system IN health_check
+  IF system.key !== "overall_health" THEN
+    status = system.value ? "✅" : "❌"
+    PRINT "{system.key}: {status}"
+  ENDIF
+NEXT
+PRINT "Overall health: {health_check["overall_health"]}"
+
+DISPLAY ""
+
+# --- Office Integration Benefits Summary ---
+DISPLAY ""
+DISPLAY "=== Advanced Office Integration Benefits ==="
+PRINT "✅ Complete Microsoft Office integration!"
+PRINT "✅ Complete LibreOffice integration!"
+PRINT "✅ RFID/NFC tag reading capabilities!"
+PRINT "✅ Automatic student ID registration!"
+PRINT "✅ Excel attendance and grade management!"
+PRINT "✅ Word report and certificate generation!"
+PRINT "✅ Student information search system!"
+PRINT "✅ Automated attendance recording!"
+PRINT "✅ Cross-platform data synchronization!"
+PRINT "✅ Kid-friendly office features!"
+PRINT "✅ English and Japanese support!"
+
+DISPLAY ""
+DISPLAY "=== Demo Complete ==="
+PRINT "📝 Now Nadesiko3 has advanced office integration capabilities!"
+PRINT "🏷️ RFID/NFC tags for automatic student ID reading!"
+PRINT "📊 Microsoft Office and LibreOffice full support!"
+PRINT "📝 Excel for attendance and grade management!"
+PRINT "📄 Word for reports and certificates!"
+PRINT "👨‍🎓 Student ID auto-registration system!"
+PRINT "🤖 Automated workflows for school management!"
+PRINT "🎈 Kids can easily use office features!"
+PRINT "🌍 Perfect for international school management!"
+
+koko

@@ -1,0 +1,297 @@
+# ドローン用複数カメラ・自動障害物回避・目標追跡デモ
+# Advanced Drone Vision System Demo
+
+「=== ドローン用複数カメラ・自動障害物回避・目標追跡デモ ===」と表示。
+
+# --- カメラシステム検出 ---
+「1. カメラシステムを検出中...」と表示。
+全カメラ = カメラシステム検出「全部」
+「検出されたカメラ数: {全カメラのキー数}」と表示。
+
+全カメラを反復
+  カメラ名 = 対象["name"]
+  カメラ種類 = 対象["type"]
+  解像度幅 = 対象["resolution"]["width"]
+  解像度高 = 対象["resolution"]["height"]
+  視野角 = 対象["fov"]
+  「  {カメラ名} ({カメラ種類}) - {解像度幅}x{解像度高}, 視野角: {視野角}°」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 安全距離設定 ---
+「2. 安全距離を設定中...」と表示。
+安全距離設定 8
+「安全距離を8mに設定しました」と表示。
+
+「」と表示。
+
+# --- 障害物検出 ---
+「3. 障害物を検出中...」と表示。
+
+# 前面カメラで障害物検出
+前面障害物 = 「front」から障害物検出
+「前面カメラ障害物:」と表示。
+「  検出数: {前面障害物["total_count"]}」と表示。
+「  危険な障害物: {前面障害物["critical_obstacles"]}」と表示。
+
+前面障害物["obstacles"]を反復
+  障害物名 = 対象["id"]
+  障害物種類 = 対象["type"]
+  距離 = 対象["distance"]
+  サイズ幅 = 対象["size"]["width"]
+  サイズ高 = 対象["size"]["height"]
+  「  {障害物名} ({障害物種類}) - 距離: {距離}m, サイズ: {サイズ幅}x{サイズ高}m」と表示。
+ここまで。
+
+# 下面カメラで障害物検出
+下面障害物 = 「bottom」から障害物検出
+「下面カメラ障害物数: {下面障害物["total_count"]}」と表示。
+
+「」と表示。
+
+# --- 自動障害物回避 ---
+「4. 自動障害物回避を実行中...」と表示。
+回避戦略 = 自動障害物回避
+「安全レベル: {回避戦略["safety_level"]}」と表示。
+「回避戦略: {回避戦略["strategy"]["action"]}」と表示。
+「回避方向: {回避戦略["strategy"]["direction"]}」と表示。
+
+回避戦略["action"]["commands"]を反復
+  コマンド種類 = 対象["type"]
+  説明 = 対象["description"]
+  「  実行コマンド: {コマンド種類} - {説明}」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 目標検出 ---
+「5. 目標を検出中...」と表示。
+
+# 人を検出
+人検出 = 「person」で「front」から目標検出
+「人検出:」と表示。
+IF 人検出["detected"] THEN
+  「  検出位置: ({人検出["position"]["x"]}, {人検出["position"]["y"]}, {人検出["position"]["z"]})」と表示。
+  「  距離: {人検出["distance"]}m」と表示。
+  「  信頼度: {人検出["confidence"]}」と表示。
+ELSE
+  「  人は検出されませんでした」と表示。
+ENDIF
+
+# 車両を検出
+車両検出 = 「vehicle」で「front」から目標検出
+「車両検出:」と表示。
+IF 車両検出["detected"] THEN
+  「  検出位置: ({車両検出["position"]["x"]}, {車両検出["position"]["y"]}, {車両検出["position"]["z"]})」と表示。
+  「  距離: {車両検出["distance"]}m」と表示。
+ELSE
+  「  車両は検出されませんでした」と表示。
+ENDIF
+
+「」と表示。
+
+# --- 目標追跡 ---
+「6. 目標追跡を開始中...」と表示。
+
+# 人を追跡
+IF 人検出["detected"] THEN
+  追跡戦略 = 人検出を目標追跡
+  「追跡対象: {追跡戦略["target"]["target_type"]}」と表示。
+  「追跡状態: {追跡戦略["tracking_status"]}」と表示。
+  
+  追跡戦略["action"]["tracking_commands"]を反復
+    コマンド種類 = 対象["type"]
+    説明 = 対象["description"]
+    「  追跡コマンド: {コマンド種類} - {説明}」と表示。
+  ここまで
+ENDIF
+
+「」と表示。
+
+# --- 画像処理 ---
+「7. 画像処理を実行中...」と表示。
+
+# エッジ検出
+エッジ処理 = 「front」で「edge_detection」に画像処理
+「エッジ検出: {エッジ処理["processing_name"]}」と表示。
+「処理時間: {エッジ処理["processed_data"]["processing_time"]}ms」と表示。
+
+# 物体検出
+物体処理 = 「front」で「object_detection」に画像処理
+「物体検出: {物体処理["processing_name"]}」と表示。
+「信頼度: {物体処理["confidence"]}」と表示。
+
+# 顔検出
+顔処理 = 「front」で「face_detection」に画像処理
+「顔検出: {顔処理["processing_name"]}」と表示。
+「信頼度: {顔処理["confidence"]}」と表示。
+
+「」と表示。
+
+# --- ビジョン状態監視 ---
+「8. ビジョン状態を監視中...」と表示。
+ビジョン状態 = ビジョン状態監視
+「監視時刻: {ビジョン状態["timestamp"]}」と表示。
+「システム状態: {ビジョン状態["system_status"]}」と表示。
+「安全レベル: {ビジョン状態["safety_level"]}」と表示。
+
+# 追跡状態
+追跡状態 = ビジョン状態["tracking_status"]
+「アクティブ追跡: {追跡状態["active_tracking"]}」と表示。
+「ロック目標: {追跡状態["locked_targets"]}」と表示。
+「追跡品質: {追跡状態["tracking_quality"]}」と表示。
+
+「」と表示。
+
+# --- 実用的な例：自動飛行パターン ---
+「9. 実用的な例：自動飛行パターン...」と表示。
+
+飛行ログ = []
+5回
+  # ビジョン状態を取得
+  最新ビジョン = ビジョン状態監視
+  
+  # 自動障害物回避を実行
+  回避結果 = 自動障害物回避
+  
+  # ログエントリーを作成
+  ログエントリー = {
+    "timestamp": 最新ビジョン["timestamp"],
+    "safety_level": 回避結果["safety_level"],
+    "obstacles_count": 0,
+    "action_taken": 回避結果["strategy"]["action"]
+  }
+  
+  # 障害物数をカウント
+  最新ビジョン["obstacles"]を反復
+    ログエントリー["obstacles_count"] = ログエントリー["obstacles_count"] + 対象["total_count"]
+  ここまで
+  
+  飛行ログにログエントリーを追加
+  「ログ: {ログエントリー["timestamp"]} - 安全レベル: {ログエントリー["safety_level"]}, 障害物: {ログエントリー["obstacles_count"]}個, アクション: {ログエントリー["action_taken"]}」と表示。
+  
+  1000を待つ
+ここまで。
+
+「」と表示。
+
+# --- 英語モードでの使用例 ---
+「10. 英語モードでの使用例...」と表示。
+「言語モード設定」に「english」
+
+# 英語でカメラシステム検出
+english_cameras = DISCOVER_CAMERA_SYSTEM
+PRINT "English Camera System:"
+PRINT "Cameras found: {english_camerasのキー数}"
+
+# 英語で障害物検出
+obstacles = DETECT_OBSTACLES "front"
+PRINT "Front camera obstacles: {obstacles["total_count"]}"
+
+# 英語で自動障害物回避
+avoidance = AUTO_AVOID_OBSTACLES
+PRINT "Safety level: {avoidance["safety_level"]}"
+PRINT "Strategy: {avoidance["strategy"]["action"]}"
+
+# 英語で目標検出
+target = DETECT_TARGET "person" "front"
+IF target["detected"] THEN
+  PRINT "Person detected at distance: {target["distance"]}m"
+ENDIF
+
+# 英語で目標追跡
+IF target["detected"] THEN
+  tracking = TRACK_TARGET target
+  PRINT "Tracking status: {tracking["tracking_status"]}"
+ENDIF
+
+# 英語で画像処理
+image_process = PROCESS_IMAGE "front" "edge_detection"
+PRINT "Image processing: {image_process["processing_name"]}"
+
+「」と表示。
+
+# --- 子供向けモードでの使用例 ---
+「11. 子供向けモードでの使用例...」と表示。
+「かんたんモード」
+
+# 子供向けカメラ操作
+「📷 ドローンのカメラさん、こんにちは！」と表示。
+わんわん
+
+# 障害物で遊ぶ
+「🚧 障害物をさがそう！」と表示。
+障害物 = 「front」から障害物検出
+IF 障害物["total_count"] > 0 THEN
+  ふくふくを「障害物が{障害物["total_count"]}個見つかったよ！危ないから気をつけてね！」
+ELSE
+  ふくふくを「大丈夫だよ！安全に飛べるよ！」
+ENDIF
+
+# 目標で遊ぶ
+「👤 人をさがそう！」と表示。
+人検出 = 「person」で「front」から目標検出
+IF 人検出["detected"] THEN
+  ふくふくを「人が見つかったよ！{人検出["distance"]}メートル先にいるよ！」
+  にゃんにゃん
+ELSE
+  ふくふくを「人は見つからなかったよ！」
+ENDIF
+
+# 自動回避で遊ぶ
+「🛡️ 自動でよけてみよう！」と表示。
+回避結果 = 自動障害物回避
+IF 回避結果["safety_level"] = "danger" THEN
+  ふくふくを「危ない！自動でよけるよ！」
+  ぴよぴよ
+ELSE
+  ふくふくを「安全だよ！そのまま進むよ！」
+ENDIF
+
+「」と表示。
+
+# --- 高度な機能：複数カメラ連携 ---
+「12. 高度な機能：複数カメラ連携...」と表示。
+
+# 全カメラで同時に障害物検出
+前面障害物 = 「front」から障害物検出
+下面障害物 = 「bottom」から障害物検出
+背面障害物 = 「rear」から障害物検出
+側面障害物 = 「side」から障害物検出
+
+# 統合的な障害物マップを作成
+統合障害物 = {
+  "front": 前面障害物["obstacles"],
+  "bottom": 下面障害物["obstacles"],
+  "rear": 背面障害物["obstacles"],
+  "side": 側面障害物["obstacles"],
+  "total_count": 前面障害物["total_count"] + 下面障害物["total_count"] + 背面障害物["total_count"] + 側面障害物["total_count"]
+}
+
+「=== 統合障害物マップ ===」と表示。
+「前面: {前面障害物["total_count"]}個」と表示。
+「下面: {下面障害物["total_count"]}個」と表示。
+「背面: {背面障害物["total_count"]}個」と表示。
+「側面: {側面障害物["total_count"]}個」と表示。
+「合計: {統合障害物["total_count"]}個」と表示。
+
+# 最も安全な飛行経路を計算
+最安全経路 = "forward"  // 簡単な例
+IF 統合障害物["total_count"] > 5 THEN
+  最安全経路 = "hover"
+ELSEIF 統合障害物["front"]["total_count"] > 2 THEN
+  最安全経路 = "altitude_up"
+ENDIF
+
+「推奨飛行経路: {最安全経路}」と表示。
+
+「」と表示。
+
+「=== デモ完了 ===」と表示。
+「📷 これでなでしこ3で複数カメラ対応のドローンが使える！」と表示。
+「🚧 自動障害物回避で安全な飛行が実現！」と表示。
+「👤 目標追跡機能でスマートな追尾が可能！」と表示。
+「🎈 子供でも簡単にドローンの目が使える！」と表示。
+「🌍 英語・日本語・子供向けモードで完全対応！」と表示。
+koko

@@ -1,0 +1,414 @@
+# GPSなしドローンナビゲーションシステムデモ
+# GPS-Free Drone Navigation System Demo
+
+「=== GPSなしドローンナビゲーションシステムデモ ===」と表示。
+
+# --- ナビゲーションシステム初期化 ---
+「1. GPSなしナビゲーションシステムを初期化中...」と表示。
+ナビゲーション初期化 = GPSなしナビゲーション初期化
+「ナビゲーション初期化: {ナビゲーション初期化["message"]}」と表示。
+「ナビゲーションID: {ナビゲーション初期化["navigation_id"]}」と表示。
+「ステータス: {ナビゲーション初期化["status"]}」と表示。
+
+# 利用可能な機能を表示
+「利用可能な機能: {ナビゲーション初期化["capabilities"]を「,」で区切って表示}」と表示。
+
+# センサー情報を表示
+「利用可能なセンサー:」と表示。
+ナビゲーション初期化["sensors"]["cameras"]を反復
+  キー = 対象.key
+  カメラ = 対象.value
+  「  カメラ({キー}): {カメラ["type"]} {カメラ["resolution"]} @ {カメラ["fps"]}fps」と表示。
+ここまで。
+
+ナビゲーション初期化["sensors"]["imu"]を反復
+  キー = 対象.key
+  IMU = 対象.value
+  「  IMU({キー}): {IMU["range"]} (分解能: {IMU["resolution"]})」と表示。
+ここまで。
+
+「」と表示。
+
+# --- SLAMナビゲーション ---
+「2. SLAMナビゲーションを実行中...」と表示。
+SLAM結果 = SLAMナビゲーション実行
+「SLAMナビゲーション: {SLAM結果["message"]}」と表示。
+「アルゴリズム: {SLAM結果["slam_result"]["algorithm"]}」と表示。
+「マップ点数: {SLAM結果["slam_result"]["map_points"]}」と表示。
+「キーフレーム数: {SLAM結果["slam_result"]["keyframes"]}」と表示。
+「ループクロージャー: {SLAM結果["slam_result"]["loop_closures"]}」と表示。
+「追跡品質: {SLAM結果["slam_result"]["tracking_quality"]}」と表示。
+「処理時間: {SLAM結果["slam_result"]["processing_time"]}ms」と表示。
+「現在位置: X={SLAM結果["current_position"]["x"]}, Y={SLAM結果["current_position"]["y"]}, Z={SLAM結果["current_position"]["z"]}」と表示。
+
+「」と表示。
+
+# --- ビジュアルオドメトリ ---
+「3. ビジュアルオドメトリを実行中...」と表示。
+VO結果 = ビジュアルオドメトリ実行
+「ビジュアルオドメトリ: {VO結果["message"]}」と表示。
+「追跡特徴点: {VO結果["visual_odometry_result"]["tracked_features"]}」と表示。
+「インライア比: {VO結果["visual_odometry_result"]["inlier_ratio"]}」と表示。
+「並進ベクトル: X={VO結果["visual_odometry_result"]["translation"]["x"]}, Y={VO結果["visual_odometry_result"]["translation"]["y"]}, Z={VO結果["visual_odometry_result"]["translation"]["z"]}」と表示。
+「回転ベクトル: Roll={VO結果["visual_odometry_result"]["rotation"]["roll"]}, Pitch={VO結果["visual_odometry_result"]["rotation"]["pitch"]}, Yaw={VO結果["visual_odometry_result"]["rotation"]["yaw"]}」と表示。
+「スケール: {VO結果["visual_odometry_result"]["scale"]}」と表示。
+
+「」と表示。
+
+# --- 特徴点マッチングナビゲーション ---
+「4. 特徴点マッチングナビゲーションを実行中...」と表示。
+特徴点結果 = 特徴点マッチングナビゲーション
+「特徴点マッチング: {特徴点結果["message"]}」と表示。
+「検出特徴点: {特徴点結果["feature_matching_result"]["detected_features"]}」と表示。
+「マッチング特徴点: {特徴点結果["feature_matching_result"]["matched_features"]}」と表示。
+「マッチング比: {特徴点結果["feature_matching_result"]["match_ratio"]}」と表示。
+「ホモグラフィインライア: {特徴点結果["feature_matching_result"]["homography_inliers"]}」と表示。
+「RANSAC反復: {特徴点結果["feature_matching_result"]["ransac_iterations"]}」と表示。
+
+「」と表示。
+
+# --- 光学フローナビゲーション ---
+「5. 光学フローナビゲーションを実行中...」と表示。
+フロー結果 = 光学フローナビゲーション
+「光学フローナビゲーション: {フロー結果["message"]}」と表示。
+「フローベクトル数: {フロー結果["optical_flow_result"]["flow_vectors"]}」と表示。
+「平均フロー: X={フロー結果["optical_flow_result"]["average_flow"]["x"]}, Y={フロー結果["optical_flow_result"]["average_flow"]["y"]}」と表示。
+「フロー分散: {フロー結果["optical_flow_result"]["flow_variance"]}」と表示。
+「発散: {フロー結果["optical_flow_result"]["divergence"]}」と表示。
+「速度推定: X={フロー結果["optical_flow_result"]["velocity_estimate"]["x"]}m/s, Y={フロー結果["optical_flow_result"]["velocity_estimate"]["y"]}m/s, Z={フロー結果["optical_flow_result"]["velocity_estimate"]["z"]}m/s」と表示。
+
+「」と表示。
+
+# --- IMU統合ナビゲーション ---
+「6. IMU統合ナビゲーションを実行中...」と表示。
+IMU結果 = IMU統合ナビゲーション
+「IMU統合ナビゲーション: {IMU結果["message"]}」と表示。
+
+# IMUデータを表示
+「IMUセンサーデータ:」と表示。
+IMUデータ = IMU結果["imu_data"]
+「  加速度計: X={IMUデータ["accelerometer"]["x"]}g, Y={IMUデータ["accelerometer"]["y"]}g, Z={IMUデータ["accelerometer"]["z"]}g」と表示。
+「  ジャイロスコープ: X={IMUデータ["gyroscope"]["x"]}°/s, Y={IMUデータ["gyroscope"]["y"]}°/s, Z={IMUデータ["gyroscope"]["z"]}°/s」と表示。
+「  磁力計: X={IMUデータ["magnetometer"]["x"]}gauss, Y={IMUデータ["magnetometer"]["y"]}gauss, Z={IMUデータ["magnetometer"]["z"]}gauss」と表示。
+「  気圧計: {IMUデータ["barometer"]["pressure"]}hPa (高度: {IMUデータ["barometer"]["altitude"]}m)」と表示。
+
+# センサーフュージョン結果を表示
+フュージョン結果 = IMU結果["fusion_result"]
+「センサーフュージョン: {フュージョン結果["sensor_fusion_method"]}」と表示。
+「加速度バイアス: X={フュージョン結果["accelerometer_bias"]["x"]}, Y={フュージョン結果["accelerometer_bias"]["y"]}, Z={フュージョン結果["accelerometer_bias"]["z"]}」と表示。
+「ジャイロバイアス: X={フュージョン結果["gyroscope_bias"]["x"]}, Y={フュージョン結果["gyroscope_bias"]["y"]}, Z={フュージョン結果["gyroscope_bias"]["z"]}」と表示。
+「位置更新信頼度: {フュージョン結果["position_update"]["confidence"]}」と表示。
+
+「」と表示。
+
+# --- 目的地設定 ---
+「7. 目的地を設定中...」と表示。
+目的地データ = {
+  "name": "公園",
+  "x": 50,
+  "y": 50,
+  "z": 20,
+  "description": "中央公園の噴水広場",
+  "priority": "high"
+}
+目的地設定 = GPSなし目的地設定 目的地データ
+「目的地設定: {目的地設定["message"]}」と表示。
+「目的地: {目的地設定["destination"]["name"]}」と表示。
+「座標: X={目的地設定["destination"]["coordinates"]["x"]}, Y={目的地設定["destination"]["coordinates"]["y"]}, Z={目的地設定["destination"]["coordinates"]["z"]}」と表示。
+「距離: {目的地設定["distance"]}m」と表示。
+
+「」と表示。
+
+# --- 経路計画 ---
+「8. GPSなし経路計画を実行中...」と表示。
+経路計画 = GPSなし経路計画
+「経路計画: {経路計画["message"]}」と表示。
+「アルゴリズム: {経路計画["path_planning"]["algorithm"]}」と表示。
+「経路長: {経路計画["path_planning"]["path_length"]}m」と表示。
+「推定時間: {経路計画["path_planning"]["estimated_time"]}s」と表示。
+「回避障害物: {経路計画["path_planning"]["obstacles_avoided"]}」と表示。
+「経路信頼度: {経路計画["path_planning"]["confidence"]}」と表示。
+「ウェイポイント数: {経路計画["path_planning"]["waypoints"]のキー数}」と表示。
+
+「」と表示。
+
+# --- 障害物検出 ---
+「9. GPSなし障害物検出を実行中...」と表示。
+障害物検出 = GPSなし障害物検出
+「障害物検出: {障害物検出["message"]}」と表示。
+「検出アルゴリズム: {障害物検出["obstacle_detection"]["algorithm"]}」と表示。
+「検出範囲: {障害物検出["obstacle_detection"]["detection_range"]}m」と表示。
+「処理時間: {障害物検出["obstacle_detection"]["processing_time"]}ms」と表示。
+「検出障害物数: {障害物検出["obstacle_detection"]["detected_obstacles"]のキー数}」と表示。
+
+# 障害物詳細を表示
+「障害物詳細:」と表示。
+障害物検出["obstacle_detection"]["detected_obstacles"]を反復
+  IF 回数 < 5 THEN
+    障害物 = 対象
+    「  {障害物["type"]}: 位置({障害物["position"]["x"]}, {障害物["position"]["y"]}, {障害物["position"]["z"]}) 距離{障害物["distance"]}m 信頼度{障害物["confidence"]} リスク{障害物["risk_level"]}」と表示。
+  ENDIF
+ここまで。
+
+「」と表示。
+
+# --- 地形認識 ---
+「10. GPSなし地形認識を実行中...」と表示。
+地形認識 = GPSなし地形認識
+「地形認識: {地形認識["message"]}」と表示。
+「認識アルゴリズム: {地形認識["terrain_recognition"]["algorithm"]}」と表示。
+「現在の地形: {地形認識["terrain_recognition"]["current_terrain"]}」と表示。
+「ナビゲーション難易度: {地形認識["terrain_recognition"]["navigation_difficulty"]}」と表示。
+「認識信頼度: {地形認識["terrain_recognition"]["confidence"]}」と表示。
+「処理時間: {地形認識["terrain_recognition"]["processing_time"]}ms」と表示。
+
+# 地形特徴を表示
+「地形特徴:」と表示。
+地形特徴 = 地形認識["terrain_recognition"]["terrain_features"]
+「  建物: {地形特徴["buildings"]}」と表示。
+「  木: {地形特徴["trees"]}」と表示。
+「  水域: {地形特徴["water_bodies"]}」と表示。
+「  標高変化: {地形特徴["elevation_changes"]}」と表示。
+「  障害物: {地形特徴["obstacles"]}」と表示。
+
+「」と表示。
+
+# --- 位置推定 ---
+「11. GPSなし位置推定を実行中...」と表示。
+位置推定 = GPSなし位置推定
+「位置推定: {位置推定["message"]}」と表示。
+「推定方法: {位置推定["position_estimation"]["method"]}」と表示。
+「使用センサー: {位置推定["position_estimation"]["sensors_used"]を「,」で区切って表示}」と表示。
+「位置信頼度: {位置推定["position_estimation"]["confidence"]}」と表示。
+「収束時間: {位置推定["position_estimation"]["convergence_time"]}ms」と表示。
+「処理時間: {位置推定["position_estimation"]["processing_time"]}ms」と表示。
+
+# 不確定性を表示
+「位置不確定性:」と表示。
+不確定性 = 位置推定["position_estimation"]["uncertainty"]
+「  X: ±{不確定性["x"]}m」と表示。
+「  Y: ±{不確定性["y"]}m」と表示。
+「  Z: ±{不確定性["z"]}m」と表示。
+「  Roll: ±{不確定性["roll"]}°」と表示。
+「  Pitch: ±{不確定性["pitch"]}°」と表示。
+「  Yaw: ±{不確定性["yaw"]}°」と表示。
+
+「」と表示。
+
+# --- 自律飛行開始 ---
+「12. GPSなし自律飛行を開始中...」と表示。
+自律飛行 = GPSなし自律飛行開始
+「自律飛行開始: {自律飛行["message"]}」と表示。
+「フライトID: {自律飛行["flight_control"]["flight_id"]}」と表示。
+「フライトモード: {自律飛行["flight_control"]["mode"]}」と表示。
+「ステータス: {自律飛行["flight_control"]["status"]}」と表示。
+「現在ウェイポイント: {自律飛行["flight_control"]["current_waypoint"]}/{自律飛行["flight_control"]["total_waypoints"]}」と表示。
+「進捗: {自律飛行["flight_control"]["progress"]}%」と表示。
+「推定到着時刻: {自律飛行["flight_control"]["estimated_arrival"]}」と表示。
+
+# 安全システムを表示
+「安全システム:」と表示。
+安全システム = 自律飛行["flight_control"]["safety_systems"]
+「  障害物回避: {安全システム["obstacle_avoidance"] ? "有効" : "無効"}」と表示。
+「  緊急着陸: {安全システム["emergency_landing"] ? "有効" : "無効"}」と表示。
+「  低バッテリー帰還: {安全システム["low_battery_return"] ? "有効" : "無効"}」と表示。
+「  通信ロスト: {安全システム["communication_lost"] ? "有効" : "無効"}」と表示。
+
+「」と表示。
+
+# --- ナビゲーション状態確認 ---
+「13. ナビゲーション状態を確認中...」と表示。
+ナビゲーション状態 = GPSなしナビゲーション状態
+「ナビゲーション状態:」と表示。
+「ナビゲーションID: {ナビゲーション状態["navigation_id"]}」と表示。
+「ステータス: {ナビゲーション状態["status"]}」と表示。
+「フライトモード: {ナビゲーション状態["flight_mode"]}」と表示。
+「信頼度: {ナビゲーション状態["confidence"]}」と表示。
+「バッテリーレベル: {ナビゲーション状態["battery_level"]}%」と表示。
+「検出障害物数: {ナビゲーション状態["detected_obstacles"]}」と表示。
+「計画経路長: {ナビゲーション状態["planned_path_length"]}」と表示。
+
+# 現在位置を表示
+「現在位置:」と表示。
+現在位置 = ナビゲーション状態["current_position"]
+「  X: {現在位置["x"]}m」と表示。
+「  Y: {現在位置["y"]}m」と表示。
+「  Z: {現在位置["z"]}m」と表示。
+「  Roll: {現在位置["roll"]}°」と表示。
+「  Pitch: {現在位置["pitch"]}°」と表示。
+「  Yaw: {現在位置["yaw"]}°」と表示。
+
+「」と表示。
+
+# --- 実用的な例：室内ナビゲーション ---
+「14. 実用的な例：室内ナビゲーション...」と表示。
+
+# 室内環境でSLAMを実行
+「室内環境でSLAMを実行します...」と表示。
+室内SLAM = SLAMナビゲーション実行
+「室内SLAM完了: {室内SLAM["slam_result"]["map_points"]}点のマップを作成」と表示。
+
+# 障害物を検出して回避
+「室内障害物を検出します...」と表示。
+室内障害物 = GPSなし障害物検出
+「室内障害物: {室内障害物["obstacle_detection"]["detected_obstacles"]のキー数}個検出」と表示。
+
+# 安全な経路を再計画
+「安全な経路を再計画します...」と表示。
+安全経路 = GPSなし経路計画
+「安全経路: {安全経路["path_planning"]["obstacles_avoided"]}個の障害物を回避」と表示。
+
+# 自律飛行で移動
+「自律飛行で移動します...」と表示。
+室内飛行 = GPSなし自律飛行開始
+「室内自律飛行: ウェイポイント{室内飛行["flight_control"]["total_waypoints"]}個で移動開始」と表示。
+
+「」と表示。
+
+# --- 実用的な例：災害現場ナビゲーション ---
+「15. 実用的な例：災害現場ナビゲーション...」と表示。
+
+# 災害現場で地形認識
+「災害現場の地形を認識します...」と表示。
+災害地形 = GPSなし地形認識
+「災害地形認識: {災害地形["terrain_recognition"]["current_terrain"]}地形を検出」と表示。
+
+# 複数のセンサーを統合して位置推定
+「複数センサーを統合して位置を推定します...」と表示。
+災害位置 = GPSなし位置推定
+「災害位置推定: 信頼度{災害位置["position_estimation"]["confidence"]}で位置確定」と表示。
+
+# 緊急経路計画
+「緊急経路を計画します...」と表示。
+緊急経路 = GPSなし経路計画
+「緊急経路計画: {緊急経路["path_planning"]["estimated_time"]}sで到着可能」と表示。
+
+# 緊急自律飛行
+「緊急自律飛行を開始します...」と表示。
+緊急飛行 = GPSなし自律飛行開始
+「緊急飛行: 安全システム全有効で飛行開始」と表示。
+
+「」と表示。
+
+# --- 英語モードでの使用例 ---
+「16. 英語モードでの使用例...」と表示。
+「言語モード設定」に「english」
+
+# 英語でナビゲーション初期化
+english_nav = INITIALIZE_GPSFREE_NAVIGATION
+PRINT "English Navigation: {english_nav["message"]}"
+PRINT "Navigation ID: {english_nav["navigation_id"]}"
+PRINT "Capabilities: {english_nav["capabilities"]を「,」で区切って表示}"
+
+# 英語でSLAM
+english_slam = EXECUTE_SLAM_NAVIGATION
+PRINT "English SLAM: {english_slam["message"]}"
+PRINT "Map Points: {english_slam["slam_result"]["map_points"]}"
+PRINT "Tracking Quality: {english_slam["slam_result"]["tracking_quality"]}"
+
+# 英語でビジュアルオドメトリ
+english_vo = EXECUTE_VISUAL_ODOMETRY
+PRINT "English Visual Odometry: {english_vo["message"]}"
+PRINT "Tracked Features: {english_vo["visual_odometry_result"]["tracked_features"]}"
+PRINT "Inlier Ratio: {english_vo["visual_odometry_result"]["inlier_ratio"]}"
+
+# 英語で目的地設定
+english_dest = SET_GPSFREE_DESTINATION {
+  "name": "Park",
+  "x": 30,
+  "y": 40,
+  "z": 15,
+  "description": "Central Park"
+}
+PRINT "English Destination: {english_dest["message"]}"
+PRINT "Distance: {english_dest["distance"]}m"
+
+# 英語で経路計画
+english_route = PLAN_GPSFREE_ROUTE
+PRINT "English Route: {english_route["message"]}"
+PRINT "Path Length: {english_route["path_planning"]["path_length"]}m"
+PRINT "Waypoints: {english_route["path_planning"]["waypoints"]のキー数}"
+
+# 英語で自律飛行
+english_flight = START_GPSFREE_AUTONOMOUS_FLIGHT
+PRINT "English Flight: {english_flight["message"]}"
+PRINT "Flight ID: {english_flight["flight_control"]["flight_id"]}"
+PRINT "Status: {english_flight["flight_control"]["status"]}"
+
+# 英語で障害物検出
+english_obs = DETECT_GPSFREE_OBSTACLES
+PRINT "English Obstacles: {english_obs["message"]}"
+PRINT "Detected: {english_obs["obstacle_detection"]["detected_obstacles"]のキー数}"
+
+# 英語でナビゲーション状態
+english_status = GET_GPSFREE_NAVIGATION_STATUS
+PRINT "English Status: {english_status["status"]}"
+PRINT "Position: X={english_status["current_position"]["x"]}, Y={english_status["current_position"]["y"]}, Z={english_status["current_position"]["z"]}"
+PRINT "Confidence: {english_status["confidence"]}"
+
+「」と表示。
+
+# --- 子供向けモードでの使用例 ---
+「17. 子供向けモードでの使用例...」と表示。
+「かんたんモード」
+
+# 子供向けナビゲーション
+「🚁 ドローンのナビゲーションを始めよう！」と表示。
+子供ナビ = GPSなしナビゲーション初期化
+ふくふくを「ナビゲーション準備OK！{子供ナビ["capabilities"]のキー数}つの機能があるよ！」
+CAT_MEOW
+
+# 子供向けSLAM
+「🗺 お部屋の地図を作ろう！」と表示。
+子供SLAM = SLAMナビゲーション実行
+ふくふくを「お部屋の地図ができた！{子供SLAM["slam_result"]["map_points"]}個の点を見つけたよ！」
+CAT_MEOW
+
+# 子供向け目的地設定
+「🎯 目的地を決めよう！」と表示。
+子供目的地 = GPSなし目的地設定 {
+  "name": "おもちゃ箱",
+  "x": 10,
+  "y": 10,
+  "z": 5
+}
+ふくふくを「目的地「{子供目的地["destination"]["name"]}」を設定したよ！{子供目的地["distance"]}m先だよ！」
+CAT_MEOW
+
+# 子供向け障害物検出
+「👀 障害物を探そう！」と表示。
+子供障害物 = GPSなし障害物検出
+ふくふくを「{子供障害物["obstacle_detection"]["detected_obstacles"]のキー数}つの障害物を見つけたよ！気をつけてね！」
+CAT_MEOW
+
+# 子供向け自律飛行
+「✈️ 自動で飛んでみよう！」と表示。
+子供飛行 = GPSなし自律飛行開始
+ふくふくを「自動飛行スタート！{子供飛行["flight_control"]["total_waypoints"]}個の通り道を進むよ！」
+CAT_MEOW
+
+# 子供向け安全確認
+「🛡️ 安全を確認しよう！」と表示。
+子供安全 = GPSなしナビゲーション状態
+ふくふくを「安全システム全部ON！{子供安全["battery_level"]}%バッテリー残ってるよ！」
+CAT_MEOW
+
+「」と表示。
+
+「=== GPSなしドローンナビゲーションシステムデモ完了 ===」と表示。
+「🚁 GPSがなくても確実に目的地に到着できる！」と表示。
+「🗺 SLAMでリアルタイム地図作成！」と表示。
+「👁️ ビジュアルオドメトリで正確な位置推定！」と表示。
+「🔍 特徴点マッチングで安定ナビゲーション！」と表示。
+「💫 光学フローで高速な移動検出！」と表示。
+「🧭 IMU統合で高精度な姿勢制御！」と表示。
+「🎯 スマート経路計画で最適ルート！」と表示。
+「🚧 障害物検出で安全飛行！」と表示。
+「🏔️ 地形認識で環境適応！」と表示。
+「📍 マルチセンサーフュージョンで信頼性向上！」と表示。
+「🤖 自律飛行で自動制御！」と表示。
+「🛡️ 安全システムで緊急対応！」と表示。
+「🏠 室内ナビゲーションで屋内でも活躍！」と表示。
+「🚑 災害現場でも確実なナビゲーション！」と表示。
+「🌍 英語・日本語・子供向けモードで完全対応！」と表示。
+koko

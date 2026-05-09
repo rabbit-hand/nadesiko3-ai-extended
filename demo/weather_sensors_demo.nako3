@@ -1,0 +1,520 @@
+# 温度計・体温計・気温計・風量計測システムと気象観測・天気管理デモ
+# Advanced Weather Sensors with Temperature, Body Temperature, Air Temperature, and Wind Measurement Demo
+
+「=== 温度計・体温計・気温計・風量計測システムと気象観測・天気管理デモ ===」と表示。
+
+# --- 温度センサーシステム検出 ---
+「1. 温度センサーシステムを検出中...」と表示。
+全温度センサー = 温度センサーシステム検出「全部」
+「検出されたシステム数: {全温度センサーのキー数}」と表示。
+
+全温度センサーを反復
+  IF 対象.key !== "initialized" AND 対象.key !== "timestamp" THEN
+    システム名 = 対象.value["name"] || 対象.key
+    「  {システム名}」と表示。
+  ENDIF
+ここまで。
+
+「」と表示。
+
+# --- 温度計測 ---
+「2. 温度を計測中...」と表示。
+温度計測 = 温度計測
+「温度計測: {温度計測["message"]}」と表示。
+「現在の温度: {温度計測["measurement"]["temperature"]}°C」と表示。
+「計測時刻: {温度計測["measurement"]["timestamp"]}」と表示。
+「精度: {温度計測["measurement"]["accuracy"]}」と表示。
+
+「」と表示。
+
+# --- 体温計測 ---
+「3. 体温を計測中...」と表示。
+体温計測 = 体温計測
+「体温計測: {体温計測["message"]}」と表示。
+「現在の体温: {体温計測["measurement"]["body_temperature"]}°C」と表示。
+「体温状態: {体温計測["measurement"]["status"]}」と表示。
+
+「」と表示。
+
+# --- 気温計測 ---
+「4. 気温を計測中...」と表示。
+気温計測 = 気温計測
+「気温計測: {気温計測["message"]}」と表示。
+「現在の気温: {気温計測["measurement"]["air_temperature"]}°C」と表示。
+「計測時刻: {気温計測["measurement"]["timestamp"]}」と表示。
+
+「」と表示。
+
+# --- 風量計測 ---
+「5. 風量を計測中...」と表示。
+風量計測 = 風量計測
+「風量計測: {風量計測["message"]}」と表示。
+「現在の風速: {風量計測["measurement"]["wind_speed"]}m/s」と表示。
+「風向: {風量計測["measurement"]["wind_direction"]}°」と表示。
+「風の状態: {風量計測["measurement"]["status"]}」と表示。
+
+「」と表示。
+
+# --- 湿度計測 ---
+「6. 湿度を計測中...」と表示。
+湿度計測 = 湿度計測
+「湿度計測: {湿度計測["message"]}」と表示。
+「現在の湿度: {湿度計測["measurement"]["humidity"]}%」と表示。
+「計測時刻: {湿度計測["measurement"]["timestamp"]}」と表示。
+
+「」と表示。
+
+# --- 気圧計測 ---
+「7. 気圧を計測中...」と表示。
+気圧計測 = 気圧計測
+「気圧計測: {気圧計測["message"]}」と表示。
+「現在の気圧: {気圧計測["measurement"]["pressure"]}hPa」と表示。
+「計測時刻: {気圧計測["measurement"]["timestamp"]}」と表示。
+
+「」と表示。
+
+# --- 天気観測 ---
+「8. 天気を観測中...」と表示。
+天気観測 = 天気観測
+「天気観測: {天気観測["message"]}」と表示。
+「天気状態: {天気観測["observation"]["weather_condition"]}」と表示。
+「気温: {天気観測["observation"]["air_temperature"]}°C」と表示。
+「湿度: {天気観測["observation"]["humidity"]}%」と表示。
+「気圧: {天気観測["observation"]["pressure"]}hPa」と表示。
+「風速: {天気観測["observation"]["wind_speed"]}m/s」と表示。
+「視界: {天気観測["observation"]["visibility"]}」と表示。
+「UV指数: {天気観測["observation"]["uv_index"]}」と表示。
+「快適度: {天気観測["observation"]["comfort_level"]}」と表示。
+
+「」と表示。
+
+# --- 天気予報取得 ---
+「9. 天気予報を取得中...」と表示。
+天気予報 = 天気予報取得
+「天気予報: {天気予報["message"]}」と表示。
+「予報日数: {天気予報["forecasts"]のキー数}」と表示。
+
+「7日間の天気予報:」と表示。
+天気予報["forecasts"]を反復
+  予報 = 対象
+  「  {予報["date"]}: {予報["weather_condition"]}」と表示。
+  「    最高気温: {予報["high_temperature"]}°C」と表示。
+  「    最低気温: {予報["low_temperature"]}°C」と表示。
+  「    湿度: {予報["humidity"]}%」と表示。
+  「    風速: {予報["wind_speed"]}m/s」と表示。
+  「    降水確率: {予報["precipitation_probability"]}%」と表示。
+  「---」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 異常温度検出 ---
+「10. 異常温度を検出中...」と表示。
+異常温度検出 = 異常温度検出
+「異常温度検出: {異常温度検出["message"]}」と表示。
+「異常検出: {異常温度検出["abnormal_detected"]}」と表示。
+「現在の温度: {異常温度検出["temperature"]}°C」と表示。
+「正常範囲: {異常温度検出["normal_range"]["min"]}°C〜{異常温度検出["normal_range"]["max"]}°C」と表示。
+
+IF 異常温度検出["abnormal_detected"] THEN
+  「偏差: {異常温度検出["deviation"]}°C」と表示。
+  「深刻度: {異常温度検出["severity"]}」と表示。
+ENDIF
+
+「」と表示。
+
+# --- 熱中症警告 ---
+「11. 熱中症リスクを評価中...」と表示。
+熱中症警告 = 熱中症警告
+「熱中症警告: {熱中症警告["message"]}」と表示。
+「気温: {熱中症警告["temperature"]}°C」と表示。
+「湿度: {熱中症警告["humidity"]}%」と表示。
+「熱指数: {熱中症警告["heat_index"]}」と表示。
+「リスクレベル: {熱中症警告["risk_level"]}」と表示。
+「推奨事項: {熱中症警告["recommendations"]}」と表示。
+
+「」と表示。
+
+# --- 温度履歴取得 ---
+「12. 温度履歴を取得中...」と表示。
+温度履歴 = 温度履歴取得
+「温度履歴: {温度履歴["message"]}」と表示。
+「総記録数: {温度履歴["total_records"]}」と表示。
+「最新の温度: {温度履歴["latest"]["temperature"]}°C」と表示。
+
+「最近の温度履歴:」と表示。
+温度履歴["history"]を反復
+  履歴 = 対象
+  「  {履歴["timestamp"]}: {履歴["temperature"]}°C」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 天気データ記録 ---
+「13. 天気データを記録中...」と表示。
+天気データ記録 = 天気データ記録
+「天気データ記録: {天気データ記録["message"]}」と表示。
+「記録ID: {天気データ記録["record"]["record_id"]}」と表示。
+「総記録数: {天気データ記録["total_records"]}」と表示。
+
+「」と表示。
+
+# --- 自動気象監視 ---
+「14. 自動気象監視を実行中...」と表示。
+自動気象監視 = 自動気象監視
+「自動気象監視: {自動気象監視["message"]}」と表示。
+「総計測回数: {自動気象監視["total_measurements"]}」と表示。
+「平均温度: {自動気象監視["average_temperature"]}°C」と表示。
+「平均湿度: {自動気象監視["average_humidity"]}%」と表示。
+「平均風速: {自動気象監視["average_wind_speed"]}m/s」と表示。
+
+「計測結果:」と表示。
+自動気象監視["measurements"]を反復
+  計測 = 対象
+  「  {計測["timestamp"]}:」と表示。
+  「    温度: {計測["temperature"]}°C」と表示。
+  「    気温: {計測["air_temperature"]}°C」と表示。
+  「    湿度: {計測["humidity"]}%」と表示。
+  「    風速: {計測["wind_speed"]}m/s」と表示。
+  「    天気: {計測["weather_condition"]}」と表示。
+  「    異常検出: {計測["abnormal_detected"]}」と表示。
+  「    熱中症リスク: {計測["heat_stroke_risk"]}」と表示。
+  「---」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 統合気象監視 ---
+「15. 統合気象監視システムを確認中...」と表示。
+統合気象監視 = 統合気象監視
+「統合システム状態: {統合気象監視["overall_status"]}」と表示。
+「利用可能な操作数: {統合気象監視["available_operations"]のキー数}」と表示。
+
+「システム状態詳細:」と表示。
+「  温度システム: {統合気象監視["temperature_system"]["active"]}」と表示。
+「  体温システム: {統合気象監視["body_temperature_system"]["active"]}」と表示。
+「  気温システム: {統合気象監視["air_temperature_system"]["active"]}」と表示。
+「  風システム: {統合気象監視["wind_system"]["active"]}」と表示。
+「  天気システム: {統合気象監視["weather_system"]["active"]}」と表示。
+
+「」と表示。
+
+# --- 実用的な例：スマートホーム気象管理 ---
+「16. 実用的な例：スマートホーム気象管理...」と表示。
+
+# 連続監視を開始
+「スマートホーム気象監視を開始します...」と表示。
+監視ログ = []
+
+10回
+  # 全てのセンサーを計測
+  温度 = 温度計測
+  体温 = 体温計測
+  気温 = 気温計測
+  湿度 = 湿度計測
+  風量 = 風量計測
+  天気 = 天気観測
+  
+  # 異常検出
+  異常 = 異常温度検出
+  
+  # 熱中症評価
+  熱中症 = 熱中症警告
+  
+  # 自動制御判断
+  IF 異常["abnormal_detected"] THEN
+    「⚠️ 異常な温度を検出！エアコンを自動調整します」と表示。
+    監視ログに{
+      "timestamp": new Date().toISOString(),
+      "event": "abnormal_temperature",
+      "temperature": 異常["temperature"],
+      "action": "auto_adjust_ac",
+      "severity": 異常["severity"]
+    }を追加
+  ENDIF
+  
+  IF 熱中症["risk_level"] = "high" OR 熱中症["risk_level"] = "extreme" THEN
+    「🚨 高い熱中症リスク！冷房を強化します」と表示。
+    監視ログに{
+      "timestamp": new Date().toISOString(),
+      "event": "heat_stroke_risk",
+      "risk_level": 熱中症["risk_level"],
+      "action": "increase_cooling",
+      "heat_index": 熱中症["heat_index"]
+    }を追加
+  ENDIF
+  
+  IF 天気["observation"]["weather_condition"] = "rainy" THEN
+    「🌧 雨が降っています！窓を閉めます」と表示。
+    監視ログに{
+      "timestamp": new Date().toISOString(),
+      "event": "rain_detected",
+      "weather": 天気["observation"]["weather_condition"],
+      "action": "close_windows"
+    }を追加
+  ENDIF
+  
+  IF 風量["measurement"]["wind_speed"] > 15 THEN
+    「💨 強風検出！外出を注意してください」と表示。
+    監視ログに{
+      "timestamp": new Date().toISOString(),
+      "event": "strong_wind",
+      "wind_speed": 風量["measurement"]["wind_speed"],
+      "action": "alert_strong_wind"
+    }を追加
+  ENDIF
+  
+  2000を待つ
+ここまで。
+
+「スマートホーム気象監視完了」と表示。
+「監視ログ:」と表示。
+監視ログを反復
+  ログ = 対象
+  「  {ログ["timestamp"]}: {ログ["event"]} - {ログ["action"]}」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 英語モードでの使用例 ---
+「17. 英語モードでの使用例...」と表示。
+「言語モード設定」に「english」
+
+# 英語で温度センサーシステム検出
+english_sensors = DISCOVER_WEATHER_SENSORS "all"
+PRINT "English weather sensors found: {english_sensorsのキー数}"
+
+# 英語で温度計測
+temp_measurement = MEASURE_TEMPERATURE
+PRINT "Temperature measurement: {temp_measurement["message"]}"
+PRINT "Current temperature: {temp_measurement["measurement"]["temperature"]}°C"
+
+# 英語で体温計測
+body_temp = MEASURE_BODY_TEMPERATURE
+PRINT "Body temperature: {body_temp["message"]}"
+PRINT "Current body temperature: {body_temp["measurement"]["body_temperature"]}°C"
+
+# 英語で気温計測
+air_temp = MEASURE_AIR_TEMPERATURE
+PRINT "Air temperature: {air_temp["message"]}"
+PRINT "Current air temperature: {air_temp["measurement"]["air_temperature"]}°C"
+
+# 英語で風量計測
+wind_measurement = MEASURE_WIND
+PRINT "Wind measurement: {wind_measurement["message"]}"
+PRINT "Current wind speed: {wind_measurement["measurement"]["wind_speed"]}m/s"
+PRINT "Wind direction: {wind_measurement["measurement"]["wind_direction"]}°"
+
+# 英語で湿度計測
+humidity_measurement = MEASURE_HUMIDITY
+PRINT "Humidity measurement: {humidity_measurement["message"]}"
+PRINT "Current humidity: {humidity_measurement["measurement"]["humidity"]}%"
+
+# 英語で気圧計測
+pressure_measurement = MEASURE_PRESSURE
+PRINT "Pressure measurement: {pressure_measurement["message"]}"
+PRINT "Current pressure: {pressure_measurement["measurement"]["pressure"]}hPa"
+
+# 英語で天気観測
+weather_obs = OBSERVE_WEATHER
+PRINT "Weather observation: {weather_obs["message"]}"
+PRINT "Weather condition: {weather_obs["observation"]["weather_condition"]}"
+PRINT "Air temperature: {weather_obs["observation"]["air_temperature"]}°C"
+PRINT "Humidity: {weather_obs["observation"]["humidity"]}%"
+PRINT "Wind speed: {weather_obs["observation"]["wind_speed"]}m/s"
+
+# 英語で天気予報取得
+forecast = GET_WEATHER_FORECAST
+PRINT "Weather forecast: {forecast["message"]}"
+PRINT "Forecast days: {forecast["forecasts"]のキー数}"
+
+# 英語で異常温度検出
+abnormal_temp = DETECT_ABNORMAL_TEMPERATURE
+PRINT "Abnormal temperature detection: {abnormal_temp["message"]}"
+PRINT "Abnormal detected: {abnormal_temp["abnormal_detected"]}"
+
+# 英語で熱中症警告
+heat_stroke = ASSESS_HEAT_STROKE
+PRINT "Heat stroke assessment: {heat_stroke["message"]}"
+PRINT "Risk level: {heat_stroke["risk_level"]}"
+PRINT "Recommendations: {heat_stroke["recommendations"]}"
+
+# 英語で温度履歴取得
+temp_history = GET_TEMPERATURE_HISTORY
+PRINT "Temperature history: {temp_history["message"]}"
+PRINT "Total records: {temp_history["total_records"]}"
+
+# 英語で天気データ記録
+weather_record = RECORD_WEATHER_DATA
+PRINT "Weather data record: {weather_record["message"]}"
+PRINT "Record ID: {weather_record["record"]["record_id"]}"
+
+# 英語で自動気象監視
+auto_monitor = AUTO_WEATHER_MONITORING
+PRINT "Auto weather monitoring: {auto_monitor["message"]}"
+PRINT "Total measurements: {auto_monitor["total_measurements"]}"
+PRINT "Average temperature: {auto_monitor["average_temperature"]}°C"
+
+# 英語で統合気象監視
+integrated_monitor = INTEGRATED_WEATHER_MONITORING
+PRINT "Integrated weather monitoring: {integrated_monitor["overall_status"]}"
+PRINT "Available operations: {integrated_monitor["available_operations"]のキー数}"
+
+「」と表示。
+
+# --- 子供向けモードでの使用例 ---
+「18. 子供向けモードでの使用例...」と表示。
+「かんたんモード」
+
+# 子供向け温度計測
+「🌡️ おんどけいさん、こんにちは！」と表示。
+わんわん
+
+# 温度で遊ぶ
+「🌡️ おんどけいをはかってみよう！」と表示。
+温度計測 = 温度計測
+ふくふくを「いまのおんどは{温度計測["measurement"]["temperature"]}どだよ！」
+ぴよぴよ
+
+# 体温で遊ぶ
+「🤒 たいおんをはかってみよう！」と表示。
+体温計測 = 体温計測
+IF 体温計測["measurement"]["status"] = "normal" THEN
+  ふくふくを「たいおんはげんきだよ！」
+  CAT_MEOW
+ELSE
+  ふくふくを「たいおんがちょっとあぶないかも！」
+ENDIF
+
+# 天気で遊ぶ
+「☀️ てんきをしらべてみよう！」と表示。
+天気観測 = 天気観測
+天気状態 = 天気観測["observation"]["weather_condition"]
+
+IF 天気状態 = "clear" THEN
+  ふくふくを「きょうははれだよ！そとあそぼう！」
+  にゃんにゃん
+ELSE IF 天気状態 = "rainy" THEN
+  ふくふくを「あめがふってるよ！かさをもってね！」
+ELSE IF 天気状態 = "cloudy" THEN
+  ふくふくを「くもってるよ！おてんきがいいかも！」
+ELSE
+  ふくふくを「てんきは{天気状態}だよ！」
+ENDIF
+
+# 風で遊ぶ
+「💨 かぜのつよさをしらべてみよう！」と表示。
+風量計測 = 風量計測
+風速 = 風量計測["measurement"]["wind_speed"]
+風状態 = 風量計測["measurement"]["status"]
+
+IF 風速 < 3 THEN
+  ふくふくを「かぜはしずかだよ！」
+ELSE IF 風速 < 8 THEN
+  ふくふくを「かぜがふいてるよ！」
+ELSE
+  ふくふくを「かぜがつよいよ！そとにでないでね！」
+ENDIF
+
+# 熱中症で遊ぶ
+「🌡️ ねっちゅうしょうリスクをしらべよう！」と表示。
+熱中症警告 = 熱中症警告
+リスク = 熱中症警告["risk_level"]
+
+IF リスク = "low" THEN
+  ふくふくを「ねっちゅうしょうリスクはひくいよ！げんきにあそぼう！」
+ELSE IF リスク = "moderate" THEN
+  ふくふくを「みずをのんでね！」
+ELSE IF リスク = "high" THEN
+  ふくふくを「そとであそぶのはやめてね！れいぼうですずしく！」
+ELSE
+  ふくふくを「あぶないからへやのなかでね！」
+ENDIF
+
+「」と表示。
+
+# --- 高度な機能：気象データ分析 ---
+「19. 高度な機能：気象データ分析...」と表示。
+
+# 24時間のデータを収集
+「24時間の気象データを収集中...」と表示。
+分析データ = []
+
+24回
+  # 全ての計測を実行
+  温度 = 温度計測
+  気温 = 気温計測
+  湿度 = 湿度計測
+  風量 = 風量計測
+  天気 = 天気観測
+  
+  分析データに{
+    "hour": 分析データのキー数 + 1,
+    "timestamp": new Date().toISOString(),
+    "temperature": 温度["measurement"]["temperature"],
+    "air_temperature": 気温["measurement"]["air_temperature"],
+    "humidity": 湿度["measurement"]["humidity"],
+    "wind_speed": 風量["measurement"]["wind_speed"],
+    "weather_condition": 天気["observation"]["weather_condition"]
+  }を追加
+  
+  500を待つ
+ここまで。
+
+# データ分析
+「気象データ分析結果:」と表示。
+
+# 平均値計算
+平均温度 = 分析データから「temperature」を平均
+平均気温 = 分析データから「air_temperature」を平均
+平均湿度 = 分析データから「humidity」を平均
+平均風速 = 分析データから「wind_speed」を平均
+
+「  平均温度: {平均温度.toFixed(1)}°C」と表示。
+「  平均気温: {平均気温.toFixed(1)}°C」と表示。
+「  平均湿度: {平均湿度.toFixed(1)}%」と表示。
+「  平均風速: {平均風速.toFixed(1)}m/s」と表示。
+
+# 最大値・最小値
+最高温度 = 分析データから「temperature」を最大
+最低温度 = 分析データから「temperature」を最小
+最高風速 = 分析データから「wind_speed」を最大
+
+「  最高温度: {最高温度.toFixed(1)}°C」と表示。
+「  最低温度: {最低温度.toFixed(1)}°C」と表示。
+「  最高風速: {最高風速.toFixed(1)}m/s」と表示。
+
+# 天気パターン分析
+天気カウント = {}
+分析データを反復
+  天気 = 対象["weather_condition"]
+  IF 天気カウント[天気] = 未定義 THEN
+    天気カウント[天気] = 0
+  ENDIF
+  天気カウント[天気] = 天気カウント[天気] + 1
+ここまで。
+
+「  天気パターン:」と表示。
+天気カウントを反復
+  天気 = 対象.key
+  回数 = 対象.value
+  「    {天気}: {回数}回 ({(回数/24*100).toFixed(1)}%)」と表示。
+ここまで。
+
+「」と表示。
+
+「=== デモ完了 ===」と表示。
+「🌡️ これでなでしこ3で完全な気象観測が使える！」と表示。
+「🤒 温度計・体温計・気温計で多角的な温度計測！」と表示。
+「💨 風量計で風速・風向を精密計測！」と表示。
+「💧 湿度計・気圧計で詳細な環境情報！」と表示。
+「☀️ 天気観測でリアルタイム天気状況把握！」と表示。
+「📅 天気予報で7日間の天気予測！」と表示。
+「⚠️ 異常温度検出で自動アラート！」と表示。
+「🚨 熱中症警告で健康リスク管理！」と表示。
+「📊 温度履歴で長期的なデータ分析！」と表示。
+「🏠 スマートホーム連携で自動環境制御！」と表示。
+「🤖 自動気象監視で24時間体制！」と表示。
+「🎈 子供でも簡単に気象観測が使える！」と表示。
+「🌍 英語・日本語・子供向けモードで完全対応！」と表示。
+koko

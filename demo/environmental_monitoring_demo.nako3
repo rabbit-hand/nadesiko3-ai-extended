@@ -1,0 +1,365 @@
+# 環境監視・道路センサー・水位検出・API送信・サーバー連携デモ
+# Advanced Environmental Monitoring Demo
+
+「=== 環境監視・道路センサー・水位検出・API送信・サーバー連携デモ ===」と表示。
+
+# --- 環境監視システム検出 ---
+「1. 環境監視システムを検出中...」と表示。
+全環境監視 = 環境監視システム検出「全部」
+「検出されたシステム数: {全環境監視のキー数}」と表示。
+
+全環境監視を反復
+  IF 対象.key !== "initialized" AND 対象.key !== "timestamp" THEN
+    システム名 = 対象.value["name"]
+    「  {システム名}」と表示。
+  ENDIF
+ここまで。
+
+「」と表示。
+
+# --- 道路センサー ---
+「2. 道路センサーを起動中...」と表示。
+道路センサー結果 = 道路センサー検出
+「道路センサー数: {道路センサー結果["total_sensors"]}」と表示。
+「アクティブセンサー数: {道路センサー結果["active_sensors"]}」と表示。
+
+道路センサー結果["sensors"]を反復
+  センサー名 = 対象["sensor"]
+  場所 = 対象["location"]["address"]
+  信頼度 = 対象["confidence"]
+  「  {センサー名} ({場所}) - 信頼度: {信頼度}」と表示。
+  
+  IF 対象["data"]["vehicle_count"] THEN
+    車両数 = 対象["data"]["vehicle_count"]
+    混雑度 = 対象["data"]["congestion_level"]
+    「    車両数: {車両数}台, 混雑度: {混雑度}」と表示。
+  ELSEIF 対象["data"]["average_speed"] THEN
+    平均速度 = 対象["data"]["average_speed"]
+    「    平均速度: {平均速度}km/h」と表示。
+  ENDIF
+ここまで。
+
+「」と表示。
+
+# --- 水位検出 ---
+「3. 水位検出を起動中...」と表示。
+水位検出結果 = 水位検出
+「水位センサー数: {水位検出結果["total_sensors"]}」と表示。
+「平均水位: {水位検出結果["average_water_level"]}m」と表示。
+「洪水リスク: {水位検出結果["flood_risk"]}」と表示。
+
+水位検出結果["sensors"]を反復
+  センサー名 = 対象["sensor"]
+  水位 = 対象["data"]["water_level"]
+  トレンド = 対象["data"]["trend"]
+  洪水リスク = 対象["data"]["flood_risk"]
+  「  {センサー名}: 水位{水位}m, トレンド: {トレンド}, 洪水リスク: {洪水リスク}」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 天気監視 ---
+「4. 天気監視を起動中...」と表示。
+天気監視結果 = 天気監視
+「天気センサー数: {天気監視結果["total_sensors"]}」と表示。
+
+天気監視結果["weather_summary"]を反復
+  IF 対象.key = "temperature" THEN
+    「  気温: {対象.value}°C」と表示。
+  ELSEIF 対象.key = "humidity" THEN
+    「  湿度: {対象.value}%」と表示。
+  ELSEIF 対象.key = "pressure" THEN
+    「  気圧: {対象.value}hPa」と表示。
+  ENDIF
+ここまで。
+
+「」と表示。
+
+# --- 空気質監視 ---
+「5. 空気質監視を起動中...」と表示。
+空気質監視結果 = 空気質監視
+「空気質センサー数: {空気質監視結果["total_sensors"]}」と表示。
+「空気質指数: {空気質監視結果["air_quality_index"]}」と表示。
+
+「健康推奨事項:」と表示。
+空気質監視結果["health_recommendations"]を反復
+  推奨事項 = 対象
+  「  - {推奨事項}」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 騒音監視 ---
+「6. 騒音監視を起動中...」と表示。
+騒音監視結果 = 騒音監視
+「騒音センサー数: {騒音監視結果["total_sensors"]}」と表示。
+「平均騒音レベル: {騒音監視結果["average_noise_level"]}dB」と表示。
+「騒音カテゴリ: {騒音監視結果["noise_level_category"]}」と表示。
+
+「」と表示。
+
+# --- API送信 ---
+「7. API送信を実行中...」と表示。
+
+# 環境データをAPI送信
+環境データ = {
+  "road_data": 道路センサー結果,
+  "water_data": 水位検出結果,
+  "weather_data": 天気監視結果,
+  "air_quality_data": 空気質監視結果,
+  "noise_data": 騒音監視結果
+}
+
+API送信結果 = 環境データを「environmental」でAPI送信
+「API送信結果: {API送信結果["message"]}」と表示。
+「エンドポイント: {API送信結果["endpoint"]}」と表示。
+「成功: {API送信結果["success"]}」と表示。
+「応答時間: {API送信結果["response_time"]}ms」と表示。
+
+「」と表示。
+
+# --- サーバー送信 ---
+「8. サーバー送信を実行中...」と表示。
+サーバー送信結果 = 環境データをサーバー送信
+「サーバー送信結果: {サーバー送信結果["message"]}」と表示。
+「サーバーURL: {サーバー送信結果["server_url"]}」と表示。
+「成功: {サーバー送信結果["success"]}」と表示。
+「応答時間: {サーバー送信結果["response_time"]}ms」と表示。
+
+「」と表示。
+
+# --- 統合環境監視 ---
+「9. 統合環境監視を実行中...」と表示。
+統合監視結果 = 統合環境監視
+「統合環境状態: {統合監視結果["overall_environmental_status"]["overall_status"]}」と表示。
+「アラートレベル: {統合監視結果["overall_environmental_status"]["alert_level"]}」と表示。
+
+「検出された問題:」と表示。
+統合監視結果["overall_environmental_status"]["issues"]を反復
+  問題 = 対象
+  「  - {問題}」と表示。
+ここまで。
+
+「推奨事項:」と表示。
+統合監視結果["overall_environmental_status"]["recommendations"]を反復
+  推奨事項 = 対象
+  「  - {推奨事項}」と表示。
+ここまで。
+
+「」と表示。
+
+# --- 自動環境監視送信 ---
+「10. 自動環境監視送信を実行中...」と表示。
+自動送信結果 = 自動環境監視送信
+「総送信数: {自動送信結果["total_transmissions"]}」と表示。
+「成功送信数: {自動送信結果["success_count"]}」と表示。
+「システム状態: {自動送信結果["system_status"]}」と表示。
+
+「」と表示。
+
+# --- 実用的な例：洪水警報システム ---
+「11. 実用的な例：洪水警報システム...」と表示。
+
+洪水警報ログ = []
+5回
+  # 最新の水位データを取得
+  最新水位 = 水位検出
+  
+  # 洪水リスクを評価
+  IF 最新水位["flood_risk"] = "high" THEN
+    警報エントリー = {
+      "timestamp": 最新水位["timestamp"],
+      "alert_type": "flood_warning",
+      "risk_level": "high",
+      "water_level": 最新水位["average_water_level"],
+      "message": "⚠️ 洪水警報！水位が危険レベルに達しました！"
+    }
+    
+    洪水警報ログに警報エントリーを追加
+    
+    # 緊急API送信
+    緊急API結果 = 警報エントリーを「emergency」でAPI送信
+    「緊急API送信: {緊急API結果["message"]}」と表示。
+    
+    # 緊急サーバー送信
+    緊急サーバー結果 = 警報エントリーをサーバー送信
+    「緊急サーバー送信: {緊急サーバー結果["message"]}」と表示。
+    
+    「🚨 洪水警報を送信しました！」と表示。
+  ELSEIF 最新水位["flood_risk"] = "medium" THEN
+    「⚠️ 水位が上昇中です。注意してください。」と表示。
+  ELSE
+    「✅ 水位は安全です。」と表示。
+  ENDIF
+  
+  1000を待つ
+ここまで。
+
+「」と表示。
+
+# --- 実用的な例：交通監視システム ---
+「12. 実用的な例：交通監視システム...」と表示。
+
+交通監視ログ = []
+5回
+  # 最新の道路データを取得
+  最新道路 = 道路センサー検出
+  
+  # 交通状況を分析
+  最新道路["sensors"]を反復
+    センサー名 = 対象["sensor"]
+    
+    IF 対象["data"]["congestion_level"] THEN
+      混雑度 = 対象["data"]["congestion_level"]
+      
+      IF 混雑度 = "high" THEN
+        交通エントリー = {
+          "timestamp": 対象["timestamp"],
+          "sensor": センサー名,
+          "alert_type": "traffic_congestion",
+          "congestion_level": "high",
+          "message": "🚗 交通渋滞を検出しました！"
+        }
+        
+        交通監視ログに交通エントリーを追加
+        
+        # API送信
+        交通API結果 = 交通エントリーを「environmental」でAPI送信
+        「交通API送信: {交通API結果["message"]}」と表示。
+        
+        「🚗 渋滞警報を送信しました！」と表示。
+      ELSEIF 混雑度 = "medium" THEN
+        「🚗 交通が混雑しています。」と表示。
+      ELSE
+        「✅ 交通はスムーズです。」と表示。
+      ENDIF
+    ENDIF
+  ここまで。
+  
+  1000を待つ
+ここまで。
+
+「」と表示。
+
+# --- 英語モードでの使用例 ---
+「13. 英語モードでの使用例...」と表示。
+「言語モード設定」に「english」
+
+# 英語で環境監視システム検出
+english_monitoring = DISCOVER_ENVIRONMENTAL_SYSTEM
+PRINT "English Environmental Systems:"
+PRINT "Systems found: {english_monitoringのキー数}"
+
+# 英語で道路センサー
+road_sensors = ROAD_SENSOR_DETECTION
+PRINT "Road sensors: {road_sensors["total_sensors"]}"
+
+# 英語で水位検出
+water_level = WATER_LEVEL_DETECTION
+PRINT "Average water level: {water_level["average_water_level"]}m"
+PRINT "Flood risk: {water_level["flood_risk"]}"
+
+# 英語で天気監視
+weather_monitoring = WEATHER_MONITORING
+PRINT "Weather sensors: {weather_monitoring["total_sensors"]}"
+
+# 英語で空気質監視
+air_quality = AIR_QUALITY_MONITORING
+PRINT "Air quality index: {air_quality["air_quality_index"]}"
+
+# 英語で騒音監視
+noise_monitoring = NOISE_MONITORING
+PRINT "Average noise level: {noise_monitoring["average_noise_level"]}dB"
+
+# 英語でAPI送信
+api_result = SEND_TO_API environment_data "environmental"
+PRINT "API transmission: {api_result["message"]}"
+
+# 英語でサーバー送信
+server_result = SEND_TO_SERVER environment_data
+PRINT "Server transmission: {server_result["message"]}"
+
+# 英語で統合環境監視
+comprehensive = COMPREHENSIVE_ENVIRONMENTAL_MONITORING
+PRINT "Overall status: {comprehensive["overall_environmental_status"]["overall_status"]}"
+
+# 英語で自動送信
+auto_transmission = AUTO_ENVIRONMENTAL_TRANSMISSION
+PRINT "Auto transmission: {auto_transmission["success_count"]}/{auto_transmission["total_transmissions"]} successful"
+
+「」と表示。
+
+# --- 子供向けモードでの使用例 ---
+「14. 子供向けモードでの使用例...」と表示。
+「かんたんモード」
+
+# 子供向け環境監視操作
+「🌍 環境監視さん、こんにちは！」と表示。
+わんわん
+
+# 道路センサーで遊ぶ
+「🚗 道路の車さんをかぞえてみよう！」と表示。
+道路センサー結果 = 道路センサー検出
+道路センサー結果["sensors"]を反復
+  IF 対象["data"]["vehicle_count"] THEN
+    車両数 = 対象["data"]["vehicle_count"]
+    ふくふくを「車さんが{車両数}台も来てるよ！すごいね！」
+    ぴよぴよ
+  ENDIF
+ここまで。
+
+# 水位センサーで遊ぶ
+「💧 水位をはかってみよう！」と表示。
+水位検出結果 = 水位検出
+IF 水位検出結果["flood_risk"] = "high" THEN
+  ふくふくを「お水がたくさん来てるよ！気をつけてね！」
+  にゃんにゃん
+ELSE
+  ふくふくを「お水はだいじょうぶだよ！」
+ENDIF
+
+# 天気で遊ぶ
+「☀️ 天気をしらべてみよう！」と表示。
+天気監視結果 = 天気監視
+気温 = 天気監視結果["weather_summary"]["temperature"]
+ふくふくを「今の気温は{気温}度だよ！」
+
+# 空気質で遊ぶ
+「🌬️ きれいな空気かな？」と表示。
+空気質監視結果 = 空気質監視
+空気質指数 = 空気質監視結果["air_quality_index"]
+IF 空気質指数 > 100 THEN
+  ふくふくを「空気がきたないよ！マスクしてね！」
+ELSE
+  ふくふくを「空気はきれいだよ！外であそぼう！」
+ENDIF
+
+# 騒音で遊ぶ
+「🔊 うるさをはかってみよう！」と表示。
+騒音監視結果 = 騒音監視
+平均騒音 = 騒音監視結果["average_noise_level"]
+IF 平均騒音 > 70 THEN
+  ふくふくを「うるさいね！静かにしてね！」
+ELSE
+  ふくふくを「静かだよ！本を読もう！」
+ENDIF
+
+# API送信で遊ぶ
+「📱 おうちの人におしらせしよう！」と表示。
+自動送信結果 = 自動環境監視送信
+ふくふくを「おうちの人に環境データをおくったよ！みんな安心だね！」
+
+「」と表示。
+
+「=== デモ完了 ===」と表示。
+「🌍 これでなでしこ3で完全な環境監視が使える！」と表示。
+「🚗 道路センサーで交通状況を監視！」と表示。
+「💧 水位センサーで洪水を予測！」と表示。
+「☀️ 天気監視で気象変化を検出！」と表示。
+「🌬️ 空気質監視で健康を保護！」と表示。
+「🔊 騒音監視で静かな環境を維持！」と表示。
+「📱 API送信でパソコン・スマホに自動通知！」と表示。
+「🖥️ サーバー送信でデータを集中管理！」と表示。
+「🎈 子供でも簡単に環境監視が使える！」と表示。
+「🌍 英語・日本語・子供向けモードで完全対応！」と表示。
+koko

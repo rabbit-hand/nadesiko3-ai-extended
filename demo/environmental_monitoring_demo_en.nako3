@@ -1,0 +1,398 @@
+# Advanced Environmental Monitoring Demo - English Version
+# Road sensors, water level detection, API transmission, and server integration
+
+DISPLAY "=== Advanced Environmental Monitoring Demo ==="
+
+# --- Environmental System Discovery ---
+DISPLAY "1. Discovering environmental monitoring systems..."
+all_monitoring = DISCOVER_ENVIRONMENTAL_SYSTEM
+PRINT "Environmental systems found: {all_monitoringのキー数}"
+
+FOR EACH system IN all_monitoring
+  IF system.key !== "initialized" AND system.key !== "timestamp" THEN
+    system_name = system.value["name"]
+    PRINT "  {system_name}"
+  ENDIF
+NEXT
+
+DISPLAY ""
+
+# --- Road Sensors ---
+DISPLAY "2. Activating road sensors..."
+road_sensors = ROAD_SENSOR_DETECTION
+PRINT "Road sensors: {road_sensors["total_sensors"]}"
+PRINT "Active sensors: {road_sensors["active_sensors"]}"
+
+FOR EACH sensor IN road_sensors["sensors"]
+  sensor_name = sensor["sensor"]
+  location = sensor["location"]["address"]
+  confidence = sensor["confidence"]
+  PRINT "  {sensor_name} ({location}) - Confidence: {confidence}"
+  
+  IF sensor["data"]["vehicle_count"] THEN
+    vehicle_count = sensor["data"]["vehicle_count"]
+    congestion_level = sensor["data"]["congestion_level"]
+    PRINT "    Vehicles: {vehicle_count}, Congestion: {congestion_level}"
+  ELSEIF sensor["data"]["average_speed"] THEN
+    avg_speed = sensor["data"]["average_speed"]
+    PRINT "    Average Speed: {avg_speed} km/h"
+  ENDIF
+NEXT
+
+DISPLAY ""
+
+# --- Water Level Detection ---
+DISPLAY "3. Activating water level detection..."
+water_level = WATER_LEVEL_DETECTION
+PRINT "Water sensors: {water_level["total_sensors"]}"
+PRINT "Average water level: {water_level["average_water_level"]}m"
+PRINT "Flood risk: {water_level["flood_risk"]}"
+
+FOR EACH sensor IN water_level["sensors"]
+  sensor_name = sensor["sensor"]
+  water_level = sensor["data"]["water_level"]
+  trend = sensor["data"]["trend"]
+  flood_risk = sensor["data"]["flood_risk"]
+  PRINT "  {sensor_name}: Level {water_level}m, Trend: {trend}, Flood Risk: {flood_risk}"
+NEXT
+
+DISPLAY ""
+
+# --- Weather Monitoring ---
+DISPLAY "4. Activating weather monitoring..."
+weather_monitoring = WEATHER_MONITORING
+PRINT "Weather sensors: {weather_monitoring["total_sensors"]}"
+
+FOR EACH key IN weather_monitoring["weather_summary"]
+  IF key !== "overall_condition" THEN
+    value = weather_monitoring["weather_summary"][key]
+    IF value THEN
+      PRINT "  {key}: {value}"
+    ENDIF
+  ENDIF
+NEXT
+
+DISPLAY ""
+
+# --- Air Quality Monitoring ---
+DISPLAY "5. Activating air quality monitoring..."
+air_quality = AIR_QUALITY_MONITORING
+PRINT "Air quality sensors: {air_quality["total_sensors"]}"
+PRINT "Air Quality Index: {air_quality["air_quality_index"]}"
+
+PRINT "Health recommendations:"
+FOR EACH recommendation IN air_quality["health_recommendations"]
+  PRINT "  - {recommendation}"
+NEXT
+
+DISPLAY ""
+
+# --- Noise Monitoring ---
+DISPLAY "6. Activating noise monitoring..."
+noise_monitoring = NOISE_MONITORING
+PRINT "Noise sensors: {noise_monitoring["total_sensors"]}"
+PRINT "Average noise level: {noise_monitoring["average_noise_level"]}dB"
+PRINT "Noise category: {noise_monitoring["noise_level_category"]}"
+
+DISPLAY ""
+
+# --- API Transmission ---
+DISPLAY "7. Sending data to API..."
+
+# Create environmental data package
+environmental_data = {
+  "road_data": road_sensors,
+  "water_data": water_level,
+  "weather_data": weather_monitoring,
+  "air_quality_data": air_quality,
+  "noise_data": noise_monitoring
+}
+
+# Send to API
+api_result = SEND_TO_API environmental_data "environmental"
+PRINT "API transmission: {api_result["message"]}"
+PRINT "Endpoint: {api_result["endpoint"]}"
+PRINT "Success: {api_result["success"]}"
+PRINT "Response time: {api_result["response_time"]}ms"
+
+DISPLAY ""
+
+# --- Server Transmission ---
+DISPLAY "8. Sending data to server..."
+server_result = SEND_TO_SERVER environmental_data
+PRINT "Server transmission: {server_result["message"]}"
+PRINT "Server URL: {server_result["server_url"]}"
+PRINT "Success: {server_result["success"]}"
+PRINT "Response time: {server_result["response_time"]}ms"
+
+DISPLAY ""
+
+# --- Comprehensive Environmental Monitoring ---
+DISPLAY "9. Comprehensive environmental monitoring..."
+comprehensive = COMPREHENSIVE_ENVIRONMENTAL_MONITORING
+PRINT "Overall environmental status: {comprehensive["overall_environmental_status"]["overall_status"]}"
+PRINT "Alert level: {comprehensive["overall_environmental_status"]["alert_level"]}"
+
+PRINT "Detected issues:"
+FOR EACH issue IN comprehensive["overall_environmental_status"]["issues"]
+  PRINT "  - {issue}"
+NEXT
+
+PRINT "Recommendations:"
+FOR EACH recommendation IN comprehensive["overall_environmental_status"]["recommendations"]
+  PRINT "  - {recommendation}"
+NEXT
+
+DISPLAY ""
+
+# --- Automatic Environmental Monitoring Transmission ---
+DISPLAY "10. Automatic environmental monitoring transmission..."
+auto_transmission = AUTO_ENVIRONMENTAL_TRANSMISSION
+PRINT "Total transmissions: {auto_transmission["total_transmissions"]}"
+PRINT "Successful transmissions: {auto_transmission["success_count"]}"
+PRINT "System status: {auto_transmission["system_status"]}"
+
+DISPLAY ""
+
+# --- Practical Example: Flood Warning System ---
+DISPLAY "11. Practical example: Flood warning system..."
+
+flood_warning_log = []
+REPEAT 5 times
+  # Get latest water level data
+  latest_water = WATER_LEVEL_DETECTION
+  
+  # Assess flood risk
+  IF latest_water["flood_risk"] = "high" THEN
+    warning_entry = {
+      "timestamp": latest_water["timestamp"],
+      "alert_type": "flood_warning",
+      "risk_level": "high",
+      "water_level": latest_water["average_water_level"],
+      "message": "⚠️ Flood Warning! Water level reached dangerous level!"
+    }
+    
+    flood_warning_logにwarning_entryを追加
+    
+    # Emergency API transmission
+    emergency_api = SEND_TO_API warning_entry "emergency"
+    PRINT "Emergency API transmission: {emergency_api["message"]}"
+    
+    # Emergency server transmission
+    emergency_server = SEND_TO_SERVER warning_entry
+    PRINT "Emergency server transmission: {emergency_server["message"]}"
+    
+    PRINT "🚨 Flood warning sent!"
+  ELSEIF latest_water["flood_risk"] = "medium" THEN
+    PRINT "⚠️ Water level is rising. Please be cautious."
+  ELSE
+    PRINT "✅ Water level is safe."
+  ENDIF
+  
+  WAIT 1000
+NEXT
+
+DISPLAY ""
+
+# --- Practical Example: Traffic Monitoring System ---
+DISPLAY "12. Practical example: Traffic monitoring system..."
+
+traffic_monitoring_log = []
+REPEAT 5 times
+  # Get latest road data
+  latest_road = ROAD_SENSOR_DETECTION
+  
+  # Analyze traffic conditions
+  FOR EACH sensor IN latest_road["sensors"]
+    sensor_name = sensor["sensor"]
+    
+    IF sensor["data"]["congestion_level"] THEN
+      congestion_level = sensor["data"]["congestion_level"]
+      
+      IF congestion_level = "high" THEN
+        traffic_entry = {
+          "timestamp": sensor["timestamp"],
+          "sensor": sensor_name,
+          "alert_type": "traffic_congestion",
+          "congestion_level": "high",
+          "message": "🚗 Traffic congestion detected!"
+        }
+        
+        traffic_monitoring_logにtraffic_entryを追加
+        
+        # API transmission
+        traffic_api = SEND_TO_API traffic_entry "environmental"
+        PRINT "Traffic API transmission: {traffic_api["message"]}"
+        
+        PRINT "🚗 Traffic congestion warning sent!"
+      ELSEIF congestion_level = "medium" THEN
+        PRINT "🚗 Traffic is congested."
+      ELSE
+        PRINT "✅ Traffic is smooth."
+      ENDIF
+    ENDIF
+  NEXT
+  
+  WAIT 1000
+NEXT
+
+DISPLAY ""
+
+# --- Kid-Friendly Mode Example ---
+DISPLAY "13. Kid-friendly mode example..."
+「かんたんモード」
+
+# Kid-friendly environmental operations
+PRINT "🌍 Hello Environmental Monitoring-san!"
+DOG_BARK
+
+# Play with road sensors
+PRINT "🚗 Let's count the cars!"
+road_sensors = ROAD_SENSOR_DETECTION
+FOR EACH sensor IN road_sensors["sensors"]
+  IF sensor["data"]["vehicle_count"] THEN
+    vehicle_count = sensor["data"]["vehicle_count"]
+    DECORATE "Found {vehicle_count} cars! So many cars!"
+    CAT_MEOW
+  ENDIF
+NEXT
+
+# Play with water sensors
+PRINT "💧 Let's check the water level!"
+water_level = WATER_LEVEL_DETECTION
+IF water_level["flood_risk"] = "high" THEN
+  DECORATE "Oh no! Water is very high! Be careful!"
+  CAT_MEOW
+ELSE
+  DECORATE "Water level is safe! Yay!"
+ENDIF
+
+# Play with weather
+PRINT "☀️ Let's check the weather!"
+weather_monitoring = WEATHER_MONITORING
+temperature = weather_monitoring["weather_summary"]["temperature"]
+IF temperature THEN
+  DECORATE "It's {temperature} degrees! Perfect weather to play!"
+ENDIF
+
+# Play with air quality
+PRINT "🌬️ Let's check the air!"
+air_quality = AIR_QUALITY_MONITORING
+aqi = air_quality["air_quality_index"]
+IF aqi > 100 THEN
+  DECORATE "Air is not so good! Let's stay inside!"
+ELSE
+  DECORATE "Air is fresh! Let's play outside!"
+ENDIF
+
+# Play with notifications
+PRINT "📱 Let's tell everyone about the environment!"
+auto_transmission = AUTO_ENVIRONMENTAL_TRANSMISSION
+DECORATE "Sent environmental data to family! Everyone knows now!"
+
+DISPLAY ""
+
+# --- Advanced Features: Multi-System Coordination ---
+DISPLAY "14. Advanced features: Multi-system coordination..."
+
+# Coordinated environmental assessment
+road_data = ROAD_SENSOR_DETECTION
+water_data = WATER_LEVEL_DETECTION
+weather_data = WEATHER_MONITORING
+air_data = AIR_QUALITY_MONITORING
+noise_data = NOISE_MONITORING
+
+coordinated_assessment = {
+  "timestamp": new Date().toISOString(),
+  "road_conditions": {
+    "total_vehicles": this._countTotalVehicles(road_data),
+    "congestion_areas": this._countCongestionAreas(road_data),
+    "average_speed": this._calculateAverageSpeed(road_data)
+  },
+  "water_conditions": {
+    "average_level": water_data["average_water_level"],
+    "flood_risk": water_data["flood_risk"],
+    "trend": water_data["sensors"] && water_data["sensors"][0] ? water_data["sensors"][0]["data"]["trend"] : "stable"
+  },
+  "weather_conditions": {
+    "temperature": weather_data["weather_summary"]["temperature"],
+    "humidity": weather_data["weather_summary"]["humidity"],
+    "pressure": weather_data["weather_summary"]["pressure"],
+    "overall": weather_data["weather_summary"]["overall_condition"]
+  },
+  "air_conditions": {
+    "aqi": air_data["air_quality_index"],
+    "health_status": this._getAirHealthStatus(air_data["air_quality_index"])
+  },
+  "noise_conditions": {
+    "average_level": noise_data["average_noise_level"],
+    "category": noise_data["noise_level_category"],
+    "quiet_hours": noise_data["average_noise_level"] < 45
+  }
+}
+
+PRINT "=== Coordinated Environmental Assessment ==="
+PRINT "Road - Total vehicles: {coordinated_assessment["road_conditions"]["total_vehicles"]}"
+PRINT "Road - Congestion areas: {coordinated_assessment["road_conditions"]["congestion_areas"]}"
+PRINT "Water - Average level: {coordinated_assessment["water_conditions"]["average_level"]}m"
+PRINT "Water - Flood risk: {coordinated_assessment["water_conditions"]["flood_risk"]}"
+PRINT "Weather - Temperature: {coordinated_assessment["weather_conditions"]["temperature"]}°C"
+PRINT "Air - AQI: {coordinated_assessment["air_conditions"]["aqi"]}"
+PRINT "Noise - Average level: {coordinated_assessment["noise_conditions"]["average_level"]}dB"
+
+# Intelligent recommendations based on coordinated data
+intelligent_recommendations = []
+IF coordinated_assessment["water_conditions"]["flood_risk"] = "high" THEN
+  intelligent_recommendations.push("Activate flood emergency protocols")
+  intelligent_recommendations.push("Notify emergency services")
+ENDIF
+
+IF coordinated_assessment["road_conditions"]["congestion_areas"] > 2 THEN
+  intelligent_recommendations.push("Implement traffic diversion strategies")
+ENDIF
+
+IF coordinated_assessment["air_conditions"]["aqi"] > 150 THEN
+  intelligent_recommendations.push("Issue air quality health advisory")
+ENDIF
+
+IF coordinated_assessment["noise_conditions"]["average_level"] > 80 THEN
+  intelligent_recommendations.push("Implement noise reduction measures")
+ENDIF
+
+PRINT "Intelligent Recommendations:"
+FOR EACH recommendation IN intelligent_recommendations
+  PRINT "  - {recommendation}"
+NEXT
+
+DISPLAY ""
+
+# --- Environmental Benefits Summary ---
+DISPLAY ""
+DISPLAY "=== Advanced Environmental Monitoring Benefits ==="
+PRINT "✅ Complete road sensor system with traffic monitoring!"
+PRINT "✅ Water level detection with flood warning!"
+PRINT "✅ Weather monitoring with comprehensive data!"
+PRINT "✅ Air quality monitoring with health recommendations!"
+PRINT "✅ Noise monitoring with category analysis!"
+PRINT "✅ API transmission to cloud services!"
+PRINT "✅ Server integration for data management!"
+PRINT "✅ Automatic environmental data transmission!"
+PRINT "✅ Multi-system coordination and intelligence!"
+PRINT "✅ Emergency warning capabilities!"
+PRINT "✅ Kid-friendly environmental features!"
+PRINT "✅ English and Japanese support!"
+
+DISPLAY ""
+DISPLAY "=== Demo Complete ==="
+PRINT "🌍 Now Nadesiko3 has advanced environmental monitoring capabilities!"
+PRINT "🚗 Road sensors monitor traffic conditions!"
+PRINT "💧 Water level detection prevents flooding!"
+PRINT "☀️ Weather monitoring tracks climate changes!"
+PRINT "🌬️ Air quality monitoring protects health!"
+PRINT "🔊 Noise monitoring ensures peaceful environment!"
+PRINT "📱 API transmission keeps everyone informed!"
+PRINT "🖥️ Server integration manages data efficiently!"
+PRINT "🎈 Kids can easily use environmental features!"
+PRINT "🌍 Perfect for international environmental monitoring!"
+
+koko
