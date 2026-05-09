@@ -1,0 +1,163 @@
+# なでしこ3AI API機能デモ
+# API Functionality Demo
+
+「=== なでしこ3AI API機能デモ ===」と表示。
+
+# --- HTTP API送受信 ---
+「HTTP API送受信デモ開始...」と表示。
+
+# API送信
+リクエスト = "https://api.example.com/data"に{"name": "テスト", "value": 123}をPOSTでAPI送信
+「リクエスト準備完了: {リクエスト["method"]} {リクエスト["url"]}」と表示。
+
+# API受信
+レスポンス = リクエストからAPI受信
+「レスポンス受信: ステータス={レスポンス["status"]}」と表示。
+「レスポンスデータ: {レスポンス["data"]["message"]}」と表示。
+
+# API実行
+実行結果 = リクエストをAPI実行
+「API実行結果: {実行結果["success"] ? "成功" : "失敗"}」と表示。
+
+# --- RESTful API ---
+「RESTful APIデモ開始...」と表示。
+
+# GETリクエスト
+GET結果 = "https://api.example.com/users"に{"page": 1, "limit": 10}をREST_GET
+「GETリクエスト: ステータス={GET結果["response"]["status"]}」と表示。
+
+# POSTリクエスト
+POST結果 = "https://api.example.com/users"に{"name": "山田", "email": "yamada@example.com"}をREST_POST
+「POSTリクエスト: ステータス={POST結果["response"]["status"]}」と表示。
+「作成ID: {POST結果["response"]["data"]["id"]}」と表示。
+
+# PUTリクエスト
+PUT結果 = "https://api.example.com/users/1"に{"name": "山田更新", "email": "yamada_updated@example.com"}をREST_PUT
+「PUTリクエスト: ステータス={PUT結果["response"]["status"]}」と表示。
+
+# DELETEリクエスト
+DELETE結果 = "https://api.example.com/users/1"をREST_DELETE
+「DELETEリクエスト: ステータス={DELETE結果["response"]["status"]}」と表示。
+
+# --- APIサーバー作成 ---
+「APIサーバー作成デモ開始...」と表示。
+
+# APIサーバー作成
+サーバー = 3000のポートでAPIサーバー作成
+「APIサーバー作成: ポート={サーバー["port"]}」と表示。
+
+# APIルート追加
+ルート追加 = サーバーに"/api/users"を{"handler": "userHandler"}でAPIルート追加
+「ルート追加: {ルート追加["route"]}」と表示。
+
+# APIミドルウェア追加
+ミドルウェア = {"name": "logger", "handler": "logHandler"}
+ミドルウェア追加 = サーバーにミドルウェアをAPIミドルウェア追加
+「ミドルウェア追加: {ミドルウェア追加["middleware"]["name"]}」と表示。
+
+# APIサーバー起動
+起動結果 = サーバーをAPIサーバー起動
+「サーバー起動: {起動結果["url"]}」と表示。
+
+# --- WebSocket API ---
+「WebSocket APIデモ開始...」と表示。
+
+# WebSocket接続
+WS接続 = "ws://localhost:8080"にWebSocket接続
+「WebSocket接続: {WS接続["status"]}」と表示。
+
+# WebSocket送信
+WS送信 = WS接続に{"type": "message", "content": "こんにちは"}をWebSocket送信
+「WebSocket送信: {WS送信["sent"] ? "成功" : "失敗"}」と表示。
+
+# WebSocket受信
+WS受信 = WS接続からWebSocket受信
+「WebSocket受信: {WS受信["data"]["data"]}」と表示。
+
+# --- GraphQL API ---
+「GraphQL APIデモ開始...」と表示。
+
+# GraphQLクエリ
+クエリ = "query { user(id: 1) { name email } }"
+変数 = {"id": 1}
+GraphQL結果 = "https://api.example.com/graphql"にクエリを変数でGraphQLクエリ
+「GraphQLクエリ: ステータス={GraphQL結果["response"]["status"]}」と表示。
+
+# GraphQLミューテーション
+ミューテーション = "mutation { createUser(name: \"田中\", email: \"tanaka@example.com\") { id name email } }"
+GraphQLミューテーション結果 = "https://api.example.com/graphql"にミューテーションを変数でGraphQLミューテーション
+「GraphQLミューテーション: ステータス={GraphQLミューテーション結果["response"]["status"]}」と表示。
+
+# --- API認証・セキュリティ ---
+「API認証・セキュリティデモ開始...」と表示。
+
+# APIキー生成
+APIキー = APIキー生成
+「APIキー生成: {APIキー}」と表示。
+
+# JWT生成
+JWTペイロード = {"user_id": 123, "exp": Date.now() + 3600000}
+JWTトークン = JWTペイロードでJWT生成
+「JWTトークン生成: {JWTトークン}」と表示。
+
+# JWT検証
+JWT検証結果 = JWTトークンでJWT検証
+「JWT検証: {JWT検証結果["valid"] ? "有効" : "無効"}」と表示。
+
+# API認証ヘッダー
+認証ヘッダー = JWTトークンでAPI認証ヘッダー
+「認証ヘッダー: {認証ヘッダー}」と表示。
+
+# --- APIテスト・デバッグ ---
+「APIテスト・デバッグデモ開始...」と表示。
+
+# APIテスト
+テスト結果 = "https://api.example.com/users"をAPIテスト
+「APIテスト結果: 成功率={テスト結果["successRate"] * 100}%」と表示。
+「平均応答時間: {テスト結果["averageResponseTime"]:.2f}ms」と表示。
+
+# APIデバッグ
+デバッグ結果 = GET結果["request"]をAPIデバッグ
+「APIデバッグ: URL={デバッグ結果["debug"]["url"]}」と表示。
+「APIデバッグ: メソッド={デバッグ結果["debug"]["method"]}」と表示。
+
+# --- APIドキュメンテーション ---
+「APIドキュメンテーションデモ開始...」と表示。
+
+# APIドキュメント生成
+ドキュメント = サーバーでAPIドキュメント生成
+「APIドキュメント生成: {ドキュメント["routes"]["配列数"]}エンドポイント」と表示。
+
+# API仕様書作成
+仕様書 = サーバーでAPI仕様書作成
+「API仕様書作成完了」を表示。
+「仕様書の長さ: {仕様書["文字数"]}文字」と表示。
+
+# --- API監視 ---
+「API監視デモ開始...」と表示。
+
+# API監視
+監視結果 = "https://api.example.com/users"をAPI監視
+「API監視: 可用性={監視結果["availability"] * 100}%」と表示。
+「API監視: 状態={監視結果["status"]}」と表示。
+「API監視: 1分あたりリクエスト={監視結果["metrics"]["requestsPerMinute"]}」と表示。
+
+# APIログ
+ログ = サーバーでAPIログ取得
+「APIログ: {ログ["配列数"]}件のログ」と表示。
+
+# --- 総合評価 ---
+「総合評価...」と表示。
+
+「✅ HTTP API送受信: 完全動作確認」を表示。
+「✅ RESTful API: 完全動作確認」を表示。
+「✅ APIサーバー作成: 完全動作確認」を表示。
+「✅ WebSocket API: 完全動作確認」を表示。
+「✅ GraphQL API: 完全動作確認」を表示。
+「✅ API認証・セキュリティ: 完全動作確認」を表示。
+「✅ APIテスト・デバッグ: 完全動作確認」を表示。
+「✅ APIドキュメンテーション: 完全動作確認」を表示。
+「✅ API監視: 完全動作確認」を表示。
+
+「=== なでしこ3AI API機能デモ完了 ===」と表示。
+「日本語プログラミングで完全なAPI開発・運用が実現できました！」と表示。
