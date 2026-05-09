@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>なでしこ3AI 大人向け - 高度な機能とプラグイン</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1200px;
+            width: 100%;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        
+        .mode-selector {
+            margin-bottom: 20px;
+        }
+        
+        .mode-selector select {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+        }
+        
+        .main-content {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .left-panel {
+            flex: 1;
+            text-align: left;
+        }
+        
+        .right-panel {
+            flex: 1;
+            text-align: left;
+        }
+        
+        .plugin-panel {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .plugin-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .plugin-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        .plugin-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .plugin-desc {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .plugin-functions {
+            font-size: 0.8em;
+            color: #888;
+        }
+        
+        .input-area {
+            margin-bottom: 30px;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            resize: vertical;
+            font-family: 'Courier New', monospace;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .output-area {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 200px;
+            text-align: left;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            border: 2px solid #e9ecef;
+        }
+        
+        .examples {
+            background: #f0f8ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: left;
+        }
+        
+        .examples h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .example-category {
+            margin-bottom: 20px;
+        }
+        
+        .example-category h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .example-item {
+            background: white;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .example-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .emoji {
+            font-size: 1.5em;
+            margin-right: 5px;
+        }
+        
+        .plugin-detail {
+            background: #e8f4fd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .plugin-detail.active {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌟 なでしこ3AI 大人向け</h1>
+        <p class="subtitle">高度な機能とプラグインを簡単に使用</p>
+        
+        <div class="mode-selector">
+            <select id="modeSelect" onchange="changeMode()">
+                <option value="ja">日本語 (Japanese)</option>
+                <option value="en">English</option>
+            </select>
+        </div>
+        
+        <div class="main-content">
+            <div class="left-panel">
+                <div class="plugin-panel">
+                    <h3><span class="emoji">🔧</span> 利用可能なプラグイン</h3>
+                    <div id="pluginList"></div>
+                </div>
+            </div>
+            
+            <div class="right-panel">
+                <div class="plugin-detail" id="pluginDetail">
+                    <h3><span class="emoji">📦</span> プラグイン詳細</h3>
+                    <div id="pluginDetailContent"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-area">
+            <textarea id="codeInput" placeholder="ここにコマンドを入力してください...
+
+例:
+プラグイン一覧
+データサイエンス: 平均を計算
+機械学習: 線形回帰
+ロボット: サーボ制御"></textarea>
+        </div>
+        
+        <div class="button-group">
+            <button onclick="runCode()">▶️ 実行</button>
+            <button onclick="clearCode()">🗑️ クリア</button>
+            <button onclick="showHelp()">❓ ヘルプ</button>
+            <button onclick="showPluginList()">🔧 プラグイン一覧</button>
+        </div>
+        
+        <div class="output-area" id="output">
+📝 実行結果がここに表示されます
+        </div>
+        
+        <div class="examples">
+            <h3><span class="emoji">💡</span> 高度な機能例</h3>
+            
+            <div class="example-category">
+                <h4>📊 データサイエンス</h4>
+                <div class="example-item" onclick="insertExample('データサイエンス: 配列を作成')">
+                    データサイエンス: 配列を作成
+                </div>
+                <div class="example-item" onclick="insertExample('データサイエンス: 平均を計算')">
+                    データサイエンス: 平均を計算
+                </div>
+                <div class="example-item" onclick="insertExample('データサイエンス: 相関係数')">
+                    データサイエンス: 相関係数
+                </div>
+            </div>
+            
+            <div class="example-category">
+                <h4>🤖 機械学習</h4>
+                <div class="example-item" onclick="insertExample('機械学習: 線形回帰')">
+                    機械学習: 線形回帰
+                </div>
+                <div class="example-item" onclick="insertExample('機械学習: クラスタリング')">
+                    機械学習: クラスタリング
+                </div>
+                <div class="example-item" onclick="insertExample('機械学習: モデル評価')">
+                    機械学習: モデル評価
+                </div>
+            </div>
+            
+            <div class="example-category">
+                <h4>🤖 ロボット制御</h4>
+                <div class="example-item" onclick="insertExample('ロボット: サーボ制御')">
+                    ロボット: サーボ制御
+                </div>
+                <div class="example-item" onclick="insertExample('ロボット: センサー読み取り')">
+                    ロボット: センサー読み取り
+                </div>
+                <div class="example-item" onclick="insertExample('ロボット: モーター制御')">
+                    ロボット: モーター制御
+                </div>
+            </div>
+            
+            <div class="example-category">
+                <h4>🌐 API開発</h4>
+                <div class="example-item" onclick="insertExample('API: GETリクエスト')">
+                    API: GETリクエスト
+                </div>
+                <div class="example-item" onclick="insertExample('API: POSTリクエスト')">
+                    API: POSTリクエスト
+                </div>
+                <div class="example-item" onclick="insertExample('API: WebSocketサーバー')">
+                    API: WebSocketサーバー
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Multi-language support
+        const translations = {
+            ja: {
+                title: "なでしこ3AI 大人向け",
+                subtitle: "高度な機能とプラグインを簡単に使用",
+                placeholder: "ここにコマンドを入力してください...\n\n例:\nプラグイン一覧\nデータサイエンス: 平均を計算\n機械学習: 線形回帰\nロボット: サーボ制御",
+                runButton: "▶️ 実行",
+                clearButton: "🗑️ クリア",
+                helpButton: "❓ ヘルプ",
+                pluginListButton: "🔧 プラグイン一覧",
+                output: "📝 実行結果がここに表示されます",
+                availablePlugins: "利用可能なプラグイン",
+                pluginDetail: "プラグイン詳細",
+                advancedExamples: "高度な機能例",
+                plugins: {
+                    datascience: {
+                        name: "データサイエンス",
+                        desc: "NumPy、pandas風のデータ処理",
+                        functions: ["配列作成", "平均計算", "相関係数", "データフレーム操作"],
+                        examples: ["データサイエンス: 配列を作成", "データサイエンス: 平均を計算", "データサイエンス: 相関係数"]
+                    },
+                    machinelearning: {
+                        name: "機械学習",
+                        desc: "scikit-learn風の機械学習アルゴリズム",
+                        functions: ["線形回帰", "ロジスティック回帰", "決定木", "クラスタリング"],
+                        examples: ["機械学習: 線形回帰", "機械学習: クラスタリング", "機械学習: モデル評価"]
+                    },
+                    robotics: {
+                        name: "ロボット制御",
+                        desc: "Arduino、Raspberry Pi風のロボット制御",
+                        functions: ["サーボ制御", "モーター制御", "センサー読み取り", "逆運動学"],
+                        examples: ["ロボット: サーボ制御", "ロボット: センサー読み取り", "ロボット: モーター制御"]
+                    },
+                    api: {
+                        name: "API開発",
+                        desc: "REST API、WebSocket、GraphQL開発",
+                        functions: ["HTTPリクエスト", "WebSocket通信", "API認証", "データベース接続"],
+                        examples: ["API: GETリクエスト", "API: POSTリクエスト", "API: WebSocketサーバー"]
+                    },
+                    science: {
+                        name: "科学実験",
+                        desc: "物理、化学、生物、地学の実験シミュレーション",
+                        functions: ["振り子計算", "化学反応", "細胞分裂", "地質年代測定"],
+                        examples: ["科学: 振り子計算", "科学: pH測定", "科学: 化学反応"]
+                    },
+                    social: {
+                        name: "ソーシャル自動化",
+                        desc: "Googleアシスタント、Discord、LINEなどの自動化",
+                        functions: ["チャットボット", "Webhook自動化", "SNS投稿", "データ収集"],
+                        examples: ["ソーシャル: Discordボット", "ソーシャル: Twitter投稿", "ソーシャル: Googleアシスタント"]
+                    },
+                    advancedai: {
+                        name: "高度なAI",
+                        desc: "深層学習、自然言語処理、コンピュータビジョン",
+                        functions: ["画像認識", "テキスト分類", "音声認識", "翻訳"],
+                        examples: ["AI: 画像認識", "AI: テキスト分類", "AI: 音声認識"]
+                    },
+                    statistics: {
+                        name: "統計学",
+                        desc: "記述統計、確率分布、仮説検定",
+                        functions: ["記述統計", "t検定", "分散分析", "回帰分析"],
+                        examples: ["統計: 記述統計", "統計: t検定", "統計: 相関分析"]
+                    }
+                }
+            },
+            en: {
+                title: "Nadesiko3AI Adult Mode",
+                subtitle: "Advanced features and plugins made easy",
+                placeholder: "Type your command here...\n\nExamples:\nplugin list\ndatascience: calculate mean\nmachinelearning: linear regression\nrobotics: servo control",
+                runButton: "▶️ Run",
+                clearButton: "🗑️ Clear",
+                helpButton: "❓ Help",
+                pluginListButton: "🔧 Plugin List",
+                output: "📝 Results will appear here",
+                availablePlugins: "Available Plugins",
+                pluginDetail: "Plugin Details",
+                advancedExamples: "Advanced Examples",
+                plugins: {
+                    datascience: {
+                        name: "Data Science",
+                        desc: "NumPy, pandas-like data processing",
+                        functions: ["Array Creation", "Mean Calculation", "Correlation Coefficient", "DataFrame Operations"],
+                        examples: ["datascience: create array", "datascience: calculate mean", "datascience: correlation"]
+                    },
+                    machinelearning: {
+                        name: "Machine Learning",
+                        desc: "scikit-learn-like machine learning algorithms",
+                        functions: ["Linear Regression", "Logistic Regression", "Decision Tree", "Clustering"],
+                        examples: ["machinelearning: linear regression", "machinelearning: clustering", "machinelearning: evaluate model"]
+                    },
+                    robotics: {
+                        name: "Robotics Control",
+                        desc: "Arduino, Raspberry Pi-like robotics control",
+                        functions: ["Servo Control", "Motor Control", "Sensor Reading", "Inverse Kinematics"],
+                        examples: ["robotics: servo control", "robotics: read sensor", "robotics: motor control"]
+                    },
+                    api: {
+                        name: "API Development",
+                        desc: "REST API, WebSocket, GraphQL development",
+                        functions: ["HTTP Requests", "WebSocket Communication", "API Authentication", "Database Connection"],
+                        examples: ["api: GET request", "api: POST request", "api: WebSocket server"]
+                    },
+                    science: {
+                        name: "Science Experiments",
+                        desc: "Physics, Chemistry, Biology, Geology experiment simulations",
+                        functions: ["Pendulum Calculation", "Chemical Reactions", "Cell Division", "Geological Dating"],
+                        examples: ["science: pendulum calculation", "science: measure pH", "science: chemical reaction"]
+                    },
+                    social: {
+                        name: "Social Automation",
+                        desc: "Google Assistant, Discord, LINE automation",
+                        functions: ["Chatbot", "Webhook Automation", "SNS Posting", "Data Collection"],
+                        examples: ["social: Discord bot", "social: Twitter post", "social: Google Assistant"]
+                    },
+                    advancedai: {
+                        name: "Advanced AI",
+                        desc: "Deep Learning, NLP, Computer Vision",
+                        functions: ["Image Recognition", "Text Classification", "Speech Recognition", "Translation"],
+                        examples: ["AI: image recognition", "AI: text classification", "AI: speech recognition"]
+                    },
+                    statistics: {
+                        name: "Statistics",
+                        desc: "Descriptive Statistics, Probability Distributions, Hypothesis Testing",
+                        functions: ["Descriptive Statistics", "t-Test", "ANOVA", "Regression Analysis"],
+                        examples: ["statistics: descriptive statistics", "statistics: t-test", "statistics: correlation analysis"]
+                    }
+                }
+            }
+        };
+
+        let currentLang = 'ja';
+
+        // Adult advanced interpreter
+        class AdultNako3AI {
+            constructor() {
+                this.plugins = translations[currentLang].plugins;
+            }
+            
+            processCommand(text) {
+                const command = text.trim();
+                
+                // Plugin list
+                if (command.includes('プラグイン一覧') || command.includes('plugin list')) {
+                    return this.showPluginList();
+                }
+                
+                // Plugin detail
+                if (command.includes('プラグイン詳細') || command.includes('plugin detail')) {
+                    const match = command.match(/(?:プラグイン詳細|plugin detail)\s*(.+)/);
+                    if (match) {
+                        return this.showPluginDetail(match[1]);
+                    }
+                }
+                
+                // Plugin-specific commands
+                if (command.includes(':')) {
+                    const parts = command.split(':');
+                    if (parts.length === 2) {
+                        const plugin = parts[0].trim();
+                        const action = parts[1].trim();
+                        return this.processPluginCommand(plugin, action);
+                    }
+                }
+                
+                return 'コマンドを実行しました / Command executed';
+            }
+            
+            showPluginList() {
+                let result = currentLang === 'ja' ? 
+                    '🔧 利用可能なプラグイン一覧:\n\n' : 
+                    '🔧 Available Plugins:\n\n';
+                
+                Object.keys(this.plugins).forEach(key => {
+                    const plugin = this.plugins[key];
+                    result += `📦 ${plugin.name}\n`;
+                    result += `   ${plugin.desc}\n`;
+                    result += `   ${plugin.functions.join(', ')}\n\n`;
+                });
+                
+                return result;
+            }
+            
+            showPluginDetail(pluginName) {
+                const plugin = this.plugins[pluginName.toLowerCase()];
+                if (!plugin) {
+                    return currentLang === 'ja' ? 
+                        `❌ プラグイン「${pluginName}」が見つかりません` :
+                        `❌ Plugin "${pluginName}" not found`;
+                }
+                
+                let result = `📦 ${plugin.name}\n\n`;
+                result += `📝 ${plugin.desc}\n\n`;
+                result += `⚙️ ${plugin.functions.join(', ')}\n\n`;
+                result += `💡 ${plugin.examples.join('\n')}`;
+                
+                return result;
+            }
+            
+            processPluginCommand(plugin, action) {
+                const pluginKey = this.findPluginKey(plugin);
+                if (!pluginKey) {
+                    return currentLang === 'ja' ? 
+                        `❌ プラグイン「${plugin}」が見つかりません` :
+                        `❌ Plugin "${plugin}" not found`;
+                }
+                
+                // Simulate different actions based on plugin and action
+                if (pluginKey === 'datascience') {
+                    if (action.includes('配列') || action.includes('array')) {
+                        return '📊 配列を作成しました: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]';
+                    }
+                    if (action.includes('平均') || action.includes('mean')) {
+                        return '📈 平均値: 5.5';
+                    }
+                    if (action.includes('相関') || action.includes('correlation')) {
+                        return '📊 相関係数: 0.85';
+                    }
+                }
+                
+                if (pluginKey === 'machinelearning') {
+                    if (action.includes('回帰') || action.includes('regression')) {
+                        return '🤖 線形回帰モデルを学習しました\n精度: 92.3%';
+                    }
+                    if (action.includes('クラスタ') || action.includes('cluster')) {
+                        return '🎯 クラスタリングを実行しました\nクラスター数: 3';
+                    }
+                }
+                
+                if (pluginKey === 'robotics') {
+                    if (action.includes('サーボ') || action.includes('servo')) {
+                        return '🦾 サーボモーターを90度に設定しました';
+                    }
+                    if (action.includes('センサー') || action.includes('sensor')) {
+                        return '📡 センサー値: 距離=25cm, 温度=22.5°C';
+                    }
+                }
+                
+                return currentLang === 'ja' ? 
+                    `🔧 ${plugin}: ${action} を実行しました` :
+                    `🔧 ${plugin}: ${action} executed`;
+            }
+            
+            findPluginKey(name) {
+                const lowerName = name.toLowerCase();
+                for (let key in this.plugins) {
+                    if (key.includes(lowerName) || this.plugins[key].name.toLowerCase().includes(lowerName)) {
+                        return key;
+                    }
+                }
+                return null;
+            }
+        }
+        
+        const nako3ai = new AdultNako3AI();
+        const output = document.getElementById('output');
+        const codeInput = document.getElementById('codeInput');
+        const modeSelect = document.getElementById('modeSelect');
+        const pluginList = document.getElementById('pluginList');
+        const pluginDetail = document.getElementById('pluginDetail');
+        const pluginDetailContent = document.getElementById('pluginDetailContent');
+        
+        function changeMode() {
+            currentLang = modeSelect.value;
+            const trans = translations[currentLang];
+            
+            document.querySelector('h1').textContent = `🌟 ${trans.title}`;
+            document.querySelector('.subtitle').textContent = trans.subtitle;
+            codeInput.placeholder = trans.placeholder;
+            document.querySelector('button[onclick="runCode()"]').textContent = trans.runButton;
+            document.querySelector('button[onclick="clearCode()"]').textContent = trans.clearButton;
+            document.querySelector('button[onclick="showHelp()"]').textContent = trans.helpButton;
+            document.querySelector('button[onclick="showPluginList()"]').textContent = trans.pluginListButton;
+            output.textContent = trans.output;
+            document.querySelector('.plugin-panel h3').innerHTML = `<span class="emoji">🔧</span> ${trans.availablePlugins}`;
+            document.querySelector('.plugin-detail h3').innerHTML = `<span class="emoji">📦</span> ${trans.pluginDetail}`;
+            document.querySelector('.examples h3').innerHTML = `<span class="emoji">💡</span> ${trans.advancedExamples}`;
+            
+            nako3ai.plugins = trans.plugins;
+            renderPluginList();
+        }
+        
+        function renderPluginList() {
+            pluginList.innerHTML = '';
+            Object.keys(nako3ai.plugins).forEach(key => {
+                const plugin = nako3ai.plugins[key];
+                const item = document.createElement('div');
+                item.className = 'plugin-item';
+                item.innerHTML = `
+                    <div class="plugin-name">${plugin.name}</div>
+                    <div class="plugin-desc">${plugin.desc}</div>
+                    <div class="plugin-functions">${plugin.functions.join(', ')}</div>
+                `;
+                item.onclick = () => showPluginDetailInfo(key);
+                pluginList.appendChild(item);
+            });
+        }
+        
+        function showPluginDetailInfo(pluginKey) {
+            const plugin = nako3ai.plugins[pluginKey];
+            pluginDetailContent.innerHTML = `
+                <h4>${plugin.name}</h4>
+                <p>${plugin.desc}</p>
+                <h5>利用可能な機能:</h5>
+                <ul>
+                    ${plugin.functions.map(f => `<li>${f}</li>`).join('')}
+                </ul>
+                <h5>使用例:</h5>
+                <ul>
+                    ${plugin.examples.map(e => `<li><code>${e}</code></li>`).join('')}
+                </ul>
+            `;
+            pluginDetail.classList.add('active');
+        }
+        
+        function runCode() {
+            const code = codeInput.value;
+            if (!code.trim()) {
+                output.textContent = currentLang === 'ja' ? '⚠️ コマンドを入力してください' : '⚠️ Please enter a command';
+                return;
+            }
+            
+            try {
+                const result = nako3ai.processCommand(code);
+                output.textContent = `📝 ${result}`;
+            } catch (error) {
+                output.textContent = `❌ Error: ${error.message}`;
+            }
+        }
+        
+        function clearCode() {
+            codeInput.value = '';
+            output.textContent = translations[currentLang].output;
+        }
+        
+        function showHelp() {
+            output.textContent = currentLang === 'ja' ? `
+🌟 なでしこ3AI 大人向けヘルプ 🌟
+
+🔧 プラグイン機能:
+• 「プラグイン一覧」 - 利用可能なプラグイン一覧
+• 「プラグイン詳細 データサイエンス」 - プラグイン詳細情報
+
+📊 データサイエンス:
+• 「データサイエンス: 配列を作成」
+• 「データサイence: 平均を計算」
+• 「データサイエンス: 相関係数」
+
+🤖 機械学習:
+• 「機械学習: 線形回帰」
+• 「機械学習: クラスタリング」
+• 「機械学習: モデル評価」
+
+🤖 ロボット制御:
+• 「ロボット: サーボ制御」
+• 「ロボット: センサー読み取り」
+• 「ロボット: モーター制御」
+
+🌐 API開発:
+• 「API: GETリクエスト」
+• 「API: POSTリクエスト」
+• 「API: WebSocketサーバー」
+
+💡 使い方:
+1. プラグイン一覧から機能を選択
+2. 「プラグイン名: 機能名」の形式で実行
+3. 結果を確認
+            ` : `
+🌟 Nadesiko3AI Adult Mode Help 🌟
+
+🔧 Plugin Features:
+• "plugin list" - List available plugins
+• "plugin detail datascience" - Detailed plugin information
+
+📊 Data Science:
+• "datascience: create array"
+• "datascience: calculate mean"
+• "datascience: correlation"
+
+🤖 Machine Learning:
+• "machinelearning: linear regression"
+• "machinelearning: clustering"
+• "machinelearning: evaluate model"
+
+🤖 Robotics:
+• "robotics: servo control"
+• "robotics: read sensor"
+• "robotics: motor control"
+
+🌐 API Development:
+• "api: GET request"
+• "api: POST request"
+• "api: WebSocket server"
+
+💡 How to Use:
+1. Select function from plugin list
+2. Execute with "plugin_name: function_name" format
+3. Check results
+            `;
+        }
+        
+        function showPluginList() {
+            output.textContent = nako3ai.showPluginList();
+        }
+        
+        function insertExample(text) {
+            codeInput.value = text;
+            codeInput.focus();
+        }
+        
+        // Ctrl+Enter to run
+        codeInput.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                runCode();
+            }
+        });
+        
+        // Initialize
+        renderPluginList();
+    </script>
+</body>
+</html>
