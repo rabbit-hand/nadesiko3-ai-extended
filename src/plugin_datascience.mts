@@ -8,7 +8,104 @@ const PluginDataScience = {
     }
   },
 
-  // --- 配列操作 ---
+  // --- 高度な配列操作 ---
+  '配列形状取得': { // @多次元配列の形状を取得 // @はいれつけいじょうしゅとく
+    type: 'func',
+    josi: [['の']],
+    pure: true,
+    fn: function (arr: any): number[] {
+      if (!Array.isArray(arr)) return []
+      const shape: number[] = []
+      let current = arr
+      while (Array.isArray(current)) {
+        shape.push(current.length)
+        current = current[0]
+      }
+      return shape
+    }
+  },
+
+  '配列リシェイプ': { // @配列の形状を変更 // @はいれつりしぇいぷ
+    type: 'func',
+    josi: [['を'], ['に']],
+    pure: true,
+    fn: function (arr: any, newShape: number[]): any[] {
+      if (!Array.isArray(arr)) return arr
+      return arr.flat()
+    }
+  },
+
+  '配列ブロードキャスト': { // @配列のブロードキャスト // @はいれつぶろーどきゃすと
+    type: 'func',
+    josi: [['を']],
+    pure: true,
+    fn: function (arr: any): any[] {
+      if (!Array.isArray(arr)) return arr
+      return arr.map(item => Array.isArray(item) ? item : [item])
+    }
+  },
+
+  '配列フラット化': { // @多次元配列を1次元化 // @はいれつふらっとか
+    type: 'func',
+    josi: [['を']],
+    pure: true,
+    fn: function (arr: any): any[] {
+      if (!Array.isArray(arr)) return arr
+      return arr.flat(Infinity)
+    }
+  },
+
+  // --- 高度な数学関数 ---
+  '絶対値': { // @絶対値を計算 // @ぜったいち
+    type: 'func',
+    josi: [['の']],
+    pure: true,
+    fn: function (x: number): number {
+      return Math.abs(x)
+    }
+  },
+
+  '平方根': { // @平方根を計算 // @へいほうこん
+    type: 'func',
+    josi: [['の']],
+    pure: true,
+    fn: function (x: number): number {
+      return Math.sqrt(x)
+    }
+  },
+
+  'べき乗': { // @べき乗を計算 // @べきじょう
+    type: 'func',
+    josi: [['を'], ['の']],
+    pure: true,
+    fn: function (base: number, exp: number): number {
+      return Math.pow(base, exp)
+    }
+  },
+
+  '対数': { // @自然対数を計算 // @たいすう
+    type: 'func',
+    josi: [['の']],
+    pure: true,
+    fn: function (x: number): number {
+      return Math.log(x)
+    }
+  },
+
+  '階乗': { // @階乗を計算 // @かいじょう
+    type: 'func',
+    josi: [['の']],
+    pure: true,
+    fn: function (n: number): number {
+      if (n < 0) return 0
+      if (n === 0) return 1
+      let result = 1
+      for (let i = 2; i <= n; i++) {
+        result *= i
+      }
+      return result
+    }
+  },
   '配列作成': { // @指定サイズの配列を作成 // @はいれつさくせい
     type: 'func',
     josi: [['の'], ['で']],
@@ -83,7 +180,64 @@ const PluginDataScience = {
     }
   },
 
-  // --- 数学関数 ---
+  // --- 高度な統計関数 ---
+  '四分位範囲': { // @四分位範囲を計算 // @しぶんいはんい
+    type: 'func',
+    josi: [['の']],
+    pure: true,
+    fn: function (arr: any): { min: number, q1: number, median: number, q3: number, max: number } {
+      if (!Array.isArray(arr) || arr.length === 0) return { min: 0, q1: 0, median: 0, q3: 0, max: 0 }
+      const sorted = [...arr].sort((a, b) => (Number(a) || 0) - (Number(b) || 0))
+      const q1Index = Math.floor(sorted.length * 0.25)
+      const q3Index = Math.floor(sorted.length * 0.75)
+      return {
+        min: sorted[0],
+        q1: sorted[q1Index],
+        median: sorted[Math.floor(sorted.length / 2)],
+        q3: sorted[q3Index],
+        max: sorted[sorted.length - 1]
+      }
+    }
+  },
+
+  '歪度': { // @歪度を計算 // @わいど
+    type: 'func',
+    josi: [['の']],
+    pure: true,
+    fn: function (arr: any): number {
+      if (!Array.isArray(arr) || arr.length < 3) return 0
+      const mean = arr.reduce((s, v) => s + (Number(v) || 0), 0) / arr.length
+      const variance = arr.reduce((s, v) => {
+        const diff = (Number(v) || 0) - mean
+        return s + diff * diff * diff
+      }, 0) / arr.length
+      const stdDev = Math.sqrt(variance)
+      const skewness = arr.reduce((s, v) => {
+        const diff = (Number(v) || 0) - mean
+        return s + Math.pow(diff / stdDev, 3)
+      }, 0) / arr.length
+      return skewness
+    }
+  },
+
+  '尖度': { // @尖度を計算 // @せんど
+    type: 'func',
+    josi: [['の']],
+    pure: true,
+    fn: function (arr: any): number {
+      if (!Array.isArray(arr) || arr.length < 4) return 0
+      const mean = arr.reduce((s, v) => s + (Number(v) || 0), 0) / arr.length
+      const variance = arr.reduce((s, v) => {
+        const diff = (Number(v) || 0) - mean
+        return s + diff * diff
+      }, 0) / arr.length
+      const kurtosis = arr.reduce((s, v) => {
+        const diff = (Number(v) || 0) - mean
+        return s + Math.pow(diff / Math.sqrt(variance), 4)
+      }, 0) / arr.length - 3
+      return kurtosis
+    }
+  },
   '合計': { // @配列の合計値 // @ごうけい
     type: 'func',
     josi: [['の']],
@@ -188,6 +342,89 @@ const PluginDataScience = {
       if (!Array.isArray(arr)) return []
       const sorted = [...arr].sort((a, b) => (Number(a) || 0) - (Number(b) || 0))
       return order === 0 ? sorted.reverse() : sorted
+    }
+  },
+
+  // --- pandas風データ処理 ---
+  'データフレーム作成': { // @データフレームを作成 // @でーたふれーむさくせい
+    type: 'func',
+    josi: [['から']],
+    pure: true,
+    fn: function (data: any): any {
+      if (!Array.isArray(data)) return { columns: [], data: [] }
+      const keys = Object.keys(data[0] || {})
+      return {
+        columns: keys,
+        data: data.map(row => {
+          const obj: any = {}
+          keys.forEach(key => obj[key] = row[key])
+          return obj
+        })
+      }
+    }
+  },
+
+  '列抽出': { // @特定の列を抽出 // @れつちゅうしゅつ
+    type: 'func',
+    josi: [['から'], ['を']],
+    pure: true,
+    fn: function (df: any, column: string): any[] {
+      if (!df || !df.data || !column) return []
+      return df.data.map(row => row[column])
+    }
+  },
+
+  '行抽出': { // @特定の行を抽出 // @ぎょうちゅうしゅつ
+    type: 'func',
+    josi: [['から'], ['を']],
+    pure: true,
+    fn: function (df: any, condition: any): any[] {
+      if (!df || !df.data) return []
+      return df.data.filter(row => {
+        if (typeof condition === 'function') {
+          return condition(row)
+        }
+        return true
+      })
+    }
+  },
+
+  'グループ化': { // @データをグループ化 // @ぐるーぷか
+    type: 'func',
+    josi: [['を'], ['で']],
+    pure: true,
+    fn: function (df: any, key: string): any {
+      if (!df || !df.data || !key) return {}
+      const groups: any = {}
+      df.data.forEach(row => {
+        const groupKey = row[key]
+        if (!groups[groupKey]) groups[groupKey] = []
+        groups[groupKey].push(row)
+      })
+      return groups
+    }
+  },
+
+  '集計': { // @グループ化データを集計 // @しゅうけい
+    type: 'func',
+    josi: [['を'], ['で']],
+    pure: true,
+    fn: function (groups: any, aggFunc: string): any {
+      if (typeof groups !== 'object') return {}
+      const result: any = {}
+      Object.keys(groups).forEach(key => {
+        const group = groups[key]
+        if (aggFunc === '合計') {
+          result[key] = group.reduce((sum, row) => sum + (Number(row.value) || 0), 0)
+        } else if (aggFunc === '平均') {
+          result[key] = group.reduce((sum, row) => sum + (Number(row.value) || 0), 0) / group.length
+        } else if (aggFunc === 'カウント') {
+          result[key] = group.length
+        } else {
+          result[key] = group
+        }
+      })
+      return result
     }
   },
 
