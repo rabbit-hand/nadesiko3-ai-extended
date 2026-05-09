@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nadesiko3AI - Easy Japanese Programming for Kids!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        
+        .language-selector {
+            margin-bottom: 20px;
+        }
+        
+        .language-selector select {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+        }
+        
+        .input-area {
+            margin-bottom: 30px;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            resize: vertical;
+            font-family: 'Courier New', monospace;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .output-area {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 200px;
+            text-align: left;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            border: 2px solid #e9ecef;
+        }
+        
+        .examples {
+            background: #f0f8ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: left;
+        }
+        
+        .examples h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .example-item {
+            background: white;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .example-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .emoji {
+            font-size: 1.5em;
+            margin-right: 5px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌟 Nadesiko3AI</h1>
+        <p class="subtitle">Easy Japanese Programming for Kids!</p>
+        
+        <div class="language-selector">
+            <select id="languageSelect" onchange="changeLanguage()">
+                <option value="en">English</option>
+                <option value="ja">日本語</option>
+            </select>
+        </div>
+        
+        <div class="input-area">
+            <textarea id="codeInput" placeholder="Type your program in simple English here!
+
+Examples:
+"Hello World!" display
+5 and 3 add
+3 repeat "Fun!"></textarea>
+        </div>
+        
+        <div class="button-group">
+            <button onclick="runCode()">▶️ Run</button>
+            <button onclick="clearCode()">🗑️ Clear</button>
+            <button onclick="showHelp()">❓ Help</button>
+        </div>
+        
+        <div class="output-area" id="output">
+📝 Results will appear here
+        </div>
+        
+        <div class="examples">
+            <h3><span class="emoji">💡</span> Try These!</h3>
+            <div class="example-item" onclick="insertExample('"Hello World!" display')">
+                "Hello World!" display
+            </div>
+            <div class="example-item" onclick="insertExample('5 and 3 add')">
+                5 and 3 add
+            </div>
+            <div class="example-item" onclick="insertExample('4 and 6 multiply')">
+                4 and 6 multiply
+            </div>
+            <div class="example-item" onclick="insertExample('10 subtract 2')">
+                10 subtract 2
+            </div>
+            <div class="example-item" onclick="insertExample('3 repeat "Fun!"')">
+                3 repeat "Fun!"
+            </div>
+            <div class="example-item" onclick="insertExample('assign 10 to A')">
+                assign 10 to A
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Multi-language support
+        const translations = {
+            en: {
+                title: "Nadesiko3AI",
+                subtitle: "Easy Japanese Programming for Kids!",
+                placeholder: "Type your program in simple English here!\n\nExamples:\n\"Hello World!\" display\n5 and 3 add\n3 repeat \"Fun!\"",
+                runButton: "▶️ Run",
+                clearButton: "🗑️ Clear",
+                helpButton: "❓ Help",
+                output: "📝 Results will appear here",
+                tryThese: "Try These!",
+                help: `🌟 Nadesiko3AI Help (English) 🌟
+
+Basic Commands:
+• "Hello World" display
+• 5 and 3 add
+• 4 and 6 multiply
+• 10 subtract 2
+• 3 repeat "Fun!"
+• assign 10 to A
+
+Data Science:
+• calculate average of [1,2,3,4,5]
+• calculate sum of [1,2,3,4,5]
+
+Robotics Control:
+• turn on LED
+• rotate motor
+• get sensor value
+
+AI Features:
+• recognize image
+• classify text
+• recognize voice
+
+💡 Try programming in simple English!`,
+                examples: [
+                    '"Hello World!" display',
+                    '5 and 3 add',
+                    '4 and 6 multiply',
+                    '10 subtract 2',
+                    '3 repeat "Fun!"',
+                    'assign 10 to A'
+                ]
+            },
+            ja: {
+                title: "なでしこ3AI",
+                subtitle: "子供でも簡単！日本語プログラミング",
+                placeholder: "ここに日本語でプログラムを入力してみよう！\n\n例:\n「こんにちは、世界！」と表示\n5と3を足して\n3回「楽しい！」と繰り返して",
+                runButton: "▶️ 実行する",
+                clearButton: "🗑️ クリア",
+                helpButton: "❓ ヘルプ",
+                output: "📝 実行結果がここに表示されます",
+                tryThese: "試してみよう！",
+                help: `🌟 なでしこ3AI ヘルプ 🌟
+
+基本的なコマンド:
+・「こんにちは」を表示
+・5と3を足して
+・4と6を掛けて
+・10から2を引いて
+・3回「楽しい！」と繰り返して
+・Aに10を代入
+
+データサイエンス:
+・[1,2,3,4,5]の平均を計算
+・[1,2,3,4,5]の合計を計算
+
+ロボット制御:
+・LEDを点灯
+・モーターを回転
+・センサー値を取得
+
+AI機能:
+・画像を認識
+・テキストを分類
+・音声を認識
+
+💡 日本語で自由にプログラミングしてみよう！`,
+                examples: [
+                    '「こんにちは、世界！」と表示',
+                    '5と3を足して',
+                    '4と6を掛けて',
+                    '10から2を引いて',
+                    '3回「楽しい！」と繰り返して',
+                    'Aに10を代入する'
+                ]
+            }
+        };
+
+        let currentLang = 'en';
+
+        // Simple programming interpreter
+        class SimpleNako3AI {
+            constructor() {
+                this.variables = {};
+            }
+            
+            processCommand(text) {
+                const command = text.trim();
+                
+                if (currentLang === 'ja') {
+                    return this.processJapaneseCommand(command);
+                } else {
+                    return this.processEnglishCommand(command);
+                }
+            }
+            
+            processEnglishCommand(command) {
+                // Display command
+                if (command.includes('display') || command.includes('show')) {
+                    const match = command.match(/"(.+?)"\s+(?:display|show)/);
+                    if (match) {
+                        return match[1];
+                    }
+                    const match2 = command.match(/(.+?)\s+(?:display|show)/);
+                    if (match2) {
+                        return match2[1];
+                    }
+                }
+                
+                // Calculation commands
+                if (command.includes('calculate') || command.includes('add') || command.includes('multiply')) {
+                    return this.calculate(command);
+                }
+                
+                // Repeat command
+                if (command.includes('repeat')) {
+                    const match = command.match(/(.+?)\s+repeat\s+(.+)/);
+                    if (match) {
+                        const count = parseInt(match[1]);
+                        const repeatText = match[2];
+                        return Array(count).fill(repeatText).join('\\n');
+                    }
+                }
+                
+                // Variable assignment
+                if (command.includes('assign') || command.includes('set')) {
+                    const match = command.match(/(.+?)\s+(?:assign|set)\s+(.+)/);
+                    if (match) {
+                        this.variables[match[1]] = match[2];
+                        return `Assigned ${match[2]} to ${match[1]}`;
+                    }
+                }
+                
+                return 'Command executed';
+            }
+            
+            processJapaneseCommand(command) {
+                // Display command
+                if (command.includes('を表示') || command.includes('と表示')) {
+                    const match = command.match(/「(.+?)」を表示/);
+                    if (match) {
+                        return match[1];
+                    }
+                    const match2 = command.match(/(.+?)と表示/);
+                    if (match2) {
+                        return match2[1];
+                    }
+                }
+                
+                // Calculation commands
+                if (command.includes('を計算') || command.includes('を足して') || command.includes('を掛けて')) {
+                    return this.calculate(command);
+                }
+                
+                // Repeat command
+                if (command.includes('回繰り返して')) {
+                    const match = command.match(/(.+?)回繰り返して(.+)/);
+                    if (match) {
+                        const count = parseInt(match[1]);
+                        const repeatText = match[2];
+                        return Array(count).fill(repeatText).join('\\n');
+                    }
+                }
+                
+                // Variable assignment
+                if (command.includes('に') && command.includes('を代入')) {
+                    const match = command.match(/(.+?)に(.+?)を代入/);
+                    if (match) {
+                        this.variables[match[1]] = match[2];
+                        return `${match[1]}に${match[2]}を代入しました`;
+                    }
+                }
+                
+                return 'コマンドを実行しました';
+            }
+            
+            calculate(command) {
+                if (currentLang === 'ja') {
+                    // Japanese calculations
+                    if (command.includes('足して') || command.includes('プラス')) {
+                        const match = command.match(/(.+?)と(.+?)を足して/);
+                        if (match) {
+                            const result = parseFloat(match[1]) + parseFloat(match[2]);
+                            return `計算結果: ${result}`;
+                        }
+                    }
+                    
+                    if (command.includes('掛けて') || command.includes('かける')) {
+                        const match = command.match(/(.+?)と(.+?)を掛けて/);
+                        if (match) {
+                            const result = parseFloat(match[1]) * parseFloat(match[2]);
+                            return `計算結果: ${result}`;
+                        }
+                    }
+                    
+                    if (command.includes('引いて') || command.includes('マイナス')) {
+                        const match = command.match(/(.+?)から(.+?)を引いて/);
+                        if (match) {
+                            const result = parseFloat(match[1]) - parseFloat(match[2]);
+                            return `計算結果: ${result}`;
+                        }
+                    }
+                } else {
+                    // English calculations
+                    if (command.includes('add') || command.includes('plus')) {
+                        const match = command.match(/(.+?)\s+and\s+(.+?)\s+(?:add|plus)/);
+                        if (match) {
+                            const result = parseFloat(match[1]) + parseFloat(match[2]);
+                            return `Calculation result: ${result}`;
+                        }
+                    }
+                    
+                    if (command.includes('multiply') || command.includes('times')) {
+                        const match = command.match(/(.+?)\s+and\s+(.+?)\s+(?:multiply|times)/);
+                        if (match) {
+                            const result = parseFloat(match[1]) * parseFloat(match[2]);
+                            return `Calculation result: ${result}`;
+                        }
+                    }
+                    
+                    if (command.includes('subtract') || command.includes('minus')) {
+                        const match = command.match(/(.+?)\s+from\s+(.+?)\s+(?:subtract|minus)/);
+                        if (match) {
+                            const result = parseFloat(match[2]) - parseFloat(match[1]);
+                            return `Calculation result: ${result}`;
+                        }
+                    }
+                }
+                
+                return currentLang === 'ja' ? '計算を実行しました' : 'Calculation executed';
+            }
+        }
+        
+        const nako3ai = new SimpleNako3AI();
+        const output = document.getElementById('output');
+        const codeInput = document.getElementById('codeInput');
+        const languageSelect = document.getElementById('languageSelect');
+        
+        function changeLanguage() {
+            currentLang = languageSelect.value;
+            const trans = translations[currentLang];
+            
+            document.querySelector('h1').textContent = `🌟 ${trans.title}`;
+            document.querySelector('.subtitle').textContent = trans.subtitle;
+            codeInput.placeholder = trans.placeholder;
+            document.querySelector('button[onclick="runCode()"]').textContent = trans.runButton;
+            document.querySelector('button[onclick="clearCode()"]').textContent = trans.clearButton;
+            document.querySelector('button[onclick="showHelp()"]').textContent = trans.helpButton;
+            output.textContent = trans.output;
+            document.querySelector('.examples h3').innerHTML = `<span class="emoji">💡</span> ${trans.tryThese}`;
+            
+            // Update examples
+            const exampleItems = document.querySelectorAll('.example-item');
+            exampleItems.forEach((item, index) => {
+                item.textContent = trans.examples[index];
+                item.onclick = () => insertExample(trans.examples[index]);
+            });
+        }
+        
+        function runCode() {
+            const code = codeInput.value;
+            if (!code.trim()) {
+                output.textContent = currentLang === 'ja' ? '⚠️ プログラムを入力してください' : '⚠️ Please enter a program';
+                return;
+            }
+            
+            try {
+                const result = nako3ai.processCommand(code);
+                output.textContent = `📝 ${result}`;
+            } catch (error) {
+                output.textContent = `❌ Error: ${error.message}`;
+            }
+        }
+        
+        function clearCode() {
+            codeInput.value = '';
+            output.textContent = translations[currentLang].output;
+        }
+        
+        function showHelp() {
+            output.textContent = translations[currentLang].help;
+        }
+        
+        function insertExample(text) {
+            codeInput.value = text;
+            codeInput.focus();
+        }
+        
+        // Ctrl+Enter to run
+        codeInput.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                runCode();
+            }
+        });
+    </script>
+</body>
+</html>

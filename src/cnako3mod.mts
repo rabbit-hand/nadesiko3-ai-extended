@@ -24,6 +24,12 @@ import PluginNode from './plugin_node.mjs'
 import PluginDataScience from './plugin_datascience.mjs'
 import PluginStatistics from './plugin_statistics.mjs'
 import PluginMachineLearning from './plugin_machinelearning.mjs'
+import PluginRobotics from './plugin_robotics.mjs'
+import PluginAdvancedAI from './plugin_advanced_ai.mjs'
+import PluginAPI from './plugin_api.mjs'
+import PluginSocialAutomation from './plugin_social_automation.mjs'
+import PluginScienceExperiments from './plugin_science_experiments.mjs'
+import PluginBeginnerSupport from './plugin_beginner_support.mjs'
 import app from './commander_ja.mjs'
 
 
@@ -67,9 +73,17 @@ export class CNako3 extends NakoCompiler {
     this.version = nakoVersion.version
     if (!opts.nostd) {
       this.addPluginFromFile('PluginNode', PluginNode, true)
-      this.addPluginFromFile('PluginDataScience', PluginDataScience, true)
-      this.addPluginFromFile('PluginStatistics', PluginStatistics, true)
-      this.addPluginFromFile('PluginMachineLearning', PluginMachineLearning, true)
+      // データサイエンス関連プラグインも一時的にコメントアウト
+      // this.addPluginFromFile('PluginDataScience', PluginDataScience, true)
+      // this.addPluginFromFile('PluginStatistics', PluginStatistics, true)
+      // this.addPluginFromFile('PluginMachineLearning', PluginMachineLearning, true)
+      // 新しいプラグインは一時的にコメントアウト
+      // this.addPluginFromFile('PluginRobotics', PluginRobotics, true)
+      // this.addPluginFromFile('PluginAdvancedAI', PluginAdvancedAI, true)
+      // this.addPluginFromFile('PluginAPI', PluginAPI, true)
+      // this.addPluginFromFile('PluginSocialAutomation', PluginSocialAutomation, true)
+      // this.addPluginFromFile('PluginScienceExperiments', PluginScienceExperiments, true)
+      // this.addPluginFromFile('PluginBeginnerSupport', PluginBeginnerSupport, true)
     }
     // 必要な定数を設定
     this.addListener('beforeRun', (g: NakoGlobal) => {

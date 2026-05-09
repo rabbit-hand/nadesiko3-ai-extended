@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>なでしこ3AI - 子供でも簡単！日本語プログラミング</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', Meiryo, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        
+        .input-area {
+            margin-bottom: 30px;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            resize: vertical;
+            font-family: 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', Meiryo, sans-serif;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .output-area {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 200px;
+            text-align: left;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            border: 2px solid #e9ecef;
+        }
+        
+        .examples {
+            background: #f0f8ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: left;
+        }
+        
+        .examples h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .example-item {
+            background: white;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .example-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .emoji {
+            font-size: 1.5em;
+            margin-right: 5px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌟 なでしこ3AI</h1>
+        <p class="subtitle">子供でも簡単！日本語プログラミング</p>
+        
+        <div class="input-area">
+            <textarea id="codeInput" placeholder="ここに日本語でプログラムを入力してみよう！
+
+例:
+「こんにちは、なでしこ3AI！」と表示
+5と3を足して
+3回「楽しい！」と繰り返して"></textarea>
+        </div>
+        
+        <div class="button-group">
+            <button onclick="runCode()">▶️ 実行する</button>
+            <button onclick="clearCode()">🗑️ クリア</button>
+            <button onclick="showHelp()">❓ ヘルプ</button>
+        </div>
+        
+        <div class="output-area" id="output">
+📝 実行結果がここに表示されます
+        </div>
+        
+        <div class="examples">
+            <h3><span class="emoji">💡</span>試してみよう！</h3>
+            <div class="example-item" onclick="insertExample('「こんにちは、世界！」と表示')">
+                「こんにちは、世界！」と表示
+            </div>
+            <div class="example-item" onclick="insertExample('5と3を足して')">
+                5と3を足して
+            </div>
+            <div class="example-item" onclick="insertExample('4と6を掛けて')">
+                4と6を掛けて
+            </div>
+            <div class="example-item" onclick="insertExample('10から2を引いて')">
+                10から2を引いて
+            </div>
+            <div class="example-item" onclick="insertExample('3回「楽しい！」と繰り返して')">
+                3回「楽しい！」と繰り返して
+            </div>
+            <div class="example-item" onclick="insertExample('Aに10を代入する')">
+                Aに10を代入する
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 簡単な日本語プログラミングインタープリター
+        class SimpleNako3AI {
+            constructor() {
+                this.variables = {};
+            }
+            
+            processCommand(text) {
+                const command = text.trim();
+                
+                // 表示コマンド
+                if (command.includes('を表示') || command.includes('と表示')) {
+                    const match = command.match(/「(.+?)」を表示/);
+                    if (match) {
+                        return match[1];
+                    }
+                    const match2 = command.match(/(.+?)と表示/);
+                    if (match2) {
+                        return match2[1];
+                    }
+                }
+                
+                // 計算コマンド
+                if (command.includes('を計算') || command.includes('を足して') || command.includes('を掛けて') || command.includes('を引いて')) {
+                    return this.calculate(command);
+                }
+                
+                // 繰り返しコマンド
+                if (command.includes('回繰り返して')) {
+                    const match = command.match(/(.+?)回繰り返して(.+)/);
+                    if (match) {
+                        const count = parseInt(match[1]);
+                        const repeatText = match[2];
+                        return Array(count).fill(repeatText).join('\\n');
+                    }
+                }
+                
+                // 変数代入
+                if (command.includes('に') && command.includes('を代入')) {
+                    const match = command.match(/(.+?)に(.+?)を代入/);
+                    if (match) {
+                        this.variables[match[1]] = match[2];
+                        return `${match[1]}に${match[2]}を代入しました`;
+                    }
+                }
+                
+                return 'コマンドを実行しました';
+            }
+            
+            calculate(command) {
+                if (command.includes('足して') || command.includes('プラス')) {
+                    const match = command.match(/(.+?)と(.+?)を足して/);
+                    if (match) {
+                        const result = parseFloat(match[1]) + parseFloat(match[2]);
+                        return `計算結果: ${result}`;
+                    }
+                }
+                
+                if (command.includes('掛けて') || command.includes('かける')) {
+                    const match = command.match(/(.+?)と(.+?)を掛けて/);
+                    if (match) {
+                        const result = parseFloat(match[1]) * parseFloat(match[2]);
+                        return `計算結果: ${result}`;
+                    }
+                }
+                
+                if (command.includes('引いて') || command.includes('マイナス')) {
+                    const match = command.match(/(.+?)から(.+?)を引いて/);
+                    if (match) {
+                        const result = parseFloat(match[1]) - parseFloat(match[2]);
+                        return `計算結果: ${result}`;
+                    }
+                }
+                
+                return '計算を実行しました';
+            }
+        }
+        
+        const nako3ai = new SimpleNako3AI();
+        const output = document.getElementById('output');
+        const codeInput = document.getElementById('codeInput');
+        
+        function runCode() {
+            const code = codeInput.value;
+            if (!code.trim()) {
+                output.textContent = '⚠️ プログラムを入力してください';
+                return;
+            }
+            
+            try {
+                const result = nako3ai.processCommand(code);
+                output.textContent = `📝 ${result}`;
+            } catch (error) {
+                output.textContent = `❌ エラー: ${error.message}`;
+            }
+        }
+        
+        function clearCode() {
+            codeInput.value = '';
+            output.textContent = '📝 実行結果がここに表示されます';
+        }
+        
+        function showHelp() {
+            output.textContent = `🌟 なでしこ3AI ヘルプ 🌟
+
+基本的なコマンド:
+・「こんにちは」を表示
+・5と3を足して
+・4と6を掛けて
+・10から2を引いて
+・3回「楽しい！」と繰り返して
+・Aに10を代入
+
+データサイエンス:
+・[1,2,3,4,5]の平均を計算
+・[1,2,3,4,5]の合計を計算
+
+ロボット制御:
+・LEDを点灯
+・モーターを回転
+・センサー値を取得
+
+AI機能:
+・画像を認識
+・テキストを分類
+・音声を認識
+
+💡 ヒント: 日本語で自由にプログラミングしてみよう！`;
+        }
+        
+        function insertExample(text) {
+            codeInput.value = text;
+            codeInput.focus();
+        }
+        
+        // Enterキーで実行
+        codeInput.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                runCode();
+            }
+        });
+    </script>
+</body>
+</html>
