@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>なでしこ3AI リアルタイム協業エディタ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 1.8em;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .online-users {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .online-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4caf50;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 20px;
+        }
+        
+        .sidebar {
+            width: 300px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .chat-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #f8f9fa;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+        
+        .chat-message {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        
+        .chat-content {
+            flex: 1;
+        }
+        
+        .chat-author {
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .chat-text {
+            background: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .chat-time {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+        
+        .chat-input {
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #ddd;
+        }
+        
+        .chat-input input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+        }
+        
+        .editor-container {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .editor-toolbar {
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .editor-toolbar button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: transform 0.2s;
+        }
+        
+        .editor-toolbar button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .editor-content {
+            flex: 1;
+            display: flex;
+        }
+        
+        .code-editor {
+            flex: 1;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            background: #fafafa;
+            border-right: 1px solid #ddd;
+        }
+        
+        .preview-panel {
+            flex: 1;
+            padding: 20px;
+            background: white;
+            overflow-y: auto;
+        }
+        
+        .cursor-indicator {
+            position: absolute;
+            width: 2px;
+            height: 20px;
+            background: #ff9800;
+            animation: blink 1s infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        .user-cursor {
+            position: absolute;
+            width: 2px;
+            height: 20px;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+        
+        .user-cursor-label {
+            position: absolute;
+            top: -25px;
+            left: 0;
+            background: #333;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        
+        .selection-highlight {
+            background: rgba(102, 126, 234, 0.3);
+            border-radius: 2px;
+        }
+        
+        .version-history {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .version-item {
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .version-item:hover {
+            background: #f0f0f0;
+        }
+        
+        .version-author {
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .version-time {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .version-description {
+            font-size: 13px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .presence-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+        }
+        
+        .presence-user {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .presence-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+        }
+        
+        .presence-name {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            max-width: 300px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .notification.success {
+            border-left: 4px solid #4caf50;
+        }
+        
+        .notification.info {
+            border-left: 4px solid #2196f3;
+        }
+        
+        .notification.warning {
+            border-left: 4px solid #ff9800;
+        }
+        
+        .notification-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .notification-message {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                order: 2;
+            }
+            
+            .editor-container {
+                order: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🤝 なでしこ3AI リアルタイム協業</h1>
+        <div class="user-info">
+            <div class="online-users">
+                <div class="online-indicator"></div>
+                <span id="onlineCount">3</span>
+                <span>人がオンライン</span>
+            </div>
+            <div class="user-avatar" id="userAvatar">A</div>
+            <span id="userName">Alice</span>
+        </div>
+    </header>
+    
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="presence-indicator">
+                <h4>👥 現在の編集者</h4>
+                <div id="presenceList">
+                    <div class="presence-user">
+                        <div class="presence-avatar" style="background: #667eea;">A</div>
+                        <span class="presence-name">Alice</span>
+                    </div>
+                    <div class="presence-user">
+                        <div class="presence-avatar" style="background: #4caf50;">B</div>
+                        <span class="presence-name">Bob</span>
+                    </div>
+                    <div class="presence-user">
+                        <div class="presence-avatar" style="background: #ff9800;">C</div>
+                        <span class="presence-name">Carol</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-panel">
+                <h4>💬 チャット</h4>
+                <div class="chat-messages" id="chatMessages">
+                    <div class="chat-message">
+                        <div class="chat-avatar" style="background: #4caf50;">B</div>
+                        <div class="chat-content">
+                            <div class="chat-author">Bob</div>
+                            <div class="chat-text">こんにちは！一緒にプログラミングしましょう！</div>
+                            <div class="chat-time">10:30</div>
+                        </div>
+                    </div>
+                    <div class="chat-message">
+                        <div class="chat-avatar" style="background: #ff9800;">C</div>
+                        <div class="chat-content">
+                            <div class="chat-author">Carol</div>
+                            <div class="chat-text">データ処理の部分を担当しますね</div>
+                            <div class="chat-time">10:32</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="chatInput" placeholder="メッセージを入力...">
+                </div>
+            </div>
+            
+            <div class="version-history">
+                <h4>📝 変更履歴</h4>
+                <div id="versionList">
+                    <div class="version-item">
+                        <div class="version-author">Alice</div>
+                        <div class="version-time">10:35</div>
+                        <div class="version-description">メイン関数を追加</div>
+                    </div>
+                    <div class="version-item">
+                        <div class="version-author">Bob</div>
+                        <div class="version-time">10:33</div>
+                        <div class="version-description">データ入力部分を実装</div>
+                    </div>
+                    <div class="version-item">
+                        <div class="version-author">Carol</div>
+                        <div class="version-time">10:31</div>
+                        <div class="version-description">初期設定を完了</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="editor-container">
+            <div class="editor-toolbar">
+                <button onclick="runCode()">▶️ 実行</button>
+                <button onclick="saveCode()">💾 保存</button>
+                <button onclick="shareCode()">🔗 共有</button>
+                <button onclick="toggleView()">👁️ プレビュー</button>
+                <button onclick="showVersionHistory()">📝 履歴</button>
+                <span style="margin-left: auto; color: #666; font-size: 14px;">
+                    最終更新: <span id="lastUpdate">10:35</span>
+                </span>
+            </div>
+            
+            <div class="editor-content">
+                <div class="code-editor" id="codeEditor" contenteditable="true"># なでしこ3AI リアルタイム協業プロジェクト
+# 複数人で同時に編集できるプログラミング環境
+
+「=== 協業プログラミングデモ ===」と表示。
+「複数人で同時に編集しています！」と表示。
+
+# データ処理関数
+●データ処理(データ)
+  「データを処理中...」と表示。
+  処理結果 = データを2倍する
+  処理結果を戻す
+ここまで
+
+# メイン処理
+入力データ = [10, 20, 30, 40, 50]
+「入力データ: {入力データ}」と表示。
+
+# 各データを処理
+処理結果 = []
+入力データを反復
+  結果 = データ処理(対象)
+  処理結果に結果を追加
+ここまで
+
+「処理結果: {処理結果}」と表示。
+「協業プログラミング完了！」と表示。</div>
+                <div class="preview-panel" id="previewPanel">
+                    <h3>📋 プレビュー</h3>
+                    <div id="previewContent">
+                        <p>プレビューがここに表示されます...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // リアルタイム協業エンジン
+        class CollaborativeEditor {
+            constructor() {
+                this.currentUser = this.generateUser();
+                this.users = new Map();
+                this.document = {
+                    content: document.getElementById('codeEditor').textContent,
+                    version: 1,
+                    lastModified: new Date()
+                };
+                this.operations = [];
+                this.init();
+            }
+            
+            init() {
+                this.setupUserInterface();
+                this.setupEditor();
+                this.setupChat();
+                this.setupRealtimeSync();
+                this.simulateOtherUsers();
+            }
+            
+            generateUser() {
+                const names = ['Alice', 'Bob', 'Carol', 'David', 'Eve'];
+                const colors = ['#667eea', '#4caf50', '#ff9800', '#e91e63', '#9c27b0'];
+                const randomIndex = Math.floor(Math.random() * Math.min(3, names.length));
+                
+                return {
+                    id: 'user_' + Date.now(),
+                    name: names[randomIndex],
+                    color: colors[randomIndex],
+                    cursor: { line: 1, column: 1 }
+                };
+            }
+            
+            setupUserInterface() {
+                document.getElementById('userName').textContent = this.currentUser.name;
+                document.getElementById('userAvatar').textContent = this.currentUser.name[0];
+                document.getElementById('userAvatar').style.background = this.currentUser.color;
+            }
+            
+            setupEditor() {
+                const editor = document.getElementById('codeEditor');
+                
+                editor.addEventListener('input', (e) => {
+                    this.handleLocalEdit(e);
+                });
+                
+                editor.addEventListener('keyup', (e) => {
+                    this.updateCursorPosition(e);
+                });
+                
+                editor.addEventListener('mouseup', (e) => {
+                    this.handleSelection(e);
+                });
+                
+                // キーボードショートカット
+                editor.addEventListener('keydown', (e) => {
+                    if (e.ctrlKey && e.key === 's') {
+                        e.preventDefault();
+                        this.saveCode();
+                    }
+                });
+            }
+            
+            setupChat() {
+                const chatInput = document.getElementById('chatInput');
+                
+                chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.sendMessage(chatInput.value);
+                        chatInput.value = '';
+                    }
+                });
+            }
+            
+            setupRealtimeSync() {
+                // WebSocket接続をシミュレート
+                setInterval(() => {
+                    this.syncWithServer();
+                }, 1000);
+                
+                // 他のユーザーの操作をシミュレート
+                setInterval(() => {
+                    this.simulateRemoteEdit();
+                }, 5000);
+            }
+            
+            handleLocalEdit(e) {
+                const content = e.target.textContent;
+                const operation = {
+                    type: 'edit',
+                    user: this.currentUser,
+                    timestamp: new Date(),
+                    content: content,
+                    version: this.document.version + 1
+                };
+                
+                this.operations.push(operation);
+                this.document.content = content;
+                this.document.version++;
+                this.document.lastModified = new Date();
+                
+                this.broadcastOperation(operation);
+                this.updatePreview();
+                this.updateLastUpdateTime();
+            }
+            
+            updateCursorPosition(e) {
+                const editor = e.target;
+                const selection = window.getSelection();
+                if (selection.rangeCount > 0) {
+                    const range = selection.getRangeAt(0);
+                    const rect = range.getBoundingClientRect();
+                    
+                    this.currentUser.cursor = {
+                        line: this.getLineFromPosition(editor, rect),
+                        column: this.getColumnFromPosition(editor, rect)
+                    };
+                    
+                    this.broadcastCursor();
+                }
+            }
+            
+            handleSelection(e) {
+                const selection = window.getSelection();
+                if (selection.rangeCount > 0) {
+                    const range = selection.getRangeAt(0);
+                    const selectedText = range.toString();
+                    
+                    if (selectedText.length > 0) {
+                        this.broadcastSelection(selectedText);
+                    }
+                }
+            }
+            
+            getLineFromPosition(editor, rect) {
+                // 簡略化された行数計算
+                const lineHeight = 20;
+                return Math.floor(rect.top / lineHeight) + 1;
+            }
+            
+            getColumnFromPosition(editor, rect) {
+                // 簡略化された列数計算
+                const charWidth = 8;
+                return Math.floor(rect.left / charWidth) + 1;
+            }
+            
+            sendMessage(message) {
+                if (!message.trim()) return;
+                
+                const chatMessage = {
+                    id: 'msg_' + Date.now(),
+                    user: this.currentUser,
+                    message: message,
+                    timestamp: new Date()
+                };
+                
+                this.addChatMessage(chatMessage);
+                this.broadcastMessage(chatMessage);
+            }
+            
+            addChatMessage(message) {
+                const chatMessages = document.getElementById('chatMessages');
+                const messageElement = document.createElement('div');
+                messageElement.className = 'chat-message';
+                
+                const time = message.timestamp.toLocaleTimeString('ja-JP', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                
+                messageElement.innerHTML = `
+                    <div class="chat-avatar" style="background: ${message.user.color};">
+                        ${message.user.name[0]}
+                    </div>
+                    <div class="chat-content">
+                        <div class="chat-author">${message.user.name}</div>
+                        <div class="chat-text">${message.message}</div>
+                        <div class="chat-time">${time}</div>
+                    </div>
+                `;
+                
+                chatMessages.appendChild(messageElement);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            broadcastOperation(operation) {
+                // リモートユーザーに操作をブロードキャスト
+                this.showNotification('info', `${operation.user.name}が編集しました`);
+            }
+            
+            broadcastCursor() {
+                // カーソル位置をブロードキャスト
+            }
+            
+            broadcastSelection(selectedText) {
+                // 選択範囲をブロードキャスト
+                this.showNotification('info', `${this.currentUser.name}が「${selectedText}」を選択`);
+            }
+            
+            broadcastMessage(message) {
+                // メッセージをブロードキャスト
+            }
+            
+            simulateOtherUsers() {
+                // 他のユーザーをシミュレート
+                const otherUsers = [
+                    { name: 'Bob', color: '#4caf50' },
+                    { name: 'Carol', color: '#ff9800' }
+                ];
+                
+                otherUsers.forEach(user => {
+                    this.users.set(user.name, user);
+                });
+                
+                this.updateOnlineCount();
+            }
+            
+            simulateRemoteEdit() {
+                // リモート編集をシミュレート
+                const users = Array.from(this.users.values());
+                if (users.length > 0) {
+                    const randomUser = users[Math.floor(Math.random() * users.length)];
+                    this.simulateUserEdit(randomUser);
+                }
+            }
+            
+            simulateUserEdit(user) {
+                const operations = [
+                    'コメントを追加',
+                    '関数を修正',
+                    '変数名を変更',
+                    'インデントを調整'
+                ];
+                
+                const operation = operations[Math.floor(Math.random() * operations.length)];
+                this.showNotification('info', `${user.name}が${operation}しました`);
+                
+                // バージョン履歴に追加
+                this.addVersionHistory(user.name, operation);
+            }
+            
+            showNotification(type, message) {
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                
+                const titles = {
+                    info: '情報',
+                    success: '成功',
+                    warning: '警告'
+                };
+                
+                notification.innerHTML = `
+                    <div class="notification-title">${titles[type]}</div>
+                    <div class="notification-message">${message}</div>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }
+            
+            updatePreview() {
+                const previewContent = document.getElementById('previewContent');
+                const code = document.getElementById('codeEditor').textContent;
+                
+                // 簡単なプレビュー生成
+                const lines = code.split('\n');
+                let preview = '<div style="font-family: monospace; line-height: 1.6;">';
+                
+                lines.forEach(line => {
+                    if (line.includes('「') && line.includes('と表示')) {
+                        const match = line.match(/「(.+?)」と表示/);
+                        if (match) {
+                            preview += `<div style="margin: 5px 0; padding: 5px; background: #f0f8ff; border-left: 3px solid #2196f3;">${match[1]}</div>`;
+                        }
+                    } else if (line.includes('●')) {
+                        const match = line.match(/●(.+?)\(/);
+                        if (match) {
+                            preview += `<div style="margin: 10px 0; padding: 5px; background: #f3e5f5; border-left: 3px solid #9c27b0;">関数: ${match[1]}</div>`;
+                        }
+                    }
+                });
+                
+                preview += '</div>';
+                previewContent.innerHTML = preview;
+            }
+            
+            updateLastUpdateTime() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('ja-JP', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                document.getElementById('lastUpdate').textContent = timeString;
+            }
+            
+            updateOnlineCount() {
+                const count = this.users.size + 1; // +1 for current user
+                document.getElementById('onlineCount').textContent = count;
+            }
+            
+            addVersionHistory(author, description) {
+                const versionList = document.getElementById('versionList');
+                const versionItem = document.createElement('div');
+                versionItem.className = 'version-item';
+                
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('ja-JP', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                
+                versionItem.innerHTML = `
+                    <div class="version-author">${author}</div>
+                    <div class="version-time">${timeString}</div>
+                    <div class="version-description">${description}</div>
+                `;
+                
+                versionList.insertBefore(versionItem, versionList.firstChild);
+                
+                // 履歴を10件に制限
+                while (versionList.children.length > 10) {
+                    versionList.removeChild(versionList.lastChild);
+                }
+            }
+            
+            syncWithServer() {
+                // サーバーとの同期をシミュレート
+                this.updateOnlineCount();
+            }
+            
+            saveCode() {
+                this.showNotification('success', 'コードを保存しました');
+                this.addVersionHistory(this.currentUser.name, 'コードを保存');
+            }
+            
+            runCode() {
+                this.showNotification('success', 'コードを実行しました');
+                this.updatePreview();
+            }
+            
+            shareCode() {
+                const shareUrl = window.location.href;
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    this.showNotification('success', '共有リンクをクリップボードにコピーしました');
+                });
+            }
+        }
+        
+        // グローバル関数
+        let editor;
+        
+        function runCode() {
+            editor.runCode();
+        }
+        
+        function saveCode() {
+            editor.saveCode();
+        }
+        
+        function shareCode() {
+            editor.shareCode();
+        }
+        
+        function toggleView() {
+            const previewPanel = document.getElementById('previewPanel');
+            previewPanel.style.display = previewPanel.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        function showVersionHistory() {
+            editor.showNotification('info', 'バージョン履歴をサイドバーに表示');
+        }
+        
+        // 初期化
+        document.addEventListener('DOMContentLoaded', () => {
+            editor = new CollaborativeEditor();
+            
+            // 初期チャットメッセージを追加
+            setTimeout(() => {
+                editor.addChatMessage({
+                    id: 'msg_welcome',
+                    user: { name: 'System', color: '#666' },
+                    message: 'リアルタイム協業プログラミングへようこそ！',
+                    timestamp: new Date()
+                });
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

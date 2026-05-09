@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>なでしこ3AI ビジュアルプログラミングエディタ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 1.8em;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .toolbar button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: transform 0.2s;
+        }
+        
+        .toolbar button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 20px;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow-y: auto;
+        }
+        
+        .sidebar h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .node-palette {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .node-item {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: grab;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .node-item:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .node-item.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+        
+        .node-input {
+            background: #e8f4fd;
+            border-color: #2196f3;
+        }
+        
+        .node-process {
+            background: #f3e5f5;
+            border-color: #9c27b0;
+        }
+        
+        .node-output {
+            background: #e8f5e8;
+            border-color: #4caf50;
+        }
+        
+        .node-control {
+            background: #fff3e0;
+            border-color: #ff9800;
+        }
+        
+        .node-data {
+            background: #fce4ec;
+            border-color: #e91e63;
+        }
+        
+        .canvas-container {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #canvas {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .visual-node {
+            position: absolute;
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 15px;
+            min-width: 150px;
+            cursor: move;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: box-shadow 0.3s;
+        }
+        
+        .visual-node:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .visual-node.selected {
+            border-color: #ff9800;
+            box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.3);
+        }
+        
+        .node-header {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .node-content {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .node-ports {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        
+        .port {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: crosshair;
+        }
+        
+        .port.input {
+            background: #2196f3;
+        }
+        
+        .port.output {
+            background: #4caf50;
+        }
+        
+        .connection {
+            stroke: #667eea;
+            stroke-width: 2;
+            fill: none;
+            pointer-events: none;
+        }
+        
+        .code-panel {
+            width: 350px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .code-panel h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .code-output {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .properties-panel {
+            margin-top: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        
+        .property-item {
+            margin-bottom: 10px;
+        }
+        
+        .property-item label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .property-item input,
+        .property-item select {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .modal h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        
+        .context-menu {
+            position: absolute;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 5px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+            display: none;
+        }
+        
+        .context-menu-item {
+            padding: 8px 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .context-menu-item:hover {
+            background: #f0f0f0;
+        }
+        
+        @media (max-width: 1200px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .sidebar,
+            .code-panel {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🎨 なでしこ3AI ビジュアルプログラミング</h1>
+        <div class="toolbar">
+            <button onclick="runProgram()">▶️ 実行</button>
+            <button onclick="generateCode()">🔧 コード生成</button>
+            <button onclick="saveProject()">💾 保存</button>
+            <button onclick="loadProject()">📁 読み込み</button>
+            <button onclick="clearCanvas()">🗑️ クリア</button>
+            <button onclick="showHelp()">❓ ヘルプ</button>
+        </div>
+    </header>
+    
+    <div class="main-container">
+        <div class="sidebar">
+            <h3>📦 ノードパレット</h3>
+            <div class="node-palette">
+                <div class="node-item node-input" draggable="true" data-type="input">
+                    📥 入力
+                </div>
+                <div class="node-item node-process" draggable="true" data-type="process">
+                    ⚙️ 処理
+                </div>
+                <div class="node-item node-output" draggable="true" data-type="output">
+                    📤 出力
+                </div>
+                <div class="node-item node-control" draggable="true" data-type="control">
+                    🔀 制御
+                </div>
+                <div class="node-item node-data" draggable="true" data-type="data">
+                    📊 データ
+                </div>
+                <div class="node-item node-process" draggable="true" data-type="math">
+                    ➕ 計算
+                </div>
+                <div class="node-item node-process" draggable="true" data-type="logic">
+                    🧠 論理
+                </div>
+                <div class="node-item node-data" draggable="true" data-type="variable">
+                    📦 変数
+                </div>
+            </div>
+        </div>
+        
+        <div class="canvas-container">
+            <div id="canvas">
+                <svg id="connections" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></svg>
+            </div>
+        </div>
+        
+        <div class="code-panel">
+            <h3>🔧 生成コード</h3>
+            <div class="code-output" id="codeOutput">
+// なでしこ3AI ビジュアルプログラミング
+// ここに生成されたコードが表示されます
+
+// ノードをキャンバスにドラッグ＆ドロップして
+// プログラムを組み立ててください
+            </div>
+            
+            <div class="properties-panel" id="propertiesPanel">
+                <h4>🔧 プロパティ</h4>
+                <div id="propertiesContent">
+                    <p>ノードを選択するとプロパティが表示されます</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="helpModal">
+        <div class="modal-content">
+            <h3>🎨 ビジュアルプログラミングヘルプ</h3>
+            <h4>基本的な使い方:</h4>
+            <ul>
+                <li>左側のパレットからノードをキャンバスにドラッグ＆ドロップ</li>
+                <li>ノードをクリックして選択し、プロパティを編集</li>
+                <li>ノードのポートをクリックして接続</li>
+                <li>「コード生成」ボタンでなでしこ3コードを生成</li>
+                <li>「実行」ボタンでプログラムを実行</li>
+            </ul>
+            
+            <h4>ノードの種類:</h4>
+            <ul>
+                <li>📥 入力: データ入力ノード</li>
+                <li>⚙️ 処理: 各種処理ノード</li>
+                <li>📤 出力: 結果出力ノード</li>
+                <li>🔀 制御: 条件分岐、ループなど</li>
+                <li>📊 データ: データ操作ノード</li>
+            </ul>
+            
+            <h4>ショートカット:</h4>
+            <ul>
+                <li>Delete: 選択ノードを削除</li>
+                <li>Ctrl+Z: 元に戻す</li>
+                <li>Ctrl+S: 保存</li>
+                <li>Ctrl+R: 実行</li>
+            </ul>
+            
+            <div class="modal-buttons">
+                <button onclick="closeHelp()">閉じる</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="context-menu" id="contextMenu">
+        <div class="context-menu-item" onclick="deleteNode()">🗑️ 削除</div>
+        <div class="context-menu-item" onclick="duplicateNode()">📋 複製</div>
+        <div class="context-menu-item" onclick="editNode()">✏️ 編集</div>
+    </div>
+    
+    <script>
+        // ビジュアルプログラミングエンジン
+        class VisualProgrammingEngine {
+            constructor() {
+                this.nodes = [];
+                this.connections = [];
+                this.selectedNode = null;
+                this.isConnecting = false;
+                this.connectingFrom = null;
+                this.nodeIdCounter = 0;
+                this.init();
+            }
+            
+            init() {
+                this.setupDragAndDrop();
+                this.setupCanvas();
+                this.setupKeyboardShortcuts();
+            }
+            
+            setupDragAndDrop() {
+                const nodeItems = document.querySelectorAll('.node-item');
+                const canvas = document.getElementById('canvas');
+                
+                nodeItems.forEach(item => {
+                    item.addEventListener('dragstart', (e) => {
+                        e.dataTransfer.setData('nodeType', item.dataset.type);
+                        e.dataTransfer.setData('nodeText', item.textContent.trim());
+                        item.classList.add('dragging');
+                    });
+                    
+                    item.addEventListener('dragend', () => {
+                        item.classList.remove('dragging');
+                    });
+                });
+                
+                canvas.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                });
+                
+                canvas.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const nodeType = e.dataTransfer.getData('nodeType');
+                    const nodeText = e.dataTransfer.getData('nodeText');
+                    const rect = canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    this.createNode(nodeType, nodeText, x, y);
+                });
+            }
+            
+            setupCanvas() {
+                const canvas = document.getElementById('canvas');
+                
+                canvas.addEventListener('click', (e) => {
+                    if (e.target === canvas) {
+                        this.deselectAll();
+                    }
+                });
+                
+                canvas.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    this.showContextMenu(e.clientX, e.clientY);
+                });
+                
+                document.addEventListener('click', () => {
+                    this.hideContextMenu();
+                });
+            }
+            
+            setupKeyboardShortcuts() {
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Delete' && this.selectedNode) {
+                        this.deleteSelectedNode();
+                    } else if (e.ctrlKey && e.key === 'z') {
+                        this.undo();
+                    } else if (e.ctrlKey && e.key === 's') {
+                        e.preventDefault();
+                        this.saveProject();
+                    } else if (e.ctrlKey && e.key === 'r') {
+                        e.preventDefault();
+                        this.runProgram();
+                    }
+                });
+            }
+            
+            createNode(type, text, x, y) {
+                const nodeId = 'node_' + this.nodeIdCounter++;
+                const node = {
+                    id: nodeId,
+                    type: type,
+                    text: text,
+                    x: x,
+                    y: y,
+                    inputs: [],
+                    outputs: [],
+                    properties: this.getDefaultProperties(type)
+                };
+                
+                this.nodes.push(node);
+                this.renderNode(node);
+                this.updateCode();
+            }
+            
+            getDefaultProperties(type) {
+                const defaults = {
+                    input: { value: '', dataType: 'string' },
+                    output: { format: 'display' },
+                    process: { operation: 'transform', params: {} },
+                    control: { condition: '', loopType: 'for' },
+                    data: { source: 'manual', structure: 'array' },
+                    math: { operation: 'add', operand1: 0, operand2: 0 },
+                    logic: { operation: 'and', operand1: true, operand2: true },
+                    variable: { name: '', value: '', type: 'string' }
+                };
+                
+                return defaults[type] || {};
+            }
+            
+            renderNode(node) {
+                const canvas = document.getElementById('canvas');
+                const nodeElement = document.createElement('div');
+                nodeElement.className = 'visual-node';
+                nodeElement.id = node.id;
+                nodeElement.style.left = node.x + 'px';
+                nodeElement.style.top = node.y + 'px';
+                
+                nodeElement.innerHTML = `
+                    <div class="node-header">${node.text}</div>
+                    <div class="node-content">${this.getNodeContent(node)}</div>
+                    <div class="node-ports">
+                        <div class="port input" data-node="${node.id}" data-type="input"></div>
+                        <div class="port output" data-node="${node.id}" data-type="output"></div>
+                    </div>
+                `;
+                
+                canvas.appendChild(nodeElement);
+                
+                // イベントリスナー設定
+                nodeElement.addEventListener('mousedown', (e) => {
+                    if (e.target.classList.contains('port')) {
+                        this.startConnection(e.target);
+                    } else {
+                        this.startDrag(node, e);
+                    }
+                });
+                
+                nodeElement.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.selectNode(node);
+                });
+            }
+            
+            getNodeContent(node) {
+                const props = node.properties;
+                
+                switch (node.type) {
+                    case 'input':
+                        return props.value || '値を入力';
+                    case 'output':
+                        return '結果を出力';
+                    case 'process':
+                        return props.operation || '処理';
+                    case 'math':
+                        return `${props.operand1} ${props.operation} ${props.operand2}`;
+                    case 'logic':
+                        return `${props.operand1} ${props.operation} ${props.operand2}`;
+                    case 'variable':
+                        return `${props.name} = ${props.value}`;
+                    default:
+                        return '設定';
+                }
+            }
+            
+            startDrag(node, e) {
+                const canvas = document.getElementById('canvas');
+                const rect = canvas.getBoundingClientRect();
+                const offsetX = e.clientX - rect.left - node.x;
+                const offsetY = e.clientY - rect.top - node.y;
+                
+                const onMouseMove = (e) => {
+                    node.x = e.clientX - rect.left - offsetX;
+                    node.y = e.clientY - rect.top - offsetY;
+                    
+                    const nodeElement = document.getElementById(node.id);
+                    nodeElement.style.left = node.x + 'px';
+                    nodeElement.style.top = node.y + 'px';
+                    
+                    this.updateConnections();
+                };
+                
+                const onMouseUp = () => {
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.removeEventListener('mouseup', onMouseUp);
+                    this.updateCode();
+                };
+                
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+            }
+            
+            startConnection(port) {
+                this.isConnecting = true;
+                this.connectingFrom = port;
+                
+                const onMouseMove = (e) => {
+                    // 接続線のプレビューを描画
+                };
+                
+                const onMouseUp = (e) => {
+                    if (e.target.classList.contains('port') && e.target !== this.connectingFrom) {
+                        this.createConnection(this.connectingFrom, e.target);
+                    }
+                    
+                    this.isConnecting = false;
+                    this.connectingFrom = null;
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.removeEventListener('mouseup', onMouseUp);
+                };
+                
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+            }
+            
+            createConnection(fromPort, toPort) {
+                const connection = {
+                    id: 'conn_' + this.connections.length,
+                    from: fromPort,
+                    to: toPort
+                };
+                
+                this.connections.push(connection);
+                this.renderConnection(connection);
+                this.updateCode();
+            }
+            
+            renderConnection(connection) {
+                const svg = document.getElementById('connections');
+                const fromNode = document.getElementById(connection.from.dataset.node);
+                const toNode = document.getElementById(connection.to.dataset.node);
+                
+                if (!fromNode || !toNode) return;
+                
+                const fromRect = fromNode.getBoundingClientRect();
+                const toRect = toNode.getBoundingClientRect();
+                const canvasRect = document.getElementById('canvas').getBoundingClientRect();
+                
+                const x1 = fromRect.right - canvasRect.left;
+                const y1 = fromRect.top + fromRect.height / 2 - canvasRect.top;
+                const x2 = toRect.left - canvasRect.left;
+                const y2 = toRect.top + toRect.height / 2 - canvasRect.top;
+                
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                const d = `M ${x1} ${y1} C ${(x1 + x2) / 2} ${y1}, ${(x1 + x2) / 2} ${y2}, ${x2} ${y2}`;
+                
+                path.setAttribute('d', d);
+                path.setAttribute('class', 'connection');
+                path.setAttribute('id', connection.id);
+                
+                svg.appendChild(path);
+            }
+            
+            updateConnections() {
+                const svg = document.getElementById('connections');
+                svg.innerHTML = '';
+                
+                this.connections.forEach(conn => {
+                    this.renderConnection(conn);
+                });
+            }
+            
+            selectNode(node) {
+                this.deselectAll();
+                this.selectedNode = node;
+                
+                const nodeElement = document.getElementById(node.id);
+                nodeElement.classList.add('selected');
+                
+                this.showProperties(node);
+            }
+            
+            deselectAll() {
+                document.querySelectorAll('.visual-node').forEach(node => {
+                    node.classList.remove('selected');
+                });
+                this.selectedNode = null;
+            }
+            
+            showProperties(node) {
+                const panel = document.getElementById('propertiesContent');
+                const props = node.properties;
+                
+                let html = '';
+                
+                Object.keys(props).forEach(key => {
+                    html += `
+                        <div class="property-item">
+                            <label>${this.translatePropertyKey(key)}</label>
+                            ${this.createPropertyInput(key, props[key], node)}
+                        </div>
+                    `;
+                });
+                
+                panel.innerHTML = html;
+                
+                // プロパティ入力イベントリスナー
+                panel.querySelectorAll('input, select').forEach(input => {
+                    input.addEventListener('change', (e) => {
+                        const key = e.target.dataset.key;
+                        node.properties[key] = this.parsePropertyValue(key, e.target.value);
+                        this.updateNodeDisplay(node);
+                        this.updateCode();
+                    });
+                });
+            }
+            
+            translatePropertyKey(key) {
+                const translations = {
+                    value: '値',
+                    format: 'フォーマット',
+                    operation: '操作',
+                    params: 'パラメータ',
+                    condition: '条件',
+                    loopType: 'ループ種類',
+                    source: 'ソース',
+                    structure: '構造',
+                    operand1: 'オペランド1',
+                    operand2: 'オペランド2',
+                    name: '名前',
+                    type: '型'
+                };
+                
+                return translations[key] || key;
+            }
+            
+            createPropertyInput(key, value, node) {
+                switch (key) {
+                    case 'operation':
+                    case 'loopType':
+                    case 'source':
+                    case 'structure':
+                    case 'format':
+                    case 'type':
+                        return `<select data-key="${key}">${this.createOptions(key, value)}</select>`;
+                    default:
+                        return `<input type="text" data-key="${key}" value="${value}">`;
+                }
+            }
+            
+            createOptions(key, currentValue) {
+                const options = {
+                    operation: ['transform', 'filter', 'map', 'reduce', 'add', 'subtract', 'multiply', 'divide'],
+                    loopType: ['for', 'while', 'foreach'],
+                    source: ['manual', 'file', 'api', 'database'],
+                    structure: ['array', 'object', 'string', 'number'],
+                    format: ['display', 'log', 'save', 'return'],
+                    type: ['string', 'number', 'boolean', 'array', 'object']
+                };
+                
+                return (options[key] || []).map(opt => 
+                    `<option value="${opt}" ${opt === currentValue ? 'selected' : ''}>${opt}</option>`
+                ).join('');
+            }
+            
+            parsePropertyValue(key, value) {
+                if (key === 'operand1' || key === 'operand2') {
+                    return isNaN(value) ? value : Number(value);
+                }
+                if (key === 'value' && node.properties.dataType === 'number') {
+                    return Number(value);
+                }
+                return value;
+            }
+            
+            updateNodeDisplay(node) {
+                const nodeElement = document.getElementById(node.id);
+                const contentElement = nodeElement.querySelector('.node-content');
+                contentElement.textContent = this.getNodeContent(node);
+            }
+            
+            updateCode() {
+                const code = this.generateCode();
+                document.getElementById('codeOutput').textContent = code;
+            }
+            
+            generateCode() {
+                let code = '// なでしこ3AI ビジュアルプログラミング生成コード\n\n';
+                
+                // 変数宣言
+                const variables = this.nodes.filter(n => n.type === 'variable');
+                variables.forEach(node => {
+                    const props = node.properties;
+                    code += `${props.name}に${props.value}を代入\n`;
+                });
+                
+                if (variables.length > 0) code += '\n';
+                
+                // メイン処理
+                const inputNodes = this.nodes.filter(n => n.type === 'input');
+                const processNodes = this.nodes.filter(n => n.type === 'process' || n.type === 'math' || n.type === 'logic');
+                const outputNodes = this.nodes.filter(n => n.type === 'output');
+                
+                // 入力処理
+                inputNodes.forEach(node => {
+                    const props = node.properties;
+                    if (props.dataType === 'number') {
+                        code += `${props.value}を計算\n`;
+                    } else {
+                        code += `「${props.value}」と表示\n`;
+                    }
+                });
+                
+                // 処理ノード
+                processNodes.forEach(node => {
+                    const props = node.properties;
+                    if (node.type === 'math') {
+                        code += `${props.operand1}と${props.operand2}を${this.translateOperation(props.operation)}して\n`;
+                    } else if (node.type === 'logic') {
+                        code += `${props.operand1}と${props.operand2}を${this.translateOperation(props.operation)}で判定\n`;
+                    } else {
+                        code += `// ${props.operation}処理\n`;
+                    }
+                });
+                
+                // 出力処理
+                outputNodes.forEach(node => {
+                    code += `// 結果出力\n`;
+                });
+                
+                return code;
+            }
+            
+            translateOperation(op) {
+                const translations = {
+                    add: '足',
+                    subtract: '引',
+                    multiply: '掛',
+                    divide: '割',
+                    and: 'かつ',
+                    or: 'または',
+                    not: 'ではない'
+                };
+                
+                return translations[op] || op;
+            }
+            
+            deleteSelectedNode() {
+                if (!this.selectedNode) return;
+                
+                const nodeId = this.selectedNode.id;
+                
+                // 関連する接続を削除
+                this.connections = this.connections.filter(conn => 
+                    conn.from.dataset.node !== nodeId && conn.to.dataset.node !== nodeId
+                );
+                
+                // ノードを削除
+                this.nodes = this.nodes.filter(n => n.id !== nodeId);
+                
+                // DOMから削除
+                const nodeElement = document.getElementById(nodeId);
+                if (nodeElement) {
+                    nodeElement.remove();
+                }
+                
+                this.updateConnections();
+                this.updateCode();
+                this.selectedNode = null;
+                
+                // プロパティパネルをクリア
+                document.getElementById('propertiesContent').innerHTML = '<p>ノードを選択するとプロパティが表示されます</p>';
+            }
+            
+            showContextMenu(x, y) {
+                const menu = document.getElementById('contextMenu');
+                menu.style.left = x + 'px';
+                menu.style.top = y + 'px';
+                menu.style.display = 'block';
+            }
+            
+            hideContextMenu() {
+                document.getElementById('contextMenu').style.display = 'none';
+            }
+            
+            clearCanvas() {
+                this.nodes = [];
+                this.connections = [];
+                this.selectedNode = null;
+                
+                const canvas = document.getElementById('canvas');
+                const nodeElements = canvas.querySelectorAll('.visual-node');
+                nodeElements.forEach(node => node.remove());
+                
+                document.getElementById('connections').innerHTML = '';
+                this.updateCode();
+                
+                document.getElementById('propertiesContent').innerHTML = '<p>ノードを選択するとプロパティが表示されます</p>';
+            }
+            
+            saveProject() {
+                const projectData = {
+                    nodes: this.nodes,
+                    connections: this.connections.map(conn => ({
+                        from: { node: conn.from.dataset.node, type: conn.from.dataset.type },
+                        to: { node: conn.to.dataset.node, type: conn.to.dataset.type }
+                    })),
+                    timestamp: new Date().toISOString()
+                };
+                
+                const dataStr = JSON.stringify(projectData, null, 2);
+                const blob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'visual_project.json';
+                a.click();
+                
+                URL.revokeObjectURL(url);
+            }
+            
+            loadProject() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                
+                input.onchange = (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const projectData = JSON.parse(e.target.result);
+                            this.loadProjectData(projectData);
+                        } catch (error) {
+                            alert('プロジェクトファイルの読み込みに失敗しました');
+                        }
+                    };
+                    reader.readAsText(file);
+                };
+                
+                input.click();
+            }
+            
+            loadProjectData(projectData) {
+                this.clearCanvas();
+                
+                // ノードを復元
+                projectData.nodes.forEach(nodeData => {
+                    this.nodes.push(nodeData);
+                    this.renderNode(nodeData);
+                });
+                
+                // 接続を復元
+                projectData.connections.forEach(connData => {
+                    const fromPort = document.querySelector(`[data-node="${connData.from.node}"][data-type="${connData.from.type}"]`);
+                    const toPort = document.querySelector(`[data-node="${connData.to.node}"][data-type="${connData.to.type}"]`);
+                    
+                    if (fromPort && toPort) {
+                        this.createConnection(fromPort, toPort);
+                    }
+                });
+                
+                this.updateCode();
+            }
+            
+            runProgram() {
+                const code = this.generateCode();
+                alert('生成されたコードを実行します:\n\n' + code);
+                // 実際にはここでなでしこ3AIエンジンを呼び出して実行
+            }
+        }
+        
+        // グローバル関数
+        let engine;
+        
+        function runProgram() {
+            engine.runProgram();
+        }
+        
+        function generateCode() {
+            engine.updateCode();
+        }
+        
+        function saveProject() {
+            engine.saveProject();
+        }
+        
+        function loadProject() {
+            engine.loadProject();
+        }
+        
+        function clearCanvas() {
+            if (confirm('キャンバスをクリアしますか？')) {
+                engine.clearCanvas();
+            }
+        }
+        
+        function showHelp() {
+            document.getElementById('helpModal').style.display = 'block';
+        }
+        
+        function closeHelp() {
+            document.getElementById('helpModal').style.display = 'none';
+        }
+        
+        function deleteNode() {
+            engine.deleteSelectedNode();
+            engine.hideContextMenu();
+        }
+        
+        function duplicateNode() {
+            // ノード複製機能を実装
+            engine.hideContextMenu();
+        }
+        
+        function editNode() {
+            // ノード編集機能を実装
+            engine.hideContextMenu();
+        }
+        
+        // 初期化
+        document.addEventListener('DOMContentLoaded', () => {
+            engine = new VisualProgrammingEngine();
+        });
+    </script>
+</body>
+</html>
