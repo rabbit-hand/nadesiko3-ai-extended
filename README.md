@@ -1,4 +1,4 @@
-# 非公式ー日本語プログラミング言語「なでしこ3」 - AI魔改造版
+# 日本語プログラミング言語「なでしこ3」非公式 AI＆データサイエンス特化エディション
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 [![npm version](https://badge.fury.io/js/nadesiko3.svg)](https://www.npmjs.com/package/nadesiko3)
