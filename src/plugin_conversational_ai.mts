@@ -1,7 +1,5 @@
-import { NakoVariables } from '../core/src/nako_variables.mjs';
-
 /**
- * なでしこ3AI 公式準拠プラグイン
+ * なでしこ3AI 公式準拠プラグイン（修正版）
  */
 const PluginConversationalAI = {
   meta: {
