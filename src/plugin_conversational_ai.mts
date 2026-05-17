@@ -1,14 +1,18 @@
+import { NakoVariables } from '../core/src/nako_variables.mjs';
+
 /**
- * なでしこ3AI 簡素化版プラグイン
+ * なでしこ3AI 公式準拠プラグイン
  */
 const PluginConversationalAI = {
   meta: {
     pluginName: 'plugin_conversational_ai',
-    description: 'AI対話機能（シンプル版）',
+    description: 'AI対話機能（公式プラグイン構成）',
     pluginVersion: '1.0.0',
     nakoRuntime: ['cnako', 'wnako'],
     nakoVersion: '3.6.0'
   },
+  
+  // --- 命令の定義 ---
   'AI話す': {
     type: 'func',
     josi: [['と', 'に']],
